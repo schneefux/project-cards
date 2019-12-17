@@ -77,19 +77,18 @@ const TrumpAttributeValue = objectType({
 const Query = objectType({
   name: 'Query',
   definition(t) {
-    t.list.field('trumpPacks', {
-      type: 'TrumpPack',
-      resolve: (_parent, _args, ctx) => {
-        return ctx.photon.trumpPacks.findMany()
-      },
-    })
+    t.crud.user()
+    t.crud.trumpPacks()
   },
 })
 
 const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
-    t.crud.createOneUser({ alias: 'signupUser' })
+    t.crud.createOneUser()
+    t.crud.createOneTrumpPack()
+    t.crud.createOneTrumpCard()
+    t.crud.createOneTrumpAttribute()
   },
 })
 

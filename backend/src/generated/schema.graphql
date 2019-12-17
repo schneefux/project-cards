@@ -5,17 +5,28 @@
 scalar DateTime
 
 type Mutation {
-  signupUser(data: UserCreateInput!): User!
+  createOneTrumpAttribute(data: TrumpAttributeCreateInput!): TrumpAttribute!
+  createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
+  createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
+  createOneUser(data: UserCreateInput!): User!
 }
 
 type Query {
-  trumpPacks: [TrumpPack!]!
+  trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
 }
 
 type TrumpAttribute {
   aimHigh: Boolean!
   id: ID!
   name: String!
+}
+
+input TrumpAttributeCreateInput {
+  aimHigh: Boolean
+  id: ID
+  name: String!
+  trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
+  trumpPack: TrumpPackCreateOneWithoutTrumpPackInput
 }
 
 input TrumpAttributeCreateManyWithoutAttributesInput {
@@ -84,6 +95,15 @@ type TrumpCard {
   id: ID!
   imageUrl: String
   name: String!
+}
+
+input TrumpCardCreateInput {
+  attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
+  description: String
+  id: ID
+  imageUrl: String
+  name: String!
+  trumpPack: TrumpPackCreateOneWithoutTrumpPackInput
 }
 
 input TrumpCardCreateManyWithoutCardsInput {
@@ -156,6 +176,17 @@ type TrumpPack {
   id: ID!
   name: String!
   updatedAt: DateTime!
+}
+
+input TrumpPackCreateInput {
+  attributes: TrumpAttributeCreateManyWithoutAttributesInput
+  cards: TrumpCardCreateManyWithoutCardsInput
+  createdAt: DateTime
+  id: ID
+  name: String!
+  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
+  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
+  updatedAt: DateTime
 }
 
 input TrumpPackCreateManyWithoutTrumpPacksInput {
