@@ -119,8 +119,8 @@ input TrumpCardWhereUniqueInput {
 type TrumpGame {
   id: ID!
   pack: TrumpPack!
-  userAtTurn: User!
-  users(after: ID, before: ID, first: Int, last: Int, skip: Int): [User!]!
+  userAtTurn: TrumpPlayer!
+  users(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPlayer!]!
 }
 
 input TrumpGameCreateManyWithoutTrumpGamesAtTurnInput {
@@ -130,19 +130,19 @@ input TrumpGameCreateManyWithoutTrumpGamesAtTurnInput {
 
 input TrumpGameCreateManyWithoutTrumpGamesInput {
   connect: [TrumpGameWhereUniqueInput!]
-  create: [TrumpGameCreateWithoutUsersInput!]
+  create: [TrumpGameCreateWithoutPackInput!]
+}
+
+input TrumpGameCreateWithoutPackInput {
+  id: ID
+  userAtTurn: TrumpPlayerCreateOneWithoutUserAtTurnInput!
+  users: TrumpPlayerCreateManyWithoutUsersInput
 }
 
 input TrumpGameCreateWithoutUserAtTurnInput {
   id: ID
   pack: TrumpPackCreateOneWithoutPackInput!
-  users: UserCreateManyWithoutUsersInput
-}
-
-input TrumpGameCreateWithoutUsersInput {
-  id: ID
-  pack: TrumpPackCreateOneWithoutPackInput!
-  userAtTurn: UserCreateOneWithoutUserAtTurnInput!
+  users: TrumpPlayerCreateManyWithoutUsersInput
 }
 
 input TrumpGameWhereUniqueInput {
@@ -160,7 +160,7 @@ type TrumpPack {
 
 input TrumpPackCreateManyWithoutTrumpPacksInput {
   connect: [TrumpPackWhereUniqueInput!]
-  create: [TrumpPackCreateWithoutUserInput!]
+  create: [TrumpPackCreateWithoutTrumpPlayerInput!]
 }
 
 input TrumpPackCreateOneWithoutPackInput {
@@ -179,8 +179,8 @@ input TrumpPackCreateWithoutAttributesInput {
   id: ID
   name: String!
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
+  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
-  user: UserCreateOneWithoutUserInput
 }
 
 input TrumpPackCreateWithoutTrumpGamesInput {
@@ -189,11 +189,11 @@ input TrumpPackCreateWithoutTrumpGamesInput {
   createdAt: DateTime
   id: ID
   name: String!
+  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
-  user: UserCreateOneWithoutUserInput
 }
 
-input TrumpPackCreateWithoutUserInput {
+input TrumpPackCreateWithoutTrumpPlayerInput {
   attributes: TrumpAttributeCreateManyWithoutAttributesInput
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
@@ -208,61 +208,77 @@ input TrumpPackWhereUniqueInput {
   name: String
 }
 
+type TrumpPlayer {
+  id: ID!
+  trumpGames(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
+  trumpGamesAtTurn(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
+  trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
+  user: User!
+}
+
+input TrumpPlayerCreateManyWithoutUsersInput {
+  connect: [TrumpPlayerWhereUniqueInput!]
+  create: [TrumpPlayerCreateWithoutTrumpGamesInput!]
+}
+
+input TrumpPlayerCreateOneWithoutTrumpPlayerInput {
+  connect: TrumpPlayerWhereUniqueInput
+  create: TrumpPlayerCreateWithoutUserInput
+}
+
+input TrumpPlayerCreateOneWithoutUserAtTurnInput {
+  connect: TrumpPlayerWhereUniqueInput
+  create: TrumpPlayerCreateWithoutTrumpGamesAtTurnInput
+}
+
+input TrumpPlayerCreateWithoutTrumpGamesAtTurnInput {
+  id: ID
+  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
+  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
+  user: UserCreateOneWithoutUserInput!
+}
+
+input TrumpPlayerCreateWithoutTrumpGamesInput {
+  id: ID
+  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
+  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
+  user: UserCreateOneWithoutUserInput!
+}
+
+input TrumpPlayerCreateWithoutUserInput {
+  id: ID
+  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
+  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
+  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
+}
+
+input TrumpPlayerWhereUniqueInput {
+  id: ID
+}
+
 type User {
   email: String!
   id: ID!
   name: String!
-  trumpGames(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
-  trumpGamesAtTurn(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
-  trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
+  trumpPlayer: TrumpPlayer!
 }
 
 input UserCreateInput {
   email: String!
   id: ID
   name: String!
-  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
-  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
-  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
-}
-
-input UserCreateManyWithoutUsersInput {
-  connect: [UserWhereUniqueInput!]
-  create: [UserCreateWithoutTrumpGamesInput!]
-}
-
-input UserCreateOneWithoutUserAtTurnInput {
-  connect: UserWhereUniqueInput
-  create: UserCreateWithoutTrumpGamesAtTurnInput
+  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput!
 }
 
 input UserCreateOneWithoutUserInput {
   connect: UserWhereUniqueInput
-  create: UserCreateWithoutTrumpPacksInput
+  create: UserCreateWithoutTrumpPlayerInput
 }
 
-input UserCreateWithoutTrumpGamesAtTurnInput {
+input UserCreateWithoutTrumpPlayerInput {
   email: String!
   id: ID
   name: String!
-  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
-  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
-}
-
-input UserCreateWithoutTrumpGamesInput {
-  email: String!
-  id: ID
-  name: String!
-  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
-  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
-}
-
-input UserCreateWithoutTrumpPacksInput {
-  email: String!
-  id: ID
-  name: String!
-  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
-  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
 }
 
 input UserWhereUniqueInput {

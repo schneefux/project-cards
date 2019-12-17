@@ -7,6 +7,15 @@ const User = objectType({
     t.model.id()
     t.model.name()
     t.model.email()
+    t.model.trumpPlayer()
+  },
+})
+
+const TrumpPlayer = objectType({
+  name: 'TrumpPlayer',
+  definition(t) {
+    t.model.id()
+    t.model.user()
     t.model.trumpPacks()
     t.model.trumpGames()
     t.model.trumpGamesAtTurn()
@@ -85,7 +94,7 @@ const Mutation = objectType({
 })
 
 export const schema = makeSchema({
-  types: [Query, Mutation, User, TrumpGame, TrumpPack,
+  types: [Query, Mutation, User, TrumpPlayer, TrumpGame, TrumpPack,
     TrumpCard, TrumpAttribute, TrumpAttributeValue],
   plugins: [nexusPrismaPlugin()],
   outputs: {
