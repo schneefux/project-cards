@@ -305,6 +305,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
+    user: NexusGenRootTypes['User'] | null; // User
   }
   TrumpAttribute: { // field return type
     aimHigh: boolean; // Boolean!
@@ -374,6 +375,9 @@ export interface NexusGenArgTypes {
       first?: number | null; // Int
       last?: number | null; // Int
       skip?: number | null; // Int
+    }
+    user: { // args
+      where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
     }
   }
   TrumpCard: {

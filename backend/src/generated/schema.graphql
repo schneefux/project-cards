@@ -13,6 +13,7 @@ type Mutation {
 
 type Query {
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
+  user(where: UserWhereUniqueInput!): User
 }
 
 type TrumpAttribute {
