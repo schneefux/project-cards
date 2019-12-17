@@ -1,0 +1,54 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.db"
+  default  = true
+}
+
+generator photon {
+  provider = "photonjs"
+}
+
+model User {
+  id String @default(cuid()) @id
+  name String
+  email String
+  trumpPacks TrumpPack[]
+  trumpGames TrumpGame[] @relation(name: "UserTrumpGame")
+  trumpGamesAtTurn TrumpGame[] @relation(name: "UserTrumpGameAtTurn")
+}
+
+model TrumpGame {
+  id String @default(cuid()) @id
+  users User[] @relation(name: "UserTrumpGame")
+  pack TrumpPack
+  userAtTurn User @relation(name: "UserTrumpGameAtTurn")
+}
+
+model TrumpPack {
+  id String @default(cuid()) @id
+  name String @unique
+  cards TrumpCard[]
+  attributes TrumpAttribute[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TrumpCard {
+  id String @default(cuid()) @id
+  name String
+  description String?
+  attributeValues TrumpAttributeValue[]
+  imageUrl String?
+}
+
+model TrumpAttribute {
+  id String @default(cuid()) @id
+  name String
+  aimHigh Boolean @default(true)
+}
+
+model TrumpAttributeValue {
+  id String @default(cuid()) @id
+  attribute TrumpAttribute
+  value Float
+}
