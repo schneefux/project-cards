@@ -12,6 +12,12 @@ model User {
   id String @default(cuid()) @id
   name String
   email String
+  trumpPlayer TrumpPlayer @relation(name: "UserPlayer")
+}
+
+model TrumpPlayer {
+  id String @default(cuid()) @id
+  user User @relation(name: "UserPlayer")
   trumpPacks TrumpPack[]
   trumpGames TrumpGame[] @relation(name: "UserTrumpGame")
   trumpGamesAtTurn TrumpGame[] @relation(name: "UserTrumpGameAtTurn")
@@ -19,9 +25,9 @@ model User {
 
 model TrumpGame {
   id String @default(cuid()) @id
-  users User[] @relation(name: "UserTrumpGame")
+  users TrumpPlayer[] @relation(name: "UserTrumpGame")
   pack TrumpPack
-  userAtTurn User @relation(name: "UserTrumpGameAtTurn")
+  userAtTurn TrumpPlayer @relation(name: "UserTrumpGameAtTurn")
 }
 
 model TrumpPack {
