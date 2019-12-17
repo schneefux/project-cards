@@ -261,6 +261,9 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     signupUser: NexusGenRootTypes['User']; // User!
   }
+  Query: { // field return type
+    trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
+  }
   TrumpAttribute: { // field return type
     aimHigh: boolean; // Boolean!
     id: string; // ID!

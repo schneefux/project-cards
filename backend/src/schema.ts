@@ -68,6 +68,12 @@ const TrumpAttributeValue = objectType({
 const Query = objectType({
   name: 'Query',
   definition(t) {
+    t.list.field('trumpPacks', {
+      type: 'TrumpPack',
+      resolve: (_parent, _args, ctx) => {
+        return ctx.photon.trumpPacks.findMany()
+      },
+    })
   },
 })
 
