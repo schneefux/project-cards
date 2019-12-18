@@ -1,3 +1,4 @@
+import * as path from 'path'
 import { nexusPrismaPlugin } from 'nexus-prisma'
 import { makeSchema, objectType, stringArg } from 'nexus'
 import { Context } from './context'
@@ -149,10 +150,14 @@ const Subscription = objectType({
 export const schema = makeSchema({
   types: [Query, Mutation, Subscription, User, TrumpPlayer, TrumpGame, TrumpPack,
     TrumpCard, TrumpAttribute, TrumpAttributeValue],
-  plugins: [nexusPrismaPlugin()],
+  plugins: [nexusPrismaPlugin({
+    outputs: {
+      typegen: path.join(__dirname, '../nexus-prisma.generated.d.ts'),
+    }
+  })],
   outputs: {
-    schema: __dirname + '/generated/schema.graphql',
-    typegen: __dirname + '/generated/nexus.ts',
+    schema: path.join(__dirname, '../schema.graphql'),
+    typegen: path.join(__dirname, '../nexus.generated.d.ts'),
   },
   typegenAutoConfig: {
     contextType: 'Context.Context',
