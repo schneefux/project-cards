@@ -9,11 +9,18 @@ type Mutation {
   createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
   createOneUser(data: UserCreateInput!): User!
+  startTrumpGame(pack: String!, player1: String!, player2: String!): TrumpGame!
 }
 
 type Query {
+  trumpGames(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
+  trumpPlayers(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPlayer!]!
   user(where: UserWhereUniqueInput!): User
+}
+
+type Subscription {
+  createdTrumpGame: TrumpGame!
 }
 
 type TrumpAttribute {
@@ -140,13 +147,13 @@ input TrumpCardWhereUniqueInput {
 type TrumpGame {
   id: ID!
   pack: TrumpPack!
-  userAtTurn: TrumpPlayer!
-  users(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPlayer!]!
+  playerAtTurn: TrumpPlayer
+  players(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPlayer!]!
 }
 
 input TrumpGameCreateManyWithoutTrumpGamesAtTurnInput {
   connect: [TrumpGameWhereUniqueInput!]
-  create: [TrumpGameCreateWithoutUserAtTurnInput!]
+  create: [TrumpGameCreateWithoutPlayerAtTurnInput!]
 }
 
 input TrumpGameCreateManyWithoutTrumpGamesInput {
@@ -156,14 +163,14 @@ input TrumpGameCreateManyWithoutTrumpGamesInput {
 
 input TrumpGameCreateWithoutPackInput {
   id: ID
-  userAtTurn: TrumpPlayerCreateOneWithoutUserAtTurnInput!
-  users: TrumpPlayerCreateManyWithoutUsersInput
+  playerAtTurn: TrumpPlayerCreateOneWithoutPlayerAtTurnInput
+  players: TrumpPlayerCreateManyWithoutPlayersInput
 }
 
-input TrumpGameCreateWithoutUserAtTurnInput {
+input TrumpGameCreateWithoutPlayerAtTurnInput {
   id: ID
   pack: TrumpPackCreateOneWithoutPackInput!
-  users: TrumpPlayerCreateManyWithoutUsersInput
+  players: TrumpPlayerCreateManyWithoutPlayersInput
 }
 
 input TrumpGameWhereUniqueInput {
@@ -248,19 +255,19 @@ type TrumpPlayer {
   user: User!
 }
 
-input TrumpPlayerCreateManyWithoutUsersInput {
+input TrumpPlayerCreateManyWithoutPlayersInput {
   connect: [TrumpPlayerWhereUniqueInput!]
   create: [TrumpPlayerCreateWithoutTrumpGamesInput!]
+}
+
+input TrumpPlayerCreateOneWithoutPlayerAtTurnInput {
+  connect: TrumpPlayerWhereUniqueInput
+  create: TrumpPlayerCreateWithoutTrumpGamesAtTurnInput
 }
 
 input TrumpPlayerCreateOneWithoutTrumpPlayerInput {
   connect: TrumpPlayerWhereUniqueInput
   create: TrumpPlayerCreateWithoutUserInput
-}
-
-input TrumpPlayerCreateOneWithoutUserAtTurnInput {
-  connect: TrumpPlayerWhereUniqueInput
-  create: TrumpPlayerCreateWithoutTrumpGamesAtTurnInput
 }
 
 input TrumpPlayerCreateWithoutTrumpGamesAtTurnInput {
@@ -292,14 +299,14 @@ type User {
   email: String!
   id: ID!
   name: String!
-  trumpPlayer: TrumpPlayer!
+  trumpPlayer: TrumpPlayer
 }
 
 input UserCreateInput {
   email: String!
   id: ID
   name: String!
-  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput!
+  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
 }
 
 input UserCreateOneWithoutUserInput {

@@ -106,7 +106,7 @@ export interface NexusGenInputs {
   }
   TrumpGameCreateManyWithoutTrumpGamesAtTurnInput: { // input type
     connect?: NexusGenInputs['TrumpGameWhereUniqueInput'][] | null; // [TrumpGameWhereUniqueInput!]
-    create?: NexusGenInputs['TrumpGameCreateWithoutUserAtTurnInput'][] | null; // [TrumpGameCreateWithoutUserAtTurnInput!]
+    create?: NexusGenInputs['TrumpGameCreateWithoutPlayerAtTurnInput'][] | null; // [TrumpGameCreateWithoutPlayerAtTurnInput!]
   }
   TrumpGameCreateManyWithoutTrumpGamesInput: { // input type
     connect?: NexusGenInputs['TrumpGameWhereUniqueInput'][] | null; // [TrumpGameWhereUniqueInput!]
@@ -114,13 +114,13 @@ export interface NexusGenInputs {
   }
   TrumpGameCreateWithoutPackInput: { // input type
     id?: string | null; // ID
-    userAtTurn: NexusGenInputs['TrumpPlayerCreateOneWithoutUserAtTurnInput']; // TrumpPlayerCreateOneWithoutUserAtTurnInput!
-    users?: NexusGenInputs['TrumpPlayerCreateManyWithoutUsersInput'] | null; // TrumpPlayerCreateManyWithoutUsersInput
+    playerAtTurn?: NexusGenInputs['TrumpPlayerCreateOneWithoutPlayerAtTurnInput'] | null; // TrumpPlayerCreateOneWithoutPlayerAtTurnInput
+    players?: NexusGenInputs['TrumpPlayerCreateManyWithoutPlayersInput'] | null; // TrumpPlayerCreateManyWithoutPlayersInput
   }
-  TrumpGameCreateWithoutUserAtTurnInput: { // input type
+  TrumpGameCreateWithoutPlayerAtTurnInput: { // input type
     id?: string | null; // ID
     pack: NexusGenInputs['TrumpPackCreateOneWithoutPackInput']; // TrumpPackCreateOneWithoutPackInput!
-    users?: NexusGenInputs['TrumpPlayerCreateManyWithoutUsersInput'] | null; // TrumpPlayerCreateManyWithoutUsersInput
+    players?: NexusGenInputs['TrumpPlayerCreateManyWithoutPlayersInput'] | null; // TrumpPlayerCreateManyWithoutPlayersInput
   }
   TrumpGameWhereUniqueInput: { // input type
     id?: string | null; // ID
@@ -178,17 +178,17 @@ export interface NexusGenInputs {
     id?: string | null; // ID
     name?: string | null; // String
   }
-  TrumpPlayerCreateManyWithoutUsersInput: { // input type
+  TrumpPlayerCreateManyWithoutPlayersInput: { // input type
     connect?: NexusGenInputs['TrumpPlayerWhereUniqueInput'][] | null; // [TrumpPlayerWhereUniqueInput!]
     create?: NexusGenInputs['TrumpPlayerCreateWithoutTrumpGamesInput'][] | null; // [TrumpPlayerCreateWithoutTrumpGamesInput!]
+  }
+  TrumpPlayerCreateOneWithoutPlayerAtTurnInput: { // input type
+    connect?: NexusGenInputs['TrumpPlayerWhereUniqueInput'] | null; // TrumpPlayerWhereUniqueInput
+    create?: NexusGenInputs['TrumpPlayerCreateWithoutTrumpGamesAtTurnInput'] | null; // TrumpPlayerCreateWithoutTrumpGamesAtTurnInput
   }
   TrumpPlayerCreateOneWithoutTrumpPlayerInput: { // input type
     connect?: NexusGenInputs['TrumpPlayerWhereUniqueInput'] | null; // TrumpPlayerWhereUniqueInput
     create?: NexusGenInputs['TrumpPlayerCreateWithoutUserInput'] | null; // TrumpPlayerCreateWithoutUserInput
-  }
-  TrumpPlayerCreateOneWithoutUserAtTurnInput: { // input type
-    connect?: NexusGenInputs['TrumpPlayerWhereUniqueInput'] | null; // TrumpPlayerWhereUniqueInput
-    create?: NexusGenInputs['TrumpPlayerCreateWithoutTrumpGamesAtTurnInput'] | null; // TrumpPlayerCreateWithoutTrumpGamesAtTurnInput
   }
   TrumpPlayerCreateWithoutTrumpGamesAtTurnInput: { // input type
     id?: string | null; // ID
@@ -215,7 +215,7 @@ export interface NexusGenInputs {
     email: string; // String!
     id?: string | null; // ID
     name: string; // String!
-    trumpPlayer: NexusGenInputs['TrumpPlayerCreateOneWithoutTrumpPlayerInput']; // TrumpPlayerCreateOneWithoutTrumpPlayerInput!
+    trumpPlayer?: NexusGenInputs['TrumpPlayerCreateOneWithoutTrumpPlayerInput'] | null; // TrumpPlayerCreateOneWithoutTrumpPlayerInput
   }
   UserCreateOneWithoutUserInput: { // input type
     connect?: NexusGenInputs['UserWhereUniqueInput'] | null; // UserWhereUniqueInput
@@ -237,6 +237,9 @@ export interface NexusGenEnums {
 export interface NexusGenRootTypes {
   Mutation: {};
   Query: {};
+  Subscription: { // root type
+    createdTrumpGame: NexusGenRootTypes['TrumpGame']; // TrumpGame!
+  }
   TrumpAttribute: photon.TrumpAttribute;
   TrumpAttributeValue: photon.TrumpAttributeValue;
   TrumpCard: photon.TrumpCard;
@@ -273,7 +276,7 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   TrumpGameCreateManyWithoutTrumpGamesAtTurnInput: NexusGenInputs['TrumpGameCreateManyWithoutTrumpGamesAtTurnInput'];
   TrumpGameCreateManyWithoutTrumpGamesInput: NexusGenInputs['TrumpGameCreateManyWithoutTrumpGamesInput'];
   TrumpGameCreateWithoutPackInput: NexusGenInputs['TrumpGameCreateWithoutPackInput'];
-  TrumpGameCreateWithoutUserAtTurnInput: NexusGenInputs['TrumpGameCreateWithoutUserAtTurnInput'];
+  TrumpGameCreateWithoutPlayerAtTurnInput: NexusGenInputs['TrumpGameCreateWithoutPlayerAtTurnInput'];
   TrumpGameWhereUniqueInput: NexusGenInputs['TrumpGameWhereUniqueInput'];
   TrumpPackCreateInput: NexusGenInputs['TrumpPackCreateInput'];
   TrumpPackCreateManyWithoutTrumpPacksInput: NexusGenInputs['TrumpPackCreateManyWithoutTrumpPacksInput'];
@@ -283,9 +286,9 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   TrumpPackCreateWithoutTrumpGamesInput: NexusGenInputs['TrumpPackCreateWithoutTrumpGamesInput'];
   TrumpPackCreateWithoutTrumpPlayerInput: NexusGenInputs['TrumpPackCreateWithoutTrumpPlayerInput'];
   TrumpPackWhereUniqueInput: NexusGenInputs['TrumpPackWhereUniqueInput'];
-  TrumpPlayerCreateManyWithoutUsersInput: NexusGenInputs['TrumpPlayerCreateManyWithoutUsersInput'];
+  TrumpPlayerCreateManyWithoutPlayersInput: NexusGenInputs['TrumpPlayerCreateManyWithoutPlayersInput'];
+  TrumpPlayerCreateOneWithoutPlayerAtTurnInput: NexusGenInputs['TrumpPlayerCreateOneWithoutPlayerAtTurnInput'];
   TrumpPlayerCreateOneWithoutTrumpPlayerInput: NexusGenInputs['TrumpPlayerCreateOneWithoutTrumpPlayerInput'];
-  TrumpPlayerCreateOneWithoutUserAtTurnInput: NexusGenInputs['TrumpPlayerCreateOneWithoutUserAtTurnInput'];
   TrumpPlayerCreateWithoutTrumpGamesAtTurnInput: NexusGenInputs['TrumpPlayerCreateWithoutTrumpGamesAtTurnInput'];
   TrumpPlayerCreateWithoutTrumpGamesInput: NexusGenInputs['TrumpPlayerCreateWithoutTrumpGamesInput'];
   TrumpPlayerCreateWithoutUserInput: NexusGenInputs['TrumpPlayerCreateWithoutUserInput'];
@@ -302,10 +305,16 @@ export interface NexusGenFieldTypes {
     createOneTrumpCard: NexusGenRootTypes['TrumpCard']; // TrumpCard!
     createOneTrumpPack: NexusGenRootTypes['TrumpPack']; // TrumpPack!
     createOneUser: NexusGenRootTypes['User']; // User!
+    startTrumpGame: NexusGenRootTypes['TrumpGame']; // TrumpGame!
   }
   Query: { // field return type
+    trumpGames: NexusGenRootTypes['TrumpGame'][]; // [TrumpGame!]!
     trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
+    trumpPlayers: NexusGenRootTypes['TrumpPlayer'][]; // [TrumpPlayer!]!
     user: NexusGenRootTypes['User'] | null; // User
+  }
+  Subscription: { // field return type
+    createdTrumpGame: NexusGenRootTypes['TrumpGame']; // TrumpGame!
   }
   TrumpAttribute: { // field return type
     aimHigh: boolean; // Boolean!
@@ -327,8 +336,8 @@ export interface NexusGenFieldTypes {
   TrumpGame: { // field return type
     id: string; // ID!
     pack: NexusGenRootTypes['TrumpPack']; // TrumpPack!
-    userAtTurn: NexusGenRootTypes['TrumpPlayer']; // TrumpPlayer!
-    users: NexusGenRootTypes['TrumpPlayer'][]; // [TrumpPlayer!]!
+    playerAtTurn: NexusGenRootTypes['TrumpPlayer'] | null; // TrumpPlayer
+    players: NexusGenRootTypes['TrumpPlayer'][]; // [TrumpPlayer!]!
   }
   TrumpPack: { // field return type
     attributes: NexusGenRootTypes['TrumpAttribute'][]; // [TrumpAttribute!]!
@@ -349,7 +358,7 @@ export interface NexusGenFieldTypes {
     email: string; // String!
     id: string; // ID!
     name: string; // String!
-    trumpPlayer: NexusGenRootTypes['TrumpPlayer']; // TrumpPlayer!
+    trumpPlayer: NexusGenRootTypes['TrumpPlayer'] | null; // TrumpPlayer
   }
 }
 
@@ -367,9 +376,28 @@ export interface NexusGenArgTypes {
     createOneUser: { // args
       data: NexusGenInputs['UserCreateInput']; // UserCreateInput!
     }
+    startTrumpGame: { // args
+      pack: string; // String!
+      player1: string; // String!
+      player2: string; // String!
+    }
   }
   Query: {
+    trumpGames: { // args
+      after?: string | null; // ID
+      before?: string | null; // ID
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
+    }
     trumpPacks: { // args
+      after?: string | null; // ID
+      before?: string | null; // ID
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
+    }
+    trumpPlayers: { // args
       after?: string | null; // ID
       before?: string | null; // ID
       first?: number | null; // Int
@@ -390,7 +418,7 @@ export interface NexusGenArgTypes {
     }
   }
   TrumpGame: {
-    users: { // args
+    players: { // args
       after?: string | null; // ID
       before?: string | null; // ID
       first?: number | null; // Int
@@ -444,9 +472,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Mutation" | "Query" | "TrumpAttribute" | "TrumpAttributeValue" | "TrumpCard" | "TrumpGame" | "TrumpPack" | "TrumpPlayer" | "User";
+export type NexusGenObjectNames = "Mutation" | "Query" | "Subscription" | "TrumpAttribute" | "TrumpAttributeValue" | "TrumpCard" | "TrumpGame" | "TrumpPack" | "TrumpPlayer" | "User";
 
-export type NexusGenInputNames = "TrumpAttributeCreateInput" | "TrumpAttributeCreateManyWithoutAttributesInput" | "TrumpAttributeCreateOneWithoutAttributeInput" | "TrumpAttributeCreateWithoutTrumpAttributeValuesInput" | "TrumpAttributeCreateWithoutTrumpPackInput" | "TrumpAttributeValueCreateManyWithoutAttributeValuesInput" | "TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput" | "TrumpAttributeValueCreateWithoutAttributeInput" | "TrumpAttributeValueCreateWithoutTrumpCardInput" | "TrumpAttributeValueWhereUniqueInput" | "TrumpAttributeWhereUniqueInput" | "TrumpCardCreateInput" | "TrumpCardCreateManyWithoutCardsInput" | "TrumpCardCreateOneWithoutTrumpCardInput" | "TrumpCardCreateWithoutAttributeValuesInput" | "TrumpCardCreateWithoutTrumpPackInput" | "TrumpCardWhereUniqueInput" | "TrumpGameCreateManyWithoutTrumpGamesAtTurnInput" | "TrumpGameCreateManyWithoutTrumpGamesInput" | "TrumpGameCreateWithoutPackInput" | "TrumpGameCreateWithoutUserAtTurnInput" | "TrumpGameWhereUniqueInput" | "TrumpPackCreateInput" | "TrumpPackCreateManyWithoutTrumpPacksInput" | "TrumpPackCreateOneWithoutPackInput" | "TrumpPackCreateOneWithoutTrumpPackInput" | "TrumpPackCreateWithoutAttributesInput" | "TrumpPackCreateWithoutTrumpGamesInput" | "TrumpPackCreateWithoutTrumpPlayerInput" | "TrumpPackWhereUniqueInput" | "TrumpPlayerCreateManyWithoutUsersInput" | "TrumpPlayerCreateOneWithoutTrumpPlayerInput" | "TrumpPlayerCreateOneWithoutUserAtTurnInput" | "TrumpPlayerCreateWithoutTrumpGamesAtTurnInput" | "TrumpPlayerCreateWithoutTrumpGamesInput" | "TrumpPlayerCreateWithoutUserInput" | "TrumpPlayerWhereUniqueInput" | "UserCreateInput" | "UserCreateOneWithoutUserInput" | "UserCreateWithoutTrumpPlayerInput" | "UserWhereUniqueInput";
+export type NexusGenInputNames = "TrumpAttributeCreateInput" | "TrumpAttributeCreateManyWithoutAttributesInput" | "TrumpAttributeCreateOneWithoutAttributeInput" | "TrumpAttributeCreateWithoutTrumpAttributeValuesInput" | "TrumpAttributeCreateWithoutTrumpPackInput" | "TrumpAttributeValueCreateManyWithoutAttributeValuesInput" | "TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput" | "TrumpAttributeValueCreateWithoutAttributeInput" | "TrumpAttributeValueCreateWithoutTrumpCardInput" | "TrumpAttributeValueWhereUniqueInput" | "TrumpAttributeWhereUniqueInput" | "TrumpCardCreateInput" | "TrumpCardCreateManyWithoutCardsInput" | "TrumpCardCreateOneWithoutTrumpCardInput" | "TrumpCardCreateWithoutAttributeValuesInput" | "TrumpCardCreateWithoutTrumpPackInput" | "TrumpCardWhereUniqueInput" | "TrumpGameCreateManyWithoutTrumpGamesAtTurnInput" | "TrumpGameCreateManyWithoutTrumpGamesInput" | "TrumpGameCreateWithoutPackInput" | "TrumpGameCreateWithoutPlayerAtTurnInput" | "TrumpGameWhereUniqueInput" | "TrumpPackCreateInput" | "TrumpPackCreateManyWithoutTrumpPacksInput" | "TrumpPackCreateOneWithoutPackInput" | "TrumpPackCreateOneWithoutTrumpPackInput" | "TrumpPackCreateWithoutAttributesInput" | "TrumpPackCreateWithoutTrumpGamesInput" | "TrumpPackCreateWithoutTrumpPlayerInput" | "TrumpPackWhereUniqueInput" | "TrumpPlayerCreateManyWithoutPlayersInput" | "TrumpPlayerCreateOneWithoutPlayerAtTurnInput" | "TrumpPlayerCreateOneWithoutTrumpPlayerInput" | "TrumpPlayerCreateWithoutTrumpGamesAtTurnInput" | "TrumpPlayerCreateWithoutTrumpGamesInput" | "TrumpPlayerCreateWithoutUserInput" | "TrumpPlayerWhereUniqueInput" | "UserCreateInput" | "UserCreateOneWithoutUserInput" | "UserCreateWithoutTrumpPlayerInput" | "UserWhereUniqueInput";
 
 export type NexusGenEnumNames = never;
 

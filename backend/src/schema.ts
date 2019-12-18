@@ -1,9 +1,10 @@
 import { nexusPrismaPlugin } from 'nexus-prisma'
-import { idArg, makeSchema, objectType, stringArg } from 'nexus'
+import { makeSchema, objectType, stringArg } from 'nexus'
+import { Context } from './context'
 
 const User = objectType({
   name: 'User',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
     t.model.name()
     t.model.email()
@@ -13,7 +14,7 @@ const User = objectType({
 
 const TrumpPlayer = objectType({
   name: 'TrumpPlayer',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
     t.model.user()
     t.model.trumpPacks()
@@ -24,17 +25,17 @@ const TrumpPlayer = objectType({
 
 const TrumpGame = objectType({
   name: 'TrumpGame',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
-    t.model.users()
+    t.model.players()
     t.model.pack()
-    t.model.userAtTurn()
+    t.model.playerAtTurn()
   },
 })
 
 const TrumpPack = objectType({
   name: 'TrumpPack',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
     t.model.name()
     t.model.cards()
@@ -46,7 +47,7 @@ const TrumpPack = objectType({
 
 const TrumpCard = objectType({
   name: 'TrumpCard',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
     t.model.name()
     t.model.description()
@@ -57,7 +58,7 @@ const TrumpCard = objectType({
 
 const TrumpAttribute = objectType({
   name: 'TrumpAttribute',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
     t.model.name()
     t.model.aimHigh()
@@ -67,7 +68,7 @@ const TrumpAttribute = objectType({
 
 const TrumpAttributeValue = objectType({
   name: 'TrumpAttributeValue',
-  definition(t) {
+  definition(t: any) {
     t.model.id()
     t.model.attribute()
     t.model.value()
@@ -76,24 +77,77 @@ const TrumpAttributeValue = objectType({
 
 const Query = objectType({
   name: 'Query',
-  definition(t) {
+  definition(t: any) {
     t.crud.user()
+    t.crud.trumpPlayers()
     t.crud.trumpPacks()
+    t.crud.trumpGames()
   },
 })
 
 const Mutation = objectType({
   name: 'Mutation',
-  definition(t) {
+  definition(t: any) {
     t.crud.createOneUser()
     t.crud.createOneTrumpPack()
     t.crud.createOneTrumpCard()
     t.crud.createOneTrumpAttribute()
+
+    t.field('startTrumpGame', {
+      type: 'TrumpGame',
+      nullable: false,
+      args: {
+        player1: stringArg({ nullable: false }),
+        player2: stringArg({ nullable: false }),
+        pack: stringArg({ nullable: false }),
+      },
+      resolve: async (parent: any,
+          { player1, player2, pack }: { player1: string, player2: string, pack: string },
+          ctx: Context) => {
+        const trumpGame = await ctx.photon.trumpGames.create({
+          data: {
+            players: {
+              connect: [{
+                id: player1,
+              }, {
+                id: player2,
+              }]
+            },
+            pack: {
+              connect: {
+                id: pack,
+              }
+            },
+            playerAtTurn: {
+              connect: {
+                id: player1,
+              }
+            },
+          },
+        })
+        ctx.pubsub.publish('CREATED_TRUMP_GAME', {
+          createdTrumpGame: trumpGame
+        })
+        return trumpGame
+      }
+    })
   },
 })
 
+const Subscription = objectType({
+  name: 'Subscription',
+  definition(t: any) {
+    t.field('createdTrumpGame', {
+      type: 'TrumpGame',
+      nullable: false,
+      subscribe: (parent: any, { }, ctx: Context) =>
+        ctx.pubsub.asyncIterator('CREATED_TRUMP_GAME')
+    })
+  }
+})
+
 export const schema = makeSchema({
-  types: [Query, Mutation, User, TrumpPlayer, TrumpGame, TrumpPack,
+  types: [Query, Mutation, Subscription, User, TrumpPlayer, TrumpGame, TrumpPack,
     TrumpCard, TrumpAttribute, TrumpAttributeValue],
   plugins: [nexusPrismaPlugin()],
   outputs: {
