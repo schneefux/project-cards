@@ -4,19 +4,18 @@
     justify-center
     align-center
   >
-    <v-flex
-      xs12
-      sm8
-      md6
-    >
+    <v-flex xs12>
       {{ trumpPacks }}
+    </v-flex>
+    <v-flex xs12>
+      <v-btn @click="addTrumpPack">
+        Neues hinzufügen
+      </v-btn>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
 import gql from 'graphql-tag'
 
 export default {
@@ -29,9 +28,21 @@ export default {
       }`
     }
   },
-  components: {
-    Logo,
-    VuetifyLogo
-  }
+  methods: {
+    async addTrumpPack() {
+      await this.$apollo.mutate({
+        mutation: gql`mutation ($name: String!) {
+          createOneTrumpPack (data: {
+            name: $name
+          }) {
+            id
+          }
+        }`,
+        variables: {
+          name: 'testing' + Math.random() * 100,
+        },
+      })
+    }
+  },
 }
 </script>
