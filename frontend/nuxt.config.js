@@ -53,8 +53,8 @@ export default {
   apollo: {
     clientConfigs: {
       default: {
-        httpEndpoint: 'http://localhost:4000',
-        wsEndpoint: 'ws://localhost:4000',
+        httpEndpoint: process.env.APOLLO_HTTP || 'http://localhost:4000',
+        wsEndpoint: process.env.APOLLO_WS || 'ws://localhost:4000',
       },
     },
   },

@@ -1,6 +1,8 @@
 # project-cards
 
-> 
+Environment variables:
+  * process.env.APOLLO_HTTP (default http://localhost:4000)
+  * process.env.APOLLOW_WS (default ws://localhost:4000)
 
 ## Build Setup
 
