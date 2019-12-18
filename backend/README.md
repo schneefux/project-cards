@@ -1,5 +1,6 @@
 Environment variables:
-  * CORS_ORIGIN
+  * CORS_ORIGIN (request origin if unset)
+  * DATABASE_URL (local sqlite if unset)
 
 # GraphQL Server Example
 
