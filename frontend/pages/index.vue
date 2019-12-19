@@ -1,5 +1,6 @@
 <template>
   <div>
+<<<<<<< HEAD
     <v-layout row>
       <v-flex xs12> Packs: {{ trumpPacks }} </v-flex>
       <v-flex xs12> Games: {{ trumpGames }} </v-flex>
@@ -16,6 +17,8 @@
       </v-flex>
     </v-layout>
 
+=======
+>>>>>>> Remove vuetify
     <button class="shadow bg-blue-500 px-4 py-2 text-white hover:bg-blue-400">
       tailwind button test
     </button>
