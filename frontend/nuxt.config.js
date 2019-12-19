@@ -23,6 +23,7 @@ export default {
   ** Global CSS
   */
   css: [
+    '~/assets/tailwind.css',
   ],
   /*
   ** Plugins to load before mounting the App
@@ -62,6 +63,22 @@ export default {
   ** Build configuration
   */
   build: {
+    postcss: {
+      plugins: {
+        'tailwindcss': {},
+        'autoprefixer': {},
+        ...(process.env.NODE_ENV === 'production'
+        ? {'@fullhuman/postcss-purgecss': {
+          content: [
+            path.join(__dirname, './pages/**/*.vue'),
+            path.join(__dirname, './layouts/**/*.vue'),
+            path.join(__dirname, './components/**/*.vue')
+          ],
+          defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
+          whitelist: ['html', 'body', 'nuxt-progress']
+        }} : {})
+      },
+    },
     /*
     ** You can extend webpack config here
     */

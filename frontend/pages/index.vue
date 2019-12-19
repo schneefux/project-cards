@@ -17,6 +17,9 @@
         Neues Spiel starten
       </v-btn>
     </v-flex>
+    <button class="shadow bg-blue-500 px-4 py-2 text-white hover:bg-blue-400">
+      tailwind button test
+    </button>
   </v-layout>
 </template>
 
