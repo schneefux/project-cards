@@ -32,22 +32,6 @@ export default {
    */
   plugins: [],
   /*
-<<<<<<< HEAD
-   ** Nuxt.js dev-modules
-   */
-  buildModules: ['@nuxtjs/vuetify', '@nuxtjs/apollo'],
-  /*
-   ** Nuxt.js modules
-   */
-  modules: ['@nuxtjs/pwa'],
-  /*
-   ** vuetify module configuration
-   ** https://github.com/nuxt-community/vuetify-module
-   */
-  vuetify: {
-    optionsPath: './vuetify.options.js'
-  },
-=======
   ** Nuxt.js dev-modules
   */
   buildModules: [
@@ -59,7 +43,6 @@ export default {
   modules: [
     '@nuxtjs/pwa',
   ],
->>>>>>> Remove vuetify
 
   apollo: {
     clientConfigs: {
