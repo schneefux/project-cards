@@ -23,6 +23,20 @@ type Subscription {
   createdTrumpGame: TrumpGame!
 }
 
+input TagCreateManyWithoutTagsInput {
+  connect: [TagWhereUniqueInput!]
+  create: [TagCreateWithoutTrumpPackInput!]
+}
+
+input TagCreateWithoutTrumpPackInput {
+  id: ID
+  name: String!
+}
+
+input TagWhereUniqueInput {
+  id: ID
+}
+
 type TrumpAttribute {
   aimHigh: Boolean!
   id: ID!
@@ -190,8 +204,11 @@ input TrumpPackCreateInput {
   attributes: TrumpAttributeCreateManyWithoutAttributesInput
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
+  description: String!
   id: ID
   name: String!
+  rating: Float!
+  tags: TagCreateManyWithoutTagsInput
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
   trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
@@ -215,8 +232,11 @@ input TrumpPackCreateOneWithoutTrumpPackInput {
 input TrumpPackCreateWithoutAttributesInput {
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
+  description: String!
   id: ID
   name: String!
+  rating: Float!
+  tags: TagCreateManyWithoutTagsInput
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
   trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
@@ -226,8 +246,11 @@ input TrumpPackCreateWithoutTrumpGamesInput {
   attributes: TrumpAttributeCreateManyWithoutAttributesInput
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
+  description: String!
   id: ID
   name: String!
+  rating: Float!
+  tags: TagCreateManyWithoutTagsInput
   trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
 }
@@ -236,8 +259,11 @@ input TrumpPackCreateWithoutTrumpPlayerInput {
   attributes: TrumpAttributeCreateManyWithoutAttributesInput
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
+  description: String!
   id: ID
   name: String!
+  rating: Float!
+  tags: TagCreateManyWithoutTagsInput
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
   updatedAt: DateTime
 }

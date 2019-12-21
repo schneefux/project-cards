@@ -33,10 +33,18 @@ model TrumpGame {
 model TrumpPack {
   id String @default(cuid()) @id
   name String @unique
+  description String
   cards TrumpCard[]
+  tags Tag[]
+  rating Float 
   attributes TrumpAttribute[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id String @default(cuid()) @id
+  name String
 }
 
 model TrumpCard {
