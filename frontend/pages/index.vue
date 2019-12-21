@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .playingcard {
   @apply border border-black rounded-lg px-3 py-1 m-2 font-sans relative bg-white;
   @apply shadow-lg mt-4;
