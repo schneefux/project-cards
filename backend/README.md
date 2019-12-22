@@ -5,6 +5,8 @@ Environment variables:
 - IMAGE_DIR
 - JWT_SECRET
 
+RangeError during upload? Run `npx npm-force-resolutions` for Node 13 compatibility, see [this issue](https://github.com/apollographql/apollo-server/issues/3579)
+
 # GraphQL Server Example
 
 **GraphQL server with TypeScript** based on [Photon.js](https://photonjs.prisma.io/), [graphql-yoga](https://github.com/prisma/graphql-yoga) and [GraphQL Nexus](https://nexus.js.org/).
