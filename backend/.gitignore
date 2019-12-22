@@ -1,3 +1,4 @@
+images/*
 prisma/Studio
 node_modules
 yarn-error.log

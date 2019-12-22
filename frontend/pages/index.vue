@@ -1,7 +1,10 @@
 <template>
   <div>
-    <button class="shadow bg-blue-500 px-4 py-2 text-white hover:bg-blue-400">
-      tailwind button test
+    <button
+      @click="addUser"
+      class="shadow rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
+    >
+      1 create user
     </button>
 
     <div class="playingcard playingcard--md playingcard--interactive">
@@ -92,6 +95,20 @@
         </p>
       </div>
     </div>
+
+    <button
+      @click="addPack"
+      class="shadow rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
+    >
+      2 create pack
+    </button>
+
+    <button
+      @click="saveCard"
+      class="shadow rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
+    >
+      3 save card
+    </button>
   </div>
 </template>
 
@@ -237,7 +254,9 @@ export default {
       title: 'Titel',
       author: 'Autor',
       image: '',
+      imageFile: undefined,
       attribute: 'Attribut',
+      attributeId: undefined,
       value: 1,
       unit: 'u'
     }
@@ -269,18 +288,39 @@ export default {
     async addPack() {
       const response = await this.$apollo.mutate({
         mutation: gql`
-          mutation($name: String!) {
-            createOneTrumpPack(data: { name: $name }) {
+          mutation(
+            $author: ID!
+            $name: String!
+            $description: String!
+            $attributeName: String!
+          ) {
+            createOneTrumpPack(
+              data: {
+                name: $name
+                author: { connect: { id: $author } }
+                description: $description
+                attributes: {
+                  create: [{ name: $attributeName, aimHigh: true }]
+                }
+              }
+            ) {
               id
+              attributes {
+                id
+              }
             }
           }
         `,
         variables: {
-          name: 'random pack ' + Math.random()
+          author: this.player,
+          description: '',
+          name: 'random pack ' + Math.random(),
+          attributeName: this.attribute
         }
       })
 
       this.pack = response.data.createOneTrumpPack.id
+      this.attributeId = response.data.createOneTrumpPack.attributes[0].id
     },
     async startTrumpGame() {
       await this.$apollo.mutate({
@@ -298,10 +338,63 @@ export default {
         }
       })
     },
-    selectImage(event) {
+    async selectImage(event) {
       const reader = new FileReader()
       reader.onload = () => (this.image = reader.result)
-      reader.readAsDataURL(event.target.files[0])
+      this.imageFile = event.target.files[0]
+      reader.readAsDataURL(this.imageFile)
+    },
+    async saveCard() {
+      const response = await this.$apollo.mutate({
+        mutation: gql`
+          mutation(
+            $name: String!
+            $pack: ID!
+            $description: String!
+            $attribute0: ID!
+            $value0: Float!
+          ) {
+            createOneTrumpCard(
+              data: {
+                name: $name
+                pack: { connect: { id: $pack } }
+                description: $description
+                attributeValues: {
+                  create: [
+                    {
+                      value: $value0
+                      attribute: { connect: { id: $attribute0 } }
+                    }
+                  ]
+                }
+              }
+            ) {
+              id
+            }
+          }
+        `,
+        variables: {
+          name: this.title,
+          pack: this.pack,
+          description: '',
+          attribute0: this.attributeId,
+          value0: this.value
+        }
+      })
+
+      const cardId = response.data.createOneTrumpCard.id
+
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation($file: Upload!, $cardId: ID!) {
+            uploadTrumpCardImage(file: $file, cardId: $cardId)
+          }
+        `,
+        variables: {
+          file: this.imageFile,
+          cardId: cardId
+        }
+      })
     }
   }
 }

@@ -1,11 +1,12 @@
 Environment variables:
-  * CORS_ORIGIN (request origin if unset)
-  * DATABASE_URL (local sqlite if unset)
+
+- CORS_ORIGIN (request origin if unset)
+- DATABASE_URL (local sqlite if unset)
+- IMAGE_DIR
 
 # GraphQL Server Example
 
 **GraphQL server with TypeScript** based on [Photon.js](https://photonjs.prisma.io/), [graphql-yoga](https://github.com/prisma/graphql-yoga) and [GraphQL Nexus](https://nexus.js.org/).
-
 
 ## Download example & install dependencies
 
@@ -20,6 +21,7 @@ prisma2 dev
 ```
 
 For a MySQL provider:
+
 ```
 datasource mysql {
     provider = "mysql"

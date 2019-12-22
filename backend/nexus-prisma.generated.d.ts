@@ -211,7 +211,6 @@ interface ModelTypes {
   TrumpPlayer: photon.TrumpPlayer
   TrumpGame: photon.TrumpGame
   TrumpPack: photon.TrumpPack
-  Tag: photon.Tag
   TrumpCard: photon.TrumpCard
   TrumpAttribute: photon.TrumpAttribute
   TrumpAttributeValue: photon.TrumpAttributeValue
@@ -232,23 +231,19 @@ interface NexusPrismaInputs {
   ordering: 'id'
 }
     trumpPacks: {
-  filtering: 'id' | 'name' | 'description' | 'cards' | 'tags' | 'rating' | 'attributes' | 'createdAt' | 'updatedAt' | 'trumpGames' | 'AND' | 'OR' | 'NOT' | 'trumpPlayer'
-  ordering: 'id' | 'name' | 'description' | 'rating' | 'createdAt' | 'updatedAt'
-}
-    tags: {
-  filtering: 'id' | 'name' | 'AND' | 'OR' | 'NOT' | 'trumpPack'
-  ordering: 'id' | 'name'
+  filtering: 'id' | 'name' | 'description' | 'cards' | 'attributes' | 'createdAt' | 'updatedAt' | 'trumpGames' | 'AND' | 'OR' | 'NOT' | 'author'
+  ordering: 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
 }
     trumpCards: {
-  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'AND' | 'OR' | 'NOT' | 'trumpPack'
+  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'AND' | 'OR' | 'NOT' | 'pack'
   ordering: 'id' | 'name' | 'description' | 'imageUrl'
 }
     trumpAttributes: {
-  filtering: 'id' | 'name' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'trumpPack'
+  filtering: 'id' | 'name' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'pack'
   ordering: 'id' | 'name' | 'aimHigh'
 }
     trumpAttributeValues: {
-  filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'attribute' | 'trumpCard'
+  filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'card' | 'attribute'
   ordering: 'id' | 'value'
 }
 
@@ -258,8 +253,8 @@ interface NexusPrismaInputs {
 
   },  TrumpPlayer: {
     trumpPacks: {
-  filtering: 'id' | 'name' | 'description' | 'cards' | 'tags' | 'rating' | 'attributes' | 'createdAt' | 'updatedAt' | 'trumpGames' | 'AND' | 'OR' | 'NOT' | 'trumpPlayer'
-  ordering: 'id' | 'name' | 'description' | 'rating' | 'createdAt' | 'updatedAt'
+  filtering: 'id' | 'name' | 'description' | 'cards' | 'attributes' | 'createdAt' | 'updatedAt' | 'trumpGames' | 'AND' | 'OR' | 'NOT' | 'author'
+  ordering: 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
 }
     trumpGames: {
   filtering: 'id' | 'players' | 'AND' | 'OR' | 'NOT' | 'pack' | 'playerAtTurn'
@@ -278,15 +273,11 @@ interface NexusPrismaInputs {
 
   },  TrumpPack: {
     cards: {
-  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'AND' | 'OR' | 'NOT' | 'trumpPack'
+  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'AND' | 'OR' | 'NOT' | 'pack'
   ordering: 'id' | 'name' | 'description' | 'imageUrl'
 }
-    tags: {
-  filtering: 'id' | 'name' | 'AND' | 'OR' | 'NOT' | 'trumpPack'
-  ordering: 'id' | 'name'
-}
     attributes: {
-  filtering: 'id' | 'name' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'trumpPack'
+  filtering: 'id' | 'name' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'pack'
   ordering: 'id' | 'name' | 'aimHigh'
 }
     trumpGames: {
@@ -294,18 +285,15 @@ interface NexusPrismaInputs {
   ordering: 'id'
 }
 
-  },  Tag: {
-
-
   },  TrumpCard: {
     attributeValues: {
-  filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'attribute' | 'trumpCard'
+  filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'card' | 'attribute'
   ordering: 'id' | 'value'
 }
 
   },  TrumpAttribute: {
     trumpAttributeValues: {
-  filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'attribute' | 'trumpCard'
+  filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'card' | 'attribute'
   ordering: 'id' | 'value'
 }
 
@@ -325,8 +313,6 @@ interface NexusPrismaTypes {
     trumpGames: 'TrumpGame'
     trumpPack: 'TrumpPack'
     trumpPacks: 'TrumpPack'
-    tag: 'Tag'
-    tags: 'Tag'
     trumpCard: 'TrumpCard'
     trumpCards: 'TrumpCard'
     trumpAttribute: 'TrumpAttribute'
@@ -360,12 +346,6 @@ interface NexusPrismaTypes {
     deleteOneTrumpPack: 'TrumpPack'
     deleteManyTrumpPack: 'BatchPayload'
     upsertOneTrumpPack: 'TrumpPack'
-    createOneTag: 'Tag'
-    updateOneTag: 'Tag'
-    updateManyTag: 'BatchPayload'
-    deleteOneTag: 'Tag'
-    deleteManyTag: 'BatchPayload'
-    upsertOneTag: 'Tag'
     createOneTrumpCard: 'TrumpCard'
     updateOneTrumpCard: 'TrumpCard'
     updateManyTrumpCard: 'BatchPayload'
@@ -408,41 +388,34 @@ interface NexusPrismaTypes {
 },  TrumpPack: {
     id: 'String'
     name: 'String'
+    author: 'TrumpPlayer'
     description: 'String'
     cards: 'TrumpCard'
-    tags: 'Tag'
-    rating: 'Float'
     attributes: 'TrumpAttribute'
     createdAt: 'DateTime'
     updatedAt: 'DateTime'
-    trumpPlayer: 'TrumpPlayer'
     trumpGames: 'TrumpGame'
-
-},  Tag: {
-    id: 'String'
-    name: 'String'
-    trumpPack: 'TrumpPack'
 
 },  TrumpCard: {
     id: 'String'
     name: 'String'
+    pack: 'TrumpPack'
     description: 'String'
     attributeValues: 'TrumpAttributeValue'
     imageUrl: 'String'
-    trumpPack: 'TrumpPack'
 
 },  TrumpAttribute: {
     id: 'String'
+    pack: 'TrumpPack'
     name: 'String'
     aimHigh: 'Boolean'
-    trumpPack: 'TrumpPack'
     trumpAttributeValues: 'TrumpAttributeValue'
 
 },  TrumpAttributeValue: {
     id: 'String'
+    card: 'TrumpCard'
     attribute: 'TrumpAttribute'
     value: 'Float'
-    trumpCard: 'TrumpCard'
 
 }
 }
@@ -452,7 +425,6 @@ interface NexusPrismaMethods {
   TrumpPlayer: NexusPrismaFields<'TrumpPlayer'>
   TrumpGame: NexusPrismaFields<'TrumpGame'>
   TrumpPack: NexusPrismaFields<'TrumpPack'>
-  Tag: NexusPrismaFields<'Tag'>
   TrumpCard: NexusPrismaFields<'TrumpCard'>
   TrumpAttribute: NexusPrismaFields<'TrumpAttribute'>
   TrumpAttributeValue: NexusPrismaFields<'TrumpAttributeValue'>

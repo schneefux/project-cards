@@ -10,6 +10,7 @@ type Mutation {
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
   createOneUser(data: UserCreateInput!): User!
   startTrumpGame(pack: String!, player1: String!, player2: String!): TrumpGame!
+  uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
 
 type Query {
@@ -23,37 +24,24 @@ type Subscription {
   createdTrumpGame: TrumpGame!
 }
 
-input TagCreateManyWithoutTagsInput {
-  connect: [TagWhereUniqueInput!]
-  create: [TagCreateWithoutTrumpPackInput!]
-}
-
-input TagCreateWithoutTrumpPackInput {
-  id: ID
-  name: String!
-}
-
-input TagWhereUniqueInput {
-  id: ID
-}
-
 type TrumpAttribute {
   aimHigh: Boolean!
   id: ID!
   name: String!
+  pack: TrumpPack!
 }
 
 input TrumpAttributeCreateInput {
   aimHigh: Boolean
   id: ID
   name: String!
+  pack: TrumpPackCreateOneWithoutPackInput!
   trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
-  trumpPack: TrumpPackCreateOneWithoutTrumpPackInput
 }
 
 input TrumpAttributeCreateManyWithoutAttributesInput {
   connect: [TrumpAttributeWhereUniqueInput!]
-  create: [TrumpAttributeCreateWithoutTrumpPackInput!]
+  create: [TrumpAttributeCreateWithoutPackInput!]
 }
 
 input TrumpAttributeCreateOneWithoutAttributeInput {
@@ -61,29 +49,30 @@ input TrumpAttributeCreateOneWithoutAttributeInput {
   create: TrumpAttributeCreateWithoutTrumpAttributeValuesInput
 }
 
-input TrumpAttributeCreateWithoutTrumpAttributeValuesInput {
-  aimHigh: Boolean
-  id: ID
-  name: String!
-  trumpPack: TrumpPackCreateOneWithoutTrumpPackInput
-}
-
-input TrumpAttributeCreateWithoutTrumpPackInput {
+input TrumpAttributeCreateWithoutPackInput {
   aimHigh: Boolean
   id: ID
   name: String!
   trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
 }
 
+input TrumpAttributeCreateWithoutTrumpAttributeValuesInput {
+  aimHigh: Boolean
+  id: ID
+  name: String!
+  pack: TrumpPackCreateOneWithoutPackInput!
+}
+
 type TrumpAttributeValue {
   attribute: TrumpAttribute!
+  card: TrumpCard!
   id: ID!
   value: Float!
 }
 
 input TrumpAttributeValueCreateManyWithoutAttributeValuesInput {
   connect: [TrumpAttributeValueWhereUniqueInput!]
-  create: [TrumpAttributeValueCreateWithoutTrumpCardInput!]
+  create: [TrumpAttributeValueCreateWithoutCardInput!]
 }
 
 input TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput {
@@ -92,12 +81,12 @@ input TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput {
 }
 
 input TrumpAttributeValueCreateWithoutAttributeInput {
+  card: TrumpCardCreateOneWithoutCardInput!
   id: ID
-  trumpCard: TrumpCardCreateOneWithoutTrumpCardInput
   value: Float!
 }
 
-input TrumpAttributeValueCreateWithoutTrumpCardInput {
+input TrumpAttributeValueCreateWithoutCardInput {
   attribute: TrumpAttributeCreateOneWithoutAttributeInput!
   id: ID
   value: Float!
@@ -117,6 +106,7 @@ type TrumpCard {
   id: ID!
   imageUrl: String
   name: String!
+  pack: TrumpPack!
 }
 
 input TrumpCardCreateInput {
@@ -125,15 +115,15 @@ input TrumpCardCreateInput {
   id: ID
   imageUrl: String
   name: String!
-  trumpPack: TrumpPackCreateOneWithoutTrumpPackInput
+  pack: TrumpPackCreateOneWithoutPackInput!
 }
 
 input TrumpCardCreateManyWithoutCardsInput {
   connect: [TrumpCardWhereUniqueInput!]
-  create: [TrumpCardCreateWithoutTrumpPackInput!]
+  create: [TrumpCardCreateWithoutPackInput!]
 }
 
-input TrumpCardCreateOneWithoutTrumpCardInput {
+input TrumpCardCreateOneWithoutCardInput {
   connect: TrumpCardWhereUniqueInput
   create: TrumpCardCreateWithoutAttributeValuesInput
 }
@@ -143,10 +133,10 @@ input TrumpCardCreateWithoutAttributeValuesInput {
   id: ID
   imageUrl: String
   name: String!
-  trumpPack: TrumpPackCreateOneWithoutTrumpPackInput
+  pack: TrumpPackCreateOneWithoutPackInput!
 }
 
-input TrumpCardCreateWithoutTrumpPackInput {
+input TrumpCardCreateWithoutPackInput {
   attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
   description: String
   id: ID
@@ -172,13 +162,7 @@ input TrumpGameCreateManyWithoutTrumpGamesAtTurnInput {
 
 input TrumpGameCreateManyWithoutTrumpGamesInput {
   connect: [TrumpGameWhereUniqueInput!]
-  create: [TrumpGameCreateWithoutPackInput!]
-}
-
-input TrumpGameCreateWithoutPackInput {
-  id: ID
-  playerAtTurn: TrumpPlayerCreateOneWithoutPlayerAtTurnInput
-  players: TrumpPlayerCreateManyWithoutPlayersInput
+  create: [TrumpGameCreateWithoutPlayersInput!]
 }
 
 input TrumpGameCreateWithoutPlayerAtTurnInput {
@@ -187,14 +171,22 @@ input TrumpGameCreateWithoutPlayerAtTurnInput {
   players: TrumpPlayerCreateManyWithoutPlayersInput
 }
 
+input TrumpGameCreateWithoutPlayersInput {
+  id: ID
+  pack: TrumpPackCreateOneWithoutPackInput!
+  playerAtTurn: TrumpPlayerCreateOneWithoutPlayerAtTurnInput
+}
+
 input TrumpGameWhereUniqueInput {
   id: ID
 }
 
 type TrumpPack {
   attributes(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpAttribute!]!
+  author: TrumpPlayer!
   cards(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpCard!]!
   createdAt: DateTime!
+  description: String!
   id: ID!
   name: String!
   updatedAt: DateTime!
@@ -202,68 +194,44 @@ type TrumpPack {
 
 input TrumpPackCreateInput {
   attributes: TrumpAttributeCreateManyWithoutAttributesInput
+  author: TrumpPlayerCreateOneWithoutAuthorInput!
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
   description: String!
   id: ID
   name: String!
-  rating: Float!
-  tags: TagCreateManyWithoutTagsInput
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
-  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
 }
 
 input TrumpPackCreateManyWithoutTrumpPacksInput {
   connect: [TrumpPackWhereUniqueInput!]
-  create: [TrumpPackCreateWithoutTrumpPlayerInput!]
+  create: [TrumpPackCreateWithoutAuthorInput!]
 }
 
 input TrumpPackCreateOneWithoutPackInput {
-  connect: TrumpPackWhereUniqueInput
-  create: TrumpPackCreateWithoutTrumpGamesInput
-}
-
-input TrumpPackCreateOneWithoutTrumpPackInput {
   connect: TrumpPackWhereUniqueInput
   create: TrumpPackCreateWithoutAttributesInput
 }
 
 input TrumpPackCreateWithoutAttributesInput {
+  author: TrumpPlayerCreateOneWithoutAuthorInput!
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
   description: String!
   id: ID
   name: String!
-  rating: Float!
-  tags: TagCreateManyWithoutTagsInput
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
-  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
   updatedAt: DateTime
 }
 
-input TrumpPackCreateWithoutTrumpGamesInput {
+input TrumpPackCreateWithoutAuthorInput {
   attributes: TrumpAttributeCreateManyWithoutAttributesInput
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
   description: String!
   id: ID
   name: String!
-  rating: Float!
-  tags: TagCreateManyWithoutTagsInput
-  trumpPlayer: TrumpPlayerCreateOneWithoutTrumpPlayerInput
-  updatedAt: DateTime
-}
-
-input TrumpPackCreateWithoutTrumpPlayerInput {
-  attributes: TrumpAttributeCreateManyWithoutAttributesInput
-  cards: TrumpCardCreateManyWithoutCardsInput
-  createdAt: DateTime
-  description: String!
-  id: ID
-  name: String!
-  rating: Float!
-  tags: TagCreateManyWithoutTagsInput
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
   updatedAt: DateTime
 }
@@ -284,6 +252,11 @@ type TrumpPlayer {
 input TrumpPlayerCreateManyWithoutPlayersInput {
   connect: [TrumpPlayerWhereUniqueInput!]
   create: [TrumpPlayerCreateWithoutTrumpGamesInput!]
+}
+
+input TrumpPlayerCreateOneWithoutAuthorInput {
+  connect: TrumpPlayerWhereUniqueInput
+  create: TrumpPlayerCreateWithoutTrumpPacksInput
 }
 
 input TrumpPlayerCreateOneWithoutPlayerAtTurnInput {
@@ -310,6 +283,13 @@ input TrumpPlayerCreateWithoutTrumpGamesInput {
   user: UserCreateOneWithoutUserInput!
 }
 
+input TrumpPlayerCreateWithoutTrumpPacksInput {
+  id: ID
+  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
+  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
+  user: UserCreateOneWithoutUserInput!
+}
+
 input TrumpPlayerCreateWithoutUserInput {
   id: ID
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
@@ -320,6 +300,9 @@ input TrumpPlayerCreateWithoutUserInput {
 input TrumpPlayerWhereUniqueInput {
   id: ID
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   email: String!

@@ -7,25 +7,33 @@
     "generate": "npm -s run generate:prisma && npm -s run generate:nexus",
     "generate:prisma": "prisma2 generate",
     "generate:nexus": "ts-node --transpile-only src/schema",
+    "preinstall": "npx npm-force-resolutions",
     "postinstall": "npm -s run generate",
     "dev": "ts-node-dev --no-notify --respawn --transpileOnly src/server",
     "seed": "ts-node prisma/seed"
   },
   "dependencies": {
     "@prisma/photon": "2.0.0-preview018.2",
+    "express": "^4.17.1",
     "graphql": "14.5.8",
+    "graphql-upload": "^9.0.0",
     "graphql-yoga": "1.18.3",
     "nexus": "0.12.0-rc.5",
     "nexus-prisma": "0.6.1"
   },
   "devDependencies": {
     "@prisma/sdk": "0.0.100",
+    "@types/express": "^4.17.2",
+    "@types/graphql-upload": "^8.0.3",
     "@types/node": "12.12.20",
     "@types/ws": "6.0.4",
     "prisma2": "^2.0.0-preview018.2",
     "ts-node": "8.5.4",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "3.7.3"
+  },
+  "resolutions": {
+    "fs-capacitor": "5.0.0"
   },
   "prettier": {
     "singleQuote": true,
