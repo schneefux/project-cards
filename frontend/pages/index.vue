@@ -1,48 +1,113 @@
 <template>
   <div>
-    <button
-      @click="addUser"
-      class="shadow rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
-    >
-      1 create user
+    <h1>Load user details</h1>
+    <div>
+      <input type="text" v-model="email" class="border" />
+      <p>User ID: {{ (user || {}).id || 'nicht gefunden' }}</p>
+      <button @click="createUser" class="border">Create User</button>
+    </div>
+
+    <div v-for="pack in (user || {}).trumpPacks" :key="pack.id">
+      <p>Pack: {{ pack.name }}</p>
+
+      <div
+        v-for="card in pack.cards"
+        :key="card.id"
+        class="playingcard playingcard--md playingcard--interactive"
+      >
+        <div class="playingcard__container">
+          <p class="playingcard__title">
+            {{ card.name }}
+          </p>
+          <div class="playingcard__image boxedimage">
+            <div class="boxedimage__container">
+              <img
+                class="boxedimage__image"
+                :src="imagesRoot + card.imageUrl"
+              />
+            </div>
+          </div>
+          <table class="playingcard__attributes">
+            <tr
+              v-for="attributeValue in card.attributeValues"
+              :key="attributeValue.id"
+            >
+              <td>{{ attributeValue.attribute.name }}</td>
+              <td>{{ attributeValue.value }}</td>
+            </tr>
+          </table>
+
+          <p class="playingcard__attribution">
+            created by {{ pack.author.name }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h1 v-show="user == undefined" class="my-4 text-red-600">
+      Load a user first!!!
+    </h1>
+
+    <h1 class="mt-8">Create a Pack</h1>
+
+    <button @click="createPack" class="border block">
+      Create Pack
     </button>
 
-    <div class="playingcard playingcard--md playingcard--interactive">
+    <input type="text" v-model="packName" class="textinput block" />
+
+    <div class="playingcard playingcard--lg">
       <div class="playingcard__container">
-        <p class="playingcard__title">
-          Snowman
-        </p>
-        <div class="playingcard__image boxedimage">
+        <span class="playingcard__title">Placeholder Title</span>
+        <div class="playingcard__image boxedimage relative">
           <div class="boxedimage__container">
             <img class="boxedimage__image" src="/snowman.png" />
+            <span class="absolute inset-0">placeholder image</span>
           </div>
         </div>
-        <table class="playingcard__attributes">
-          <tr>
-            <td>Heat Resistance</td>
-            <td>5&#176; C</td>
-          </tr>
-          <tr>
-            <td>Weight</td>
-            <td>5kg</td>
-          </tr>
-          <tr>
-            <td>Lifetime</td>
-            <td>14d</td>
-          </tr>
-        </table>
-
+        <div class="playingcard__attributes">
+          <div class="flex">
+            <input
+              type="text"
+              v-model="attribute"
+              maxlength="16"
+              class="w-3/4 mr-px textinput"
+            />
+            <input
+              type="text"
+              v-model="unit"
+              maxlength="8"
+              class="w-1/4 textinput"
+            />
+          </div>
+        </div>
         <p class="playingcard__attribution">
-          created by schneefux
+          created by
+          <input
+            type="text"
+            v-model="author"
+            maxlength="16"
+            class="textinput"
+            :style="`width: ${author.length}ch;`"
+          />
         </p>
       </div>
     </div>
+
+    <h1 v-show="pack == undefined" class="my-4 text-red-600">
+      Must create pack first!!!
+    </h1>
+
+    <h1 class="mt-8">Create new Card</h1>
+    <button @click="saveCard" class="border block">
+      Create Card
+    </button>
 
     <div class="playingcard playingcard--lg">
       <div class="playingcard__container">
         <input
           type="text"
-          v-model="title"
+          v-model="cardName"
           maxlength="20"
           class="playingcard__title textinput"
         />
@@ -64,51 +129,18 @@
         </div>
         <div class="playingcard__attributes">
           <div class="flex">
-            <input
-              type="text"
-              v-model="attribute"
-              maxlength="16"
-              class="w-7/12 mr-px textinput"
-            />
+            <span class="w-1/2">{{ attribute }}</span>
             <input
               type="number"
               v-model="value"
-              class="w-3/12 mr-px textinput"
+              class="w-1/4 mr-px textinput"
             />
-            <input
-              type="text"
-              v-model="unit"
-              maxlength="8"
-              class="w-2/12 textinput"
-            />
+            <span class="w-1/4">{{ unit }}</span>
           </div>
         </div>
-        <p class="playingcard__attribution">
-          created by
-          <input
-            type="text"
-            v-model="author"
-            maxlength="16"
-            class="textinput"
-            :style="`width: ${author.length}ch;`"
-          />
-        </p>
+        <p class="playingcard__attribution">created by {{ author }}</p>
       </div>
     </div>
-
-    <button
-      @click="addPack"
-      class="shadow rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
-    >
-      2 create pack
-    </button>
-
-    <button
-      @click="saveCard"
-      class="shadow rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-400"
-    >
-      3 save card
-    </button>
   </div>
 </template>
 
@@ -210,14 +242,42 @@ import gql from 'graphql-tag'
 
 export default {
   apollo: {
-    trumpPacks: {
+    user: {
       query: gql`
-        query {
-          trumpPacks {
+        query($email: String!) {
+          user(where: { email: $email }) {
+            id
             name
+            trumpPacks {
+              id
+              name
+              author {
+                name
+              }
+              cards {
+                id
+                name
+                imageUrl
+                attributeValues {
+                  id
+                  value
+                  attribute {
+                    id
+                    name
+                    aimHigh
+                  }
+                }
+              }
+            }
           }
         }
-      `
+      `,
+      variables() {
+        return {
+          email: this.email
+        }
+      },
+      debounce: 300
     },
     trumpGames: {
       query: gql`
@@ -248,44 +308,40 @@ export default {
   },
   data() {
     return {
-      user: undefined,
-      player: undefined,
+      email: 'email@1.test',
       pack: undefined,
-      title: 'Titel',
-      author: 'Autor',
+      packName: 'Pack Title',
+      cardName: 'Card Title',
+      author: 'Author',
       image: '',
       imageFile: undefined,
-      attribute: 'Attribut',
+      attribute: 'Attribute',
       attributeId: undefined,
       value: 1,
-      unit: 'u'
+      unit: 'u',
+      imagesRoot: process.env.imagesRoot
     }
   },
   methods: {
-    async addUser() {
+    async createUser() {
+      console.log(this.$apollo)
       const response = await this.$apollo.mutate({
         mutation: gql`
           mutation($name: String!, $email: String!) {
-            createOneUser(
-              data: { name: $name, email: $email, trumpPlayer: { create: {} } }
-            ) {
+            createOneUser(data: { name: $name, email: $email }) {
               id
-              trumpPlayer {
-                id
-              }
             }
           }
         `,
         variables: {
-          name: 'random name ' + Math.random(),
-          email: 'random@' + Math.random()
+          name: this.email,
+          email: this.email
         }
       })
 
-      this.user = response.data.createOneUser.id
-      this.player = response.data.createOneUser.trumpPlayer.id
+      this.$apollo.queries.user.refetch()
     },
-    async addPack() {
+    async createPack() {
       const response = await this.$apollo.mutate({
         mutation: gql`
           mutation(
@@ -312,15 +368,17 @@ export default {
           }
         `,
         variables: {
-          author: this.player,
+          author: this.user.id,
+          name: this.packName,
           description: '',
-          name: 'random pack ' + Math.random(),
           attributeName: this.attribute
+          // TODO add unit
         }
       })
 
       this.pack = response.data.createOneTrumpPack.id
       this.attributeId = response.data.createOneTrumpPack.attributes[0].id
+      this.$apollo.queries.user.refetch()
     },
     async startTrumpGame() {
       await this.$apollo.mutate({
@@ -374,11 +432,11 @@ export default {
           }
         `,
         variables: {
-          name: this.title,
+          name: this.cardName,
           pack: this.pack,
           description: '',
           attribute0: this.attributeId,
-          value0: this.value
+          value0: parseFloat(this.value)
         }
       })
 
@@ -395,6 +453,8 @@ export default {
           cardId: cardId
         }
       })
+
+      this.$apollo.queries.user.refetch()
     }
   }
 }

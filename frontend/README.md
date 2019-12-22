@@ -1,12 +1,14 @@
 # project-cards
 
 Environment variables:
-  * process.env.APOLLO_HTTP (default http://localhost:4000)
-  * process.env.APOLLOW_WS (default ws://localhost:4000)
+
+- APOLLO_HTTP (default http://localhost:4000)
+- APOLLOW_WS (default ws://localhost:4000)
+- IMAGES_ROOT (default http://localhost:4000/static/images)
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 $ npm run install
 

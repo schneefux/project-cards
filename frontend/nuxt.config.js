@@ -32,18 +32,17 @@ export default {
    */
   plugins: [],
   /*
-  ** Nuxt.js dev-modules
-  */
-  buildModules: [
-    '@nuxtjs/apollo',
-  ],
+   ** Nuxt.js dev-modules
+   */
+  buildModules: ['@nuxtjs/apollo'],
   /*
-  ** Nuxt.js modules
-  */
-  modules: [
-    '@nuxtjs/pwa',
-  ],
+   ** Nuxt.js modules
+   */
+  modules: ['@nuxtjs/pwa'],
 
+  env: {
+    imagesRoot: process.env.IMAGES_ROOT || 'http://localhost:4000/static/images'
+  },
   apollo: {
     clientConfigs: {
       default: {

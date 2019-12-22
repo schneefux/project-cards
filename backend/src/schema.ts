@@ -125,7 +125,7 @@ const Mutation = objectType({
           data: {
             // TODO use absolute URL
             // TODO change filename?
-            imageUrl: `/${cardId}/${filename}`,
+            imageUrl: `/${filename}`,
           },
         })
 
