@@ -4,66 +4,148 @@
       tailwind button test
     </button>
 
-    <div class="playingcard playingcard--md">
-      <p class="playingcard__title">
-        Snowman
-      </p>
-      <div class="playingcard__image boxedimage">
-        <div class="boxedimage__container">
-          <img class="boxedimage__image" src="/snowman.png">
+    <div class="playingcard playingcard--md playingcard--interactive">
+      <div class="playingcard__container">
+        <p class="playingcard__title">
+          Snowman
+        </p>
+        <div class="playingcard__image boxedimage">
+          <div class="boxedimage__container">
+            <img class="boxedimage__image" src="/snowman.png" />
+          </div>
         </div>
+        <table class="playingcard__attributes">
+          <tr>
+            <td>Heat Resistance</td>
+            <td>5&#176; C</td>
+          </tr>
+          <tr>
+            <td>Weight</td>
+            <td>5kg</td>
+          </tr>
+          <tr>
+            <td>Lifetime</td>
+            <td>14d</td>
+          </tr>
+        </table>
+
+        <p class="playingcard__attribution">
+          created by schneefux
+        </p>
       </div>
-      <table class="playingcard__attribute-table">
-        <tr>
-          <td>Heat Resistance</td>
-          <td>5&#176; C</td>
-        </tr>
-        <tr>
-          <td>Weight</td>
-          <td>5kg</td>
-        </tr>
-        <tr>
-          <td>Lifetime</td>
-          <td>14d</td>
-        </tr>
-      </table>
-      <p class="playingcard__attribution">
-        created by schneefux
-      </p>
+    </div>
+
+    <div class="playingcard playingcard--lg">
+      <div class="playingcard__container">
+        <input
+          type="text"
+          v-model="title"
+          maxlength="20"
+          class="playingcard__title textinput"
+        />
+        <div class="playingcard__image boxedimage relative">
+          <div class="boxedimage__container">
+            <img class="boxedimage__image" :src="image" />
+          </div>
+          <label
+            class="absolute bottom-0 right-0 rounded-tl pl-1 pr-px bg-blue-500 hover:bg-blue-400 text-white"
+          >
+            select
+            <input
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="selectImage"
+            />
+          </label>
+        </div>
+        <div class="playingcard__attributes">
+          <div class="flex">
+            <input
+              type="text"
+              v-model="attribute"
+              maxlength="16"
+              class="w-7/12 mr-px textinput"
+            />
+            <input
+              type="number"
+              v-model="value"
+              class="w-3/12 mr-px textinput"
+            />
+            <input
+              type="text"
+              v-model="unit"
+              maxlength="8"
+              class="w-2/12 textinput"
+            />
+          </div>
+        </div>
+        <p class="playingcard__attribution">
+          created by
+          <input
+            type="text"
+            v-model="author"
+            maxlength="16"
+            class="textinput"
+            :style="`width: ${author.length}ch;`"
+          />
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .playingcard {
-  @apply border border-black rounded-lg px-3 py-1 m-2 font-sans relative bg-white;
-  @apply shadow-lg mt-4;
-}
-
-.playingcard:hover {
-  @apply shadow-xl mt-2;
+  @apply m-2 inline-block;
 }
 
 .playingcard--sm {
-  width: 6rem;
-  height: 9rem;
-  font-size: 0.45rem;
+  .playingcard__container {
+    width: 6rem;
+    height: 9rem;
+    font-size: 0.45rem;
+  }
 }
 
 .playingcard--md {
-  width: 8rem;
-  height: 12rem;
-  font-size: 0.6rem;
+  .playingcard__container {
+    width: 8rem;
+    height: 12rem;
+    font-size: 0.6rem;
+  }
 }
 
 .playingcard--lg {
-  width: 12rem;
-  height: 18rem;
-  font-size: 0.9rem;
+  .playingcard__container {
+    width: 12rem;
+    height: 18rem;
+    font-size: 0.9rem;
+  }
+}
+
+.playingcard__container {
+  @apply border border-black rounded-lg px-3 py-1 font-sans relative bg-white;
+}
+
+.playingcard--interactive {
+  @apply pt-4;
+
+  .playingcard__container {
+    @apply shadow-lg;
+  }
+
+  &:hover {
+    @apply pt-2 pb-2;
+
+    .playingcard__container {
+      @apply shadow-xl;
+    }
+  }
 }
 
 .playingcard__title {
-  @apply font-semibold text-center;
+  @apply w-full font-semibold text-center;
   @apply mb-2;
   font-size: 130%;
 }
@@ -73,12 +155,12 @@
   @apply mb-2;
 }
 
-.playingcard__attribute-table {
+.playingcard__attributes {
   @apply w-full leading-snug;
 }
 
 .playingcard__attribution {
-  @apply text-right text-gray-400 absolute bottom-0 right-0 mr-1;
+  @apply text-right text-gray-400 absolute bottom-0 right-0 mr-1 mb-px;
   font-size: 70%;
 }
 
@@ -95,6 +177,14 @@
 .boxedimage__image {
   @apply absolute inset-0;
   @apply w-auto h-auto max-w-full max-h-full m-auto;
+}
+
+.textinput {
+  @apply shadow border rounded-sm border-blue-300 appearance-none;
+
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
 }
 </style>
 
@@ -143,7 +233,13 @@ export default {
     return {
       user: undefined,
       player: undefined,
-      pack: undefined
+      pack: undefined,
+      title: 'Titel',
+      author: 'Autor',
+      image: '',
+      attribute: 'Attribut',
+      value: 1,
+      unit: 'u'
     }
   },
   methods: {
@@ -201,6 +297,11 @@ export default {
           pack: this.pack
         }
       })
+    },
+    selectImage(event) {
+      const reader = new FileReader()
+      reader.onload = () => (this.image = reader.result)
+      reader.readAsDataURL(event.target.files[0])
     }
   }
 }
