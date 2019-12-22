@@ -1,10 +1,12 @@
 <template>
   <div>
-    <h1>Load user details</h1>
+    <h1>Login</h1>
     <div>
       <input type="text" v-model="email" class="border" />
+      <input type="text" v-model="password" class="border" />
+      <button @click="login" class="border">Login</button>
+      <button @click="register" class="border">Register</button>
       <p>User ID: {{ (user || {}).id || 'nicht gefunden' }}</p>
-      <button @click="createUser" class="border">Create User</button>
     </div>
 
     <div v-for="pack in (user || {}).trumpPacks" :key="pack.id">
@@ -45,7 +47,7 @@
     </div>
 
     <h1 v-show="user == undefined" class="my-4 text-red-600">
-      Load a user first!!!
+      Login first!!!
     </h1>
 
     <h1 class="mt-8">Create a Pack</h1>
@@ -308,6 +310,7 @@ export default {
   },
   data() {
     return {
+      password: '',
       email: 'email@1.test',
       pack: undefined,
       packName: 'Pack Title',
@@ -323,8 +326,44 @@ export default {
     }
   },
   methods: {
+    async login() {
+      const response = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($email: String!, $password: String!) {
+            login(email: $email, password: $password) {
+              token
+            }
+          }
+        `,
+        variables: {
+          email: this.email,
+          password: this.password
+        }
+      })
+
+      await this.$apolloHelpers.onLogin(response.data.login.token)
+      await this.$apollo.queries.user.refetch()
+    },
+    async register() {
+      const response = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($name: String!, $email: String!, $password: String!) {
+            register(name: $name, email: $email, password: $password) {
+              token
+            }
+          }
+        `,
+        variables: {
+          name: this.email,
+          email: this.email,
+          password: this.password
+        }
+      })
+
+      await this.$apolloHelpers.onLogin(response.data.register.token)
+      await this.$apollo.queries.user.refetch()
+    },
     async createUser() {
-      console.log(this.$apollo)
       const response = await this.$apollo.mutate({
         mutation: gql`
           mutation($name: String!, $email: String!) {
@@ -339,7 +378,7 @@ export default {
         }
       })
 
-      this.$apollo.queries.user.refetch()
+      await this.$apollo.queries.user.refetch()
     },
     async createPack() {
       const response = await this.$apollo.mutate({
@@ -378,7 +417,7 @@ export default {
 
       this.pack = response.data.createOneTrumpPack.id
       this.attributeId = response.data.createOneTrumpPack.attributes[0].id
-      this.$apollo.queries.user.refetch()
+      await this.$apollo.queries.user.refetch()
     },
     async startTrumpGame() {
       await this.$apollo.mutate({
@@ -454,7 +493,7 @@ export default {
         }
       })
 
-      this.$apollo.queries.user.refetch()
+      await this.$apollo.queries.user.refetch()
     }
   }
 }

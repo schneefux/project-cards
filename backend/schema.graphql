@@ -4,11 +4,17 @@
 
 scalar DateTime
 
+type LoginResponse {
+  token: String!
+  user: User!
+}
+
 type Mutation {
   createOneTrumpAttribute(data: TrumpAttributeCreateInput!): TrumpAttribute!
   createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
-  createOneUser(data: UserCreateInput!): User!
+  login(email: String!, password: String!): LoginResponse!
+  register(email: String!, name: String!, password: String!): LoginResponse!
   startTrumpGame(pack: String!, player1: String!, player2: String!): TrumpGame!
   uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
@@ -252,15 +258,6 @@ type User {
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
 }
 
-input UserCreateInput {
-  email: String!
-  id: ID
-  name: String!
-  trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
-  trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
-  trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
-}
-
 input UserCreateManyWithoutPlayersInput {
   connect: [UserWhereUniqueInput!]
   create: [UserCreateWithoutTrumpGamesInput!]
@@ -280,6 +277,7 @@ input UserCreateWithoutTrumpGamesAtTurnInput {
   email: String!
   id: ID
   name: String!
+  password: String!
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
   trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
 }
@@ -288,6 +286,7 @@ input UserCreateWithoutTrumpGamesInput {
   email: String!
   id: ID
   name: String!
+  password: String!
   trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
   trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
 }
@@ -296,6 +295,7 @@ input UserCreateWithoutTrumpPacksInput {
   email: String!
   id: ID
   name: String!
+  password: String!
   trumpGames: TrumpGameCreateManyWithoutTrumpGamesInput
   trumpGamesAtTurn: TrumpGameCreateManyWithoutTrumpGamesAtTurnInput
 }

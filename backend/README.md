@@ -3,6 +3,7 @@ Environment variables:
 - CORS_ORIGIN (request origin if unset)
 - DATABASE_URL (local sqlite if unset)
 - IMAGE_DIR
+- JWT_SECRET
 
 # GraphQL Server Example
 

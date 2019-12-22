@@ -1,13 +1,26 @@
 import * as path from 'path'
 import * as fs from 'fs'
+import * as bcrypt from 'bcryptjs'
+import * as jwt from 'jsonwebtoken'
 import { nexusPrismaPlugin } from 'nexus-prisma'
 import { makeSchema, objectType, stringArg, arg, intArg, idArg } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
+const JWT_SECRET = process.env.JWT_SECRET || ''
 
 const Upload = GraphQLUpload
+
+const LoginResponse = objectType({
+  name: 'LoginResponse',
+  definition(t: any) {
+    t.string('token')
+    t.field('user', {
+      type: 'User',
+    })
+  },
+})
 
 const User = objectType({
   name: 'User',
@@ -89,10 +102,90 @@ const Query = objectType({
 const Mutation = objectType({
   name: 'Mutation',
   definition(t: any) {
-    t.crud.createOneUser()
     t.crud.createOneTrumpPack()
     t.crud.createOneTrumpCard()
     t.crud.createOneTrumpAttribute()
+
+    t.field('register', {
+      type: 'LoginResponse',
+      nullable: false,
+      args: {
+        name: stringArg({ required: true }),
+        email: stringArg({ required: true }),
+        password: stringArg({ required: true }),
+      },
+      resolve: async (
+        parent: any,
+        {
+          name,
+          email,
+          password,
+        }: { name: string; email: string; password: string },
+        ctx: Context,
+      ) => {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const user = await ctx.photon.users.create({
+          data: {
+            email,
+            name,
+            password: hashedPassword,
+          },
+        })
+
+        const token = jwt.sign(
+          {
+            id: user.id,
+          },
+          JWT_SECRET,
+        )
+
+        return {
+          token,
+          user,
+        }
+      },
+    })
+
+    t.field('login', {
+      type: 'LoginResponse',
+      nullable: false,
+      args: {
+        email: stringArg({ required: true }),
+        password: stringArg({ required: true }),
+      },
+      resolve: async (
+        parent: any,
+        { email, password }: { email: string; password: string },
+        ctx: Context,
+      ) => {
+        const user = await ctx.photon.users.findOne({
+          where: {
+            email,
+          },
+        })
+
+        if (!user) {
+          throw new Error('Invalid Login')
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password)
+        if (!passwordMatch) {
+          throw new Error('Invalid Password')
+        }
+
+        const token = jwt.sign(
+          {
+            id: user.id,
+          },
+          JWT_SECRET,
+        )
+
+        return {
+          token,
+          user,
+        }
+      },
+    })
 
     t.field('uploadTrumpCardImage', {
       type: 'Boolean',
@@ -202,6 +295,7 @@ export const schema = makeSchema({
     Subscription,
     Upload,
     User,
+    LoginResponse,
     TrumpGame,
     TrumpPack,
     TrumpCard,

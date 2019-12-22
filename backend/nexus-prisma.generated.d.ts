@@ -218,8 +218,8 @@ interface ModelTypes {
 interface NexusPrismaInputs {
   Query: {
     users: {
-  filtering: 'id' | 'name' | 'email' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id' | 'name' | 'email'
+  filtering: 'id' | 'email' | 'password' | 'name' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'email' | 'password' | 'name'
 }
     trumpGames: {
   filtering: 'id' | 'players' | 'AND' | 'OR' | 'NOT' | 'pack' | 'playerAtTurn'
@@ -259,8 +259,8 @@ interface NexusPrismaInputs {
 
   },  TrumpGame: {
     players: {
-  filtering: 'id' | 'name' | 'email' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id' | 'name' | 'email'
+  filtering: 'id' | 'email' | 'password' | 'name' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'email' | 'password' | 'name'
 }
 
   },  TrumpPack: {
@@ -352,8 +352,9 @@ interface NexusPrismaTypes {
   },
   User: {
     id: 'String'
-    name: 'String'
     email: 'String'
+    password: 'String'
+    name: 'String'
     trumpPacks: 'TrumpPack'
     trumpGames: 'TrumpGame'
     trumpGamesAtTurn: 'TrumpGame'
