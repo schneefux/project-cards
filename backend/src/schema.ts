@@ -15,15 +15,6 @@ const User = objectType({
     t.model.id()
     t.model.name()
     t.model.email()
-    t.model.trumpPlayer()
-  },
-})
-
-const TrumpPlayer = objectType({
-  name: 'TrumpPlayer',
-  definition(t: any) {
-    t.model.id()
-    t.model.user()
     t.model.trumpPacks()
     t.model.trumpGames()
     t.model.trumpGamesAtTurn()
@@ -90,7 +81,6 @@ const Query = objectType({
   name: 'Query',
   definition(t: any) {
     t.crud.user()
-    t.crud.trumpPlayers()
     t.crud.trumpPacks()
     t.crud.trumpGames()
   },
@@ -212,7 +202,6 @@ export const schema = makeSchema({
     Subscription,
     Upload,
     User,
-    TrumpPlayer,
     TrumpGame,
     TrumpPack,
     TrumpCard,

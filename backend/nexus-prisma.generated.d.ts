@@ -208,7 +208,6 @@ type GetNexusPrisma<
 // Generated
 interface ModelTypes {
   User: photon.User
-  TrumpPlayer: photon.TrumpPlayer
   TrumpGame: photon.TrumpGame
   TrumpPack: photon.TrumpPack
   TrumpCard: photon.TrumpCard
@@ -219,12 +218,8 @@ interface ModelTypes {
 interface NexusPrismaInputs {
   Query: {
     users: {
-  filtering: 'id' | 'name' | 'email' | 'AND' | 'OR' | 'NOT' | 'trumpPlayer'
+  filtering: 'id' | 'name' | 'email' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT'
   ordering: 'id' | 'name' | 'email'
-}
-    trumpPlayers: {
-  filtering: 'id' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT' | 'user'
-  ordering: 'id'
 }
     trumpGames: {
   filtering: 'id' | 'players' | 'AND' | 'OR' | 'NOT' | 'pack' | 'playerAtTurn'
@@ -249,9 +244,6 @@ interface NexusPrismaInputs {
 
   },
     User: {
-
-
-  },  TrumpPlayer: {
     trumpPacks: {
   filtering: 'id' | 'name' | 'description' | 'cards' | 'attributes' | 'createdAt' | 'updatedAt' | 'trumpGames' | 'AND' | 'OR' | 'NOT' | 'author'
   ordering: 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
@@ -267,8 +259,8 @@ interface NexusPrismaInputs {
 
   },  TrumpGame: {
     players: {
-  filtering: 'id' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT' | 'user'
-  ordering: 'id'
+  filtering: 'id' | 'name' | 'email' | 'trumpPacks' | 'trumpGames' | 'trumpGamesAtTurn' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'name' | 'email'
 }
 
   },  TrumpPack: {
@@ -307,8 +299,6 @@ interface NexusPrismaTypes {
   Query: {
     user: 'User'
     users: 'User'
-    trumpPlayer: 'TrumpPlayer'
-    trumpPlayers: 'TrumpPlayer'
     trumpGame: 'TrumpGame'
     trumpGames: 'TrumpGame'
     trumpPack: 'TrumpPack'
@@ -328,12 +318,6 @@ interface NexusPrismaTypes {
     deleteOneUser: 'User'
     deleteManyUser: 'BatchPayload'
     upsertOneUser: 'User'
-    createOneTrumpPlayer: 'TrumpPlayer'
-    updateOneTrumpPlayer: 'TrumpPlayer'
-    updateManyTrumpPlayer: 'BatchPayload'
-    deleteOneTrumpPlayer: 'TrumpPlayer'
-    deleteManyTrumpPlayer: 'BatchPayload'
-    upsertOneTrumpPlayer: 'TrumpPlayer'
     createOneTrumpGame: 'TrumpGame'
     updateOneTrumpGame: 'TrumpGame'
     updateManyTrumpGame: 'BatchPayload'
@@ -370,25 +354,20 @@ interface NexusPrismaTypes {
     id: 'String'
     name: 'String'
     email: 'String'
-    trumpPlayer: 'TrumpPlayer'
-
-},  TrumpPlayer: {
-    id: 'String'
-    user: 'User'
     trumpPacks: 'TrumpPack'
     trumpGames: 'TrumpGame'
     trumpGamesAtTurn: 'TrumpGame'
 
 },  TrumpGame: {
     id: 'String'
-    players: 'TrumpPlayer'
+    players: 'User'
     pack: 'TrumpPack'
-    playerAtTurn: 'TrumpPlayer'
+    playerAtTurn: 'User'
 
 },  TrumpPack: {
     id: 'String'
     name: 'String'
-    author: 'TrumpPlayer'
+    author: 'User'
     description: 'String'
     cards: 'TrumpCard'
     attributes: 'TrumpAttribute'
@@ -422,7 +401,6 @@ interface NexusPrismaTypes {
 
 interface NexusPrismaMethods {
   User: NexusPrismaFields<'User'>
-  TrumpPlayer: NexusPrismaFields<'TrumpPlayer'>
   TrumpGame: NexusPrismaFields<'TrumpGame'>
   TrumpPack: NexusPrismaFields<'TrumpPack'>
   TrumpCard: NexusPrismaFields<'TrumpCard'>
