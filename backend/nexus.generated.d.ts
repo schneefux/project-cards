@@ -285,12 +285,13 @@ export interface NexusGenFieldTypes {
     createOneTrumpAttribute: NexusGenRootTypes['TrumpAttribute']; // TrumpAttribute!
     createOneTrumpCard: NexusGenRootTypes['TrumpCard']; // TrumpCard!
     createOneTrumpPack: NexusGenRootTypes['TrumpPack']; // TrumpPack!
-    login: NexusGenRootTypes['LoginResponse']; // LoginResponse!
-    register: NexusGenRootTypes['LoginResponse']; // LoginResponse!
+    login: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
+    register: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
     startTrumpGame: NexusGenRootTypes['TrumpGame']; // TrumpGame!
     uploadTrumpCardImage: boolean; // Boolean!
   }
   Query: { // field return type
+    me: NexusGenRootTypes['User'] | null; // User
     trumpGames: NexusGenRootTypes['TrumpGame'][]; // [TrumpGame!]!
     trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
     user: NexusGenRootTypes['User'] | null; // User

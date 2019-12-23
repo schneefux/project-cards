@@ -6,6 +6,7 @@ import { nexusPrismaPlugin } from 'nexus-prisma'
 import { makeSchema, objectType, stringArg, arg, intArg, idArg } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
+import { getUserId } from './server'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
 const JWT_SECRET = process.env.JWT_SECRET || ''
@@ -96,6 +97,18 @@ const Query = objectType({
     t.crud.user()
     t.crud.trumpPacks()
     t.crud.trumpGames()
+
+    t.field('me', {
+      type: 'User',
+      nullable: true,
+      resolve: async (parent: any, {}, ctx: Context) => {
+        const id = await getUserId(ctx)
+        if (id == null) {
+          return null
+        }
+        return await ctx.photon.users.findOne({ where: { id } })
+      },
+    })
   },
 })
 
@@ -108,7 +121,7 @@ const Mutation = objectType({
 
     t.field('register', {
       type: 'LoginResponse',
-      nullable: false,
+      nullable: true,
       args: {
         name: stringArg({ required: true }),
         email: stringArg({ required: true }),
@@ -123,6 +136,13 @@ const Mutation = objectType({
         }: { name: string; email: string; password: string },
         ctx: Context,
       ) => {
+        const existingUser = await ctx.photon.users.findOne({
+          where: { email },
+        })
+        if (existingUser !== null) {
+          return null
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = await ctx.photon.users.create({
           data: {
@@ -148,7 +168,7 @@ const Mutation = objectType({
 
     t.field('login', {
       type: 'LoginResponse',
-      nullable: false,
+      nullable: true,
       args: {
         email: stringArg({ required: true }),
         password: stringArg({ required: true }),
@@ -165,12 +185,12 @@ const Mutation = objectType({
         })
 
         if (!user) {
-          throw new Error('Invalid Login')
+          return null
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password)
         if (!passwordMatch) {
-          throw new Error('Invalid Password')
+          return null
         }
 
         const token = jwt.sign(

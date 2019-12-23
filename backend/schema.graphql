@@ -13,13 +13,14 @@ type Mutation {
   createOneTrumpAttribute(data: TrumpAttributeCreateInput!): TrumpAttribute!
   createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
-  login(email: String!, password: String!): LoginResponse!
-  register(email: String!, name: String!, password: String!): LoginResponse!
+  login(email: String!, password: String!): LoginResponse
+  register(email: String!, name: String!, password: String!): LoginResponse
   startTrumpGame(pack: String!, player1: String!, player2: String!): TrumpGame!
   uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
 
 type Query {
+  me: User
   trumpGames(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
   user(where: UserWhereUniqueInput!): User
