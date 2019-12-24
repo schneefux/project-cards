@@ -5,6 +5,8 @@ import { schema } from './schema'
 import { createContext, Context } from './context'
 import { getUserId } from './util'
 
+const IMAGE_DIR = process.env.IMAGE_DIR || './images'
+
 function shutdown() {
   // Any sync or async graceful shutdown procedures can be run before exiting…
   process.exit(0)
@@ -47,7 +49,7 @@ const server = new GraphQLServer({
   middlewares: [permissions],
   context: createContext,
 })
-server.express.use('/static/images', express.static('images'))
+server.express.use('/static/images', express.static(IMAGE_DIR))
 server.start(
   {
     cors: {
