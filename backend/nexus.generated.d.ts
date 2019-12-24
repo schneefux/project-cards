@@ -293,6 +293,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     me: NexusGenRootTypes['User'] | null; // User
     trumpGames: NexusGenRootTypes['TrumpGame'][]; // [TrumpGame!]!
+    trumpPack: NexusGenRootTypes['TrumpPack'] | null; // TrumpPack
     trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
     user: NexusGenRootTypes['User'] | null; // User
   }
@@ -382,6 +383,9 @@ export interface NexusGenArgTypes {
       first?: number | null; // Int
       last?: number | null; // Int
       skip?: number | null; // Int
+    }
+    trumpPack: { // args
+      where: NexusGenInputs['TrumpPackWhereUniqueInput']; // TrumpPackWhereUniqueInput!
     }
     trumpPacks: { // args
       after?: string | null; // ID

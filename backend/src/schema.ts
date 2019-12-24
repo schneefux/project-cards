@@ -95,6 +95,7 @@ const Query = objectType({
   name: 'Query',
   definition(t: any) {
     t.crud.user()
+    t.crud.trumpPack()
     t.crud.trumpPacks()
     t.crud.trumpGames()
 

@@ -22,6 +22,7 @@ type Mutation {
 type Query {
   me: User
   trumpGames(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpGame!]!
+  trumpPack(where: TrumpPackWhereUniqueInput!): TrumpPack
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
   user(where: UserWhereUniqueInput!): User
 }
