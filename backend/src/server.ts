@@ -3,9 +3,7 @@ import { GraphQLServer } from 'graphql-yoga'
 import { shield, rule } from 'graphql-shield'
 import { schema } from './schema'
 import { createContext, Context } from './context'
-import * as jwt from 'jsonwebtoken'
-
-const JWT_SECRET = process.env.JWT_SECRET || ''
+import { getUserId } from './util'
 
 function shutdown() {
   // Any sync or async graceful shutdown procedures can be run before exiting…
@@ -15,17 +13,6 @@ function shutdown() {
 process.on('SIGINT', shutdown)
 process.on('SIGTERM', shutdown)
 process.on('SIGHUP', shutdown)
-
-export const getUserId = async (context: Context) => {
-  const token = context.request.get('Authorization')?.replace('Bearer ', '')
-  let userId: string | null = null
-
-  if (token !== undefined) {
-    userId = ((await jwt.verify(token, JWT_SECRET)) as { id: string }).id
-  }
-
-  return userId
-}
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   async (parent: any, args: any, context: Context) => {

@@ -6,7 +6,7 @@ import { nexusPrismaPlugin } from 'nexus-prisma'
 import { makeSchema, objectType, stringArg, arg, intArg, idArg } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
-import { getUserId } from './server'
+import { getUserId } from './util'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
 const JWT_SECRET = process.env.JWT_SECRET || ''
