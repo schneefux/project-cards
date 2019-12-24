@@ -1,0 +1,90 @@
+.playingcard {
+  @apply m-2 inline-block;
+}
+
+.playingcard--sm {
+  .playingcard__container {
+    width: 6rem;
+    height: 9rem;
+    font-size: 0.45rem;
+  }
+}
+
+.playingcard--md {
+  .playingcard__container {
+    width: 8rem;
+    height: 12rem;
+    font-size: 0.6rem;
+  }
+}
+
+.playingcard--lg {
+  .playingcard__container {
+    width: 12rem;
+    height: 18rem;
+    font-size: 0.9rem;
+  }
+}
+
+.playingcard__container {
+  @apply border border-black rounded-lg px-3 py-1 font-sans relative bg-white;
+}
+
+.playingcard--interactive {
+  @apply pt-4;
+
+  .playingcard__container {
+    @apply shadow-lg;
+  }
+
+  &:hover {
+    @apply pt-2 pb-2;
+
+    .playingcard__container {
+      @apply shadow-xl;
+    }
+  }
+}
+
+.playingcard__title {
+  @apply w-full font-semibold text-center;
+  @apply mb-2;
+  font-size: 130%;
+}
+
+.playingcard__image {
+  @apply w-5/6;
+  @apply mb-2;
+}
+
+.playingcard__attributes {
+  @apply w-full leading-snug;
+}
+
+.playingcard__attribution {
+  @apply text-right text-gray-400 absolute bottom-0 right-0 mr-1 mb-px;
+  font-size: 70%;
+}
+
+/* responsive image with a border and fixed 1:1 ratio */
+.boxedimage {
+  @apply mx-auto p-1 border;
+}
+
+.boxedimage__container {
+  @apply relative w-full;
+  padding-top: 100%; /* 1:1 aspect ratio */
+}
+
+.boxedimage__image {
+  @apply absolute inset-0;
+  @apply w-auto h-auto max-w-full max-h-full m-auto;
+}
+
+.textinput {
+  @apply shadow border rounded-sm border-blue-300 appearance-none;
+
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+}
