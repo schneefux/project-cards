@@ -1,7 +1,8 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
     <h1 class="page-heading">New Card for "{{ trumpPack.name }}"</h1>
-    <div class="mt-2 flex flex-wrap">
+
+    <form ref="card-form" @submit.prevent="saveAndReturn" class="mt-2 flex flex-wrap">
       <div class="w-full mt-2 flex justify-center">
         <div class="playingcard playingcard--lg">
           <div class="playingcard__container">
@@ -9,6 +10,7 @@
               type="text"
               v-model="cardName"
               maxlength="20"
+              required
               class="playingcard__title textinput"
             />
             <div class="playingcard__image boxedimage relative">
@@ -19,13 +21,24 @@
                 class="absolute bottom-0 right-0 rounded-tl pl-1 pr-px bg-blue-500 hover:bg-blue-400 text-white"
               >
                 select
-                <input type="file" accept="image/*" class="hidden" @change="selectImage" />
+                <input
+                  @change="selectImage"
+                  type="file"
+                  accept="image/*"
+                  required
+                  class="h-px w-px absolute bottom-0 right-0"
+                />
               </label>
             </div>
             <div class="playingcard__attributes">
               <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
                 <span class="w-1/2">{{ attribute.name }}</span>
-                <input type="number" v-model="attribute.value" class="w-1/4 mr-px textinput" />
+                <input
+                  type="number"
+                  v-model="attribute.value"
+                  required
+                  class="w-1/4 mr-px textinput"
+                />
                 <span class="w-1/4">u</span>
               </div>
             </div>
@@ -35,13 +48,10 @@
       </div>
 
       <div class="w-full mt-2 flex flex-wrap justify-end">
-        <button @click="saveAndNext" class="button button--secondary">Save and Create Another</button>
-        <button
-          @click="saveAndReturn"
-          class="button button--secondary ml-1 mt-1"
-        >Save and Return to Packs</button>
+        <button @click="saveAndReset" class="button button--secondary">Save and Create Another</button>
+        <button type="submit" class="button button--secondary ml-1 mt-1">Save and Return to Packs</button>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -92,20 +102,24 @@ export default {
     }
   },
   methods: {
-    async saveAndNext() {
-      await this.save()
-      this.trumpPack.attributes.forEach(a => delete a.value)
-      Object.assign(this.$data, initialFormData())
-    },
-    async saveAndReturn() {
-      await this.save()
-      this.$router.push(`/packs/${this.trumpPack.id}`)
-    },
     async selectImage(event) {
       const reader = new FileReader()
       reader.onload = () => (this.image = reader.result)
       this.imageFile = event.target.files[0]
       reader.readAsDataURL(this.imageFile)
+    },
+    async saveAndReturn() {
+      await this.save()
+      this.$router.push(`/packs/${this.trumpPack.id}`)
+    },
+    async saveAndReset() {
+      // custom submit, no native browser validation
+      if (!this.$refs['card-form'].reportValidity()) {
+        return
+      }
+      await this.save()
+      this.trumpPack.attributes.forEach(a => delete a.value)
+      Object.assign(this.$data, initialFormData())
     },
     async save() {
       const attributeValuesInput = this.trumpPack.attributes.map(

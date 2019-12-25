@@ -2,10 +2,10 @@
   <div class="container container--page">
     <h1 class="page-heading">Create a Pack</h1>
 
-    <div class="flex flex-wrap">
+    <form @submit.prevent="createPack" class="flex flex-wrap">
       <div class="w-full">
-        <label for="name" class="mr-1">Titel</label>
-        <input type="text" v-model="packName" class="textinput" />
+        <label for="name" class="mr-1">Title</label>
+        <input type="text" v-model="packName" maxlength="20" required class="textinput" />
       </div>
 
       <div class="w-full mt-2 flex justify-center">
@@ -24,9 +24,10 @@
                   type="text"
                   v-model="attribute.name"
                   maxlength="16"
+                  required
                   class="w-3/4 mr-px textinput"
                 />
-                <input type="text" maxlength="8" class="w-1/4 textinput" />
+                <input type="text" maxlength="8" required class="w-1/4 textinput" />
               </div>
               <button @click="addAttribute" class="button button--sm mt-1">Add</button>
             </div>
@@ -36,8 +37,9 @@
                 type="text"
                 v-model="author"
                 maxlength="16"
+                required
                 class="textinput"
-                :style="`width: ${author.length}ch;`"
+                :style="`min-width: 8ch; width: ${author.length}ch;`"
               />
             </p>
           </div>
@@ -45,9 +47,9 @@
       </div>
 
       <div class="w-full mt-2 flex justify-end">
-        <button @click="createPack" class="button button--secondary">Save</button>
+        <button type="submit" class="button button--secondary">Save</button>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -66,11 +68,11 @@ export default {
   },
   data() {
     return {
-      packName: 'Pack Title',
-      author: 'Author',
+      packName: '',
+      author: '',
       attributes: [
         {
-          name: 'Attribute',
+          name: '',
           aimHigh: true
         }
       ]
@@ -109,6 +111,7 @@ export default {
           name: this.packName,
           description: '',
           attributes: this.attributes
+          // TODO add author
           // TODO add unit
         }
       })
