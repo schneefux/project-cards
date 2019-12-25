@@ -1,55 +1,7 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
-    <h1 class="page-heading">Pack "{{ trumpPack.name }}"</h1>
-    <p>Description: {{ trumpPack.description }}</p>
-    <p>Author: {{ trumpPack.author.name }}</p>
-
-    <div class="mt-2">
-      <h2 class="page-subheading">Cards ({{ trumpPack.cards.length }})</h2>
-
-      <div class="flex flex-wrap">
-        <button
-          @click="createNew = true"
-          class="playingcard playingcard--md playingcard--interactive"
-        >
-          <div class="playingcard__container">
-            <div class="w-full h-full flex flex-wrap justify-center items-center">
-              <div class="button button--secondary button--round h-16 w-16 flex">
-                <span class="text-4xl font-bold leading-none mx-auto mt-1">+</span>
-              </div>
-              <p class="w-full text-lg">Create New</p>
-            </div>
-          </div>
-        </button>
-
-        <div
-          v-for="card in trumpPack.cards"
-          :key="card.id"
-          class="playingcard playingcard--md playingcard--interactive"
-        >
-          <div class="playingcard__container">
-            <p class="playingcard__title">{{ card.name }}</p>
-            <div class="playingcard__image boxedimage">
-              <div class="boxedimage__container">
-                <img class="boxedimage__image" :src="imagesRoot + card.imageUrl" />
-              </div>
-            </div>
-            <table class="playingcard__attributes">
-              <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
-                <td>{{ attributeValue.attribute.name }}</td>
-                <td>{{ attributeValue.value }}</td>
-              </tr>
-            </table>
-
-            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="createNew == true" class="mt-2 flex flex-wrap">
-      <h2 class="page-subheading">New Card</h2>
-
+    <h1 class="page-heading">New Card for "{{ trumpPack.name }}"</h1>
+    <div class="mt-2 flex flex-wrap">
       <div class="w-full mt-2 flex justify-center">
         <div class="playingcard playingcard--lg">
           <div class="playingcard__container">
@@ -74,7 +26,7 @@
               <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
                 <span class="w-1/2">{{ attribute.name }}</span>
                 <input type="number" v-model="attribute.value" class="w-1/4 mr-px textinput" />
-                <span class="w-1/4">{{ unit }}</span>
+                <span class="w-1/4">u</span>
               </div>
             </div>
             <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
@@ -82,8 +34,12 @@
         </div>
       </div>
 
-      <div class="w-full mt-2 flex justify-end">
-        <button @click="saveCard" class="button button--secondary">Save Card</button>
+      <div class="w-full mt-2 flex flex-wrap justify-end">
+        <button @click="saveAndNext" class="button button--secondary">Save and Create Another</button>
+        <button
+          @click="saveAndReturn"
+          class="button button--secondary ml-1 mt-1"
+        >Save and Return to Packs</button>
       </div>
     </div>
   </div>
@@ -91,6 +47,14 @@
 
 <script>
 import gql from 'graphql-tag'
+
+function initialFormData() {
+  return {
+    cardName: 'Card Title',
+    image: '',
+    imageFile: undefined
+  }
+}
 
 export default {
   apollo: {
@@ -106,20 +70,6 @@ export default {
             attributes {
               id
               name
-            }
-            cards {
-              id
-              name
-              imageUrl
-              attributeValues {
-                id
-                value
-                attribute {
-                  id
-                  name
-                  aimHigh
-                }
-              }
             }
           }
         }
@@ -138,26 +88,26 @@ export default {
   },
   data() {
     return {
-      createNew: false,
-      attributeValues: {},
-      cardName: 'Card Title',
-      image: '',
-      imageFile: undefined,
-      attribute: 'Attribute',
-      attributeId: undefined,
-      value: 1,
-      unit: 'u',
-      imagesRoot: process.env.imagesRoot
+      ...initialFormData()
     }
   },
   methods: {
+    async saveAndNext() {
+      await this.save()
+      this.trumpPack.attributes.forEach(a => delete a.value)
+      Object.assign(this.$data, initialFormData())
+    },
+    async saveAndReturn() {
+      await this.save()
+      this.$router.push(`/packs/${this.trumpPack.id}`)
+    },
     async selectImage(event) {
       const reader = new FileReader()
       reader.onload = () => (this.image = reader.result)
       this.imageFile = event.target.files[0]
       reader.readAsDataURL(this.imageFile)
     },
-    async saveCard() {
+    async save() {
       const attributeValuesInput = this.trumpPack.attributes.map(
         ({ id, value }) => ({
           value: parseFloat(value),
@@ -206,8 +156,6 @@ export default {
           cardId: cardId
         }
       })
-
-      await this.$apollo.queries.trumpPack.refetch()
     }
   }
 }
