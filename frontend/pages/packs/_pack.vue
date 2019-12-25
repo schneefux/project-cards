@@ -1,55 +1,89 @@
 <template>
-  <div v-if="trumpPack != undefined">
-    <p>Pack: {{ trumpPack.name }}</p>
+  <div v-if="trumpPack != undefined" class="container container--page">
+    <h1 class="page-heading">Pack "{{ trumpPack.name }}"</h1>
+    <p>Description: {{ trumpPack.description }}</p>
+    <p>Author: {{ trumpPack.author.name }}</p>
 
-    <div
-      v-for="card in trumpPack.cards"
-      :key="card.id"
-      class="playingcard playingcard--md playingcard--interactive"
-    >
-      <div class="playingcard__container">
-        <p class="playingcard__title">{{ card.name }}</p>
-        <div class="playingcard__image boxedimage">
-          <div class="boxedimage__container">
-            <img class="boxedimage__image" :src="imagesRoot + card.imageUrl" />
+    <div class="mt-2">
+      <h2 class="page-subheading">Cards ({{ trumpPack.cards.length }})</h2>
+
+      <div class="flex flex-wrap">
+        <button
+          @click="createNew = true"
+          class="playingcard playingcard--md playingcard--interactive"
+        >
+          <div class="playingcard__container">
+            <div class="w-full h-full flex flex-wrap justify-center items-center">
+              <div class="button button--secondary button--round h-16 w-16 flex">
+                <span class="text-4xl font-bold leading-none mx-auto mt-1">+</span>
+              </div>
+              <p class="w-full text-lg">Create New</p>
+            </div>
+          </div>
+        </button>
+
+        <div
+          v-for="card in trumpPack.cards"
+          :key="card.id"
+          class="playingcard playingcard--md playingcard--interactive"
+        >
+          <div class="playingcard__container">
+            <p class="playingcard__title">{{ card.name }}</p>
+            <div class="playingcard__image boxedimage">
+              <div class="boxedimage__container">
+                <img class="boxedimage__image" :src="imagesRoot + card.imageUrl" />
+              </div>
+            </div>
+            <table class="playingcard__attributes">
+              <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
+                <td>{{ attributeValue.attribute.name }}</td>
+                <td>{{ attributeValue.value }}</td>
+              </tr>
+            </table>
+
+            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
           </div>
         </div>
-        <table class="playingcard__attributes">
-          <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
-            <td>{{ attributeValue.attribute.name }}</td>
-            <td>{{ attributeValue.value }}</td>
-          </tr>
-        </table>
-
-        <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
       </div>
     </div>
 
-    <h1 class="mt-8">Add new Card</h1>
-    <button @click="saveCard" class="border block">Create Card</button>
+    <div v-if="createNew == true" class="mt-2 flex flex-wrap">
+      <h2 class="page-subheading">New Card</h2>
 
-    <div class="playingcard playingcard--lg">
-      <div class="playingcard__container">
-        <input type="text" v-model="cardName" maxlength="20" class="playingcard__title textinput" />
-        <div class="playingcard__image boxedimage relative">
-          <div class="boxedimage__container">
-            <img class="boxedimage__image" :src="image" />
+      <div class="w-full mt-2 flex justify-center">
+        <div class="playingcard playingcard--lg">
+          <div class="playingcard__container">
+            <input
+              type="text"
+              v-model="cardName"
+              maxlength="20"
+              class="playingcard__title textinput"
+            />
+            <div class="playingcard__image boxedimage relative">
+              <div class="boxedimage__container">
+                <img class="boxedimage__image" :src="image" />
+              </div>
+              <label
+                class="absolute bottom-0 right-0 rounded-tl pl-1 pr-px bg-blue-500 hover:bg-blue-400 text-white"
+              >
+                select
+                <input type="file" accept="image/*" class="hidden" @change="selectImage" />
+              </label>
+            </div>
+            <div class="playingcard__attributes">
+              <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
+                <span class="w-1/2">{{ attribute.name }}</span>
+                <input type="number" v-model="attribute.value" class="w-1/4 mr-px textinput" />
+                <span class="w-1/4">{{ unit }}</span>
+              </div>
+            </div>
+            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
           </div>
-          <label
-            class="absolute bottom-0 right-0 rounded-tl pl-1 pr-px bg-blue-500 hover:bg-blue-400 text-white"
-          >
-            select
-            <input type="file" accept="image/*" class="hidden" @change="selectImage" />
-          </label>
         </div>
-        <div class="playingcard__attributes">
-          <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
-            <span class="w-1/2">{{ attribute.name }}</span>
-            <input type="number" v-model="attribute.value" class="w-1/4 mr-px textinput" />
-            <span class="w-1/4">{{ unit }}</span>
-          </div>
-        </div>
-        <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
+      </div>
+
+      <div class="w-full mt-2 flex justify-end">
+        <button @click="saveCard" class="button button--secondary">Save Card</button>
       </div>
     </div>
   </div>
@@ -104,6 +138,7 @@ export default {
   },
   data() {
     return {
+      createNew: false,
       attributeValues: {},
       cardName: 'Card Title',
       image: '',

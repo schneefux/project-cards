@@ -82,9 +82,45 @@
 }
 
 .textinput {
-  @apply shadow border rounded-sm border-blue-300 appearance-none;
+  @apply shadow border rounded-sm border-primary-300 appearance-none;
 
   &:focus {
     @apply outline-none shadow-outline;
   }
+}
+
+.button {
+  @apply bg-primary-500 py-1 px-3 rounded-sm text-white;
+
+  &:hover {
+    @apply bg-primary-400;
+  }
+
+  &--secondary {
+    @apply bg-secondary-500;
+
+    &:hover {
+      @apply bg-secondary-400;
+    }
+  }
+
+  &--sm {
+    @apply py-px px-2;
+  }
+
+  &--round {
+    @apply rounded-full;
+  }
+}
+
+.page-heading {
+  @apply text-2xl mt-2 mb-4;
+}
+
+.page-subheading {
+  @apply text-xl mt-2 mb-2;
+}
+
+.container--page {
+  @apply mx-auto px-4 py-2;
 }

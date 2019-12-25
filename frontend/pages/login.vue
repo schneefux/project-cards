@@ -1,15 +1,25 @@
 <template>
-  <div>
-    <h1>Login</h1>
-    <p>Logged in: {{ loggedIn }}</p>
-    <p>{{ message }}</p>
-    <div>
-      <input type="text" v-model="email" class="border" />
-      <input type="text" v-model="password" class="border" />
-      <button @click="login" class="border">Login</button>
-      <button @click="register" class="border">Register</button>
-      <button @click="logout" class="border">Logout</button>
-      <p>User ID: {{ (me || {}).id || 'nicht gefunden' }}</p>
+  <div class="container container--page">
+    <h1 class="page-heading">Login</h1>
+
+    <div class="flex justify-between items-center">
+      <p>Logged in as: {{ (me || {}).name || 'nicht gefunden' }}</p>
+      <button v-show="me != undefined" @click="logout" class="button">Logout</button>
+    </div>
+    <div class="mt-4 flex flex-wrap justify-between">
+      <div class="w-full flex">
+        <label for="email" class="w-3/12">E-Mail</label>
+        <input id="email" type="email" v-model="email" class="textinput w-9/12" />
+      </div>
+      <div class="mt-2 w-full flex">
+        <label for="password" class="w-3/12">Password</label>
+        <input id="password" type="password" v-model="password" class="textinput w-9/12" />
+      </div>
+      <div class="mt-4 w-full">
+        <button @click="login" class="button mx-1">Login</button>
+        <button @click="register" class="button mx-1">Register</button>
+      </div>
+      <p class="w-full text-red-500 ml-1 mt-2">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -22,15 +32,10 @@ export default {
     me: gql`
       query {
         me {
-          id
+          name
         }
       }
     `
-  },
-  computed: {
-    loggedIn() {
-      return !!this.$apolloHelpers.getToken()
-    }
   },
   data() {
     return {
