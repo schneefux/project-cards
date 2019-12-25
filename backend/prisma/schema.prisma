@@ -27,7 +27,7 @@ model TrumpGame {
 
 model TrumpPack {
   id          String           @default(cuid()) @id
-  name        String           @unique
+  name        String
   author      User
   description String
   cards       TrumpCard[]

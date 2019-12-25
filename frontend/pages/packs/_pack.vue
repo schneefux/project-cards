@@ -43,13 +43,13 @@
           </label>
         </div>
         <div class="playingcard__attributes">
-          <div class="flex">
-            <span class="w-1/2">{{ attribute }}</span>
-            <input type="number" v-model="value" class="w-1/4 mr-px textinput" />
+          <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
+            <span class="w-1/2">{{ attribute.name }}</span>
+            <input type="number" v-model="attribute.value" class="w-1/4 mr-px textinput" />
             <span class="w-1/4">{{ unit }}</span>
           </div>
         </div>
-        <p class="playingcard__attribution">created by {{ author }}</p>
+        <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
       </div>
     </div>
   </div>
@@ -105,8 +105,8 @@ export default {
   data() {
     return {
       trumpPack: {},
+      attributeValues: {},
       cardName: 'Card Title',
-      author: 'Author',
       image: '',
       imageFile: undefined,
       attribute: 'Attribute',
@@ -124,28 +124,27 @@ export default {
       reader.readAsDataURL(this.imageFile)
     },
     async saveCard() {
+      const attributeValuesInput = this.trumpPack.attributes.map(
+        ({ id, value }) => ({
+          value: parseFloat(value),
+          attribute: { connect: { id } }
+        })
+      )
+
       const response = await this.$apollo.mutate({
         mutation: gql`
           mutation(
             $name: String!
             $pack: ID!
             $description: String!
-            $attribute0: ID!
-            $value0: Float!
+            $attributeValues: [TrumpAttributeValueCreateWithoutCardInput!]!
           ) {
             createOneTrumpCard(
               data: {
                 name: $name
                 pack: { connect: { id: $pack } }
                 description: $description
-                attributeValues: {
-                  create: [
-                    {
-                      value: $value0
-                      attribute: { connect: { id: $attribute0 } }
-                    }
-                  ]
-                }
+                attributeValues: { create: $attributeValues }
               }
             ) {
               id
@@ -156,8 +155,7 @@ export default {
           name: this.cardName,
           pack: this.trumpPack.id,
           description: '',
-          attribute0: this.trumpPack.attributes[0].id,
-          value0: parseFloat(this.value)
+          attributeValues: attributeValuesInput
         }
       })
 

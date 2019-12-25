@@ -16,10 +16,16 @@
           </div>
         </div>
         <div class="playingcard__attributes">
-          <div class="flex">
-            <input type="text" v-model="attribute" maxlength="16" class="w-3/4 mr-px textinput" />
-            <input type="text" v-model="unit" maxlength="8" class="w-1/4 textinput" />
+          <div v-for="(attribute, index) in attributes" :key="index" class="flex">
+            <input
+              type="text"
+              v-model="attribute.name"
+              maxlength="16"
+              class="w-3/4 mr-px textinput"
+            />
+            <input type="text" maxlength="8" class="w-1/4 textinput" />
           </div>
+          <button @click="addAttribute">add</button>
         </div>
         <p class="playingcard__attribution">
           created by
@@ -40,15 +46,34 @@
 import gql from 'graphql-tag'
 
 export default {
+  apollo: {
+    me: gql`
+      query {
+        me {
+          id
+        }
+      }
+    `
+  },
   data() {
     return {
       packName: 'Pack Title',
       author: 'Author',
-      attribute: 'Attribute',
-      unit: 'u'
+      attributes: [
+        {
+          name: 'Attribute',
+          aimHigh: true
+        }
+      ]
     }
   },
   methods: {
+    addAttribute() {
+      this.attributes.push({
+        name: '',
+        aimHigh: true
+      })
+    },
     async createPack() {
       const response = await this.$apollo.mutate({
         mutation: gql`
@@ -56,22 +81,17 @@ export default {
             $author: ID!
             $name: String!
             $description: String!
-            $attributeName: String!
+            $attributes: [TrumpAttributeCreateWithoutPackInput!]!
           ) {
             createOneTrumpPack(
               data: {
                 name: $name
                 author: { connect: { id: $author } }
                 description: $description
-                attributes: {
-                  create: [{ name: $attributeName, aimHigh: true }]
-                }
+                attributes: { create: $attributes }
               }
             ) {
               id
-              attributes {
-                id
-              }
             }
           }
         `,
@@ -79,12 +99,13 @@ export default {
           author: this.me.id,
           name: this.packName,
           description: '',
-          attributeName: this.attribute
+          attributes: this.attributes
           // TODO add unit
         }
       })
 
-      await this.$apollo.queries.me.refetch()
+      const trumpPackId = response.data.createOneTrumpPack.id
+      this.$router.push(`/packs/${trumpPackId}`)
     }
   }
 }
