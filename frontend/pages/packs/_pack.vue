@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="trumpPack != undefined">
     <p>Pack: {{ trumpPack.name }}</p>
 
     <div
@@ -104,7 +104,6 @@ export default {
   },
   data() {
     return {
-      trumpPack: {},
       attributeValues: {},
       cardName: 'Card Title',
       image: '',
