@@ -117,6 +117,7 @@ export default {
       if (!this.$refs['card-form'].reportValidity()) {
         return
       }
+
       await this.save()
       this.trumpPack.attributes.forEach(a => delete a.value)
       Object.assign(this.$data, initialFormData())

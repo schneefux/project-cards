@@ -11,7 +11,7 @@
         v-for="pack in me.trumpPacks"
         :key="pack.id"
         :to="`/packs/${pack.id}`"
-        class="playingcard playingcard--lg playingcard--interactive"
+        class="playingcard playingcard--lg playingcard--interactive mr-8"
       >
         <div class="playingcard__container">
           <div class="playingcard__container">
