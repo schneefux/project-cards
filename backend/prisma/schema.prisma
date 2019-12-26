@@ -32,12 +32,19 @@ model GamePile {
 }
 
 model GameHand {
-  id     String      @default(cuid()) @id
+  id     String         @default(cuid()) @id
   game   Game
   player User
   score  Int
-  cards  TrumpCard[]
+  piles  GameHandPile[]
   atTurn Boolean
+}
+
+model GameHandPile {
+  id    String      @default(cuid()) @id
+  hand  GameHand
+  cards TrumpCard[]
+  name  String
 }
 
 model TrumpPack {

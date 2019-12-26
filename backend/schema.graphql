@@ -35,7 +35,6 @@ input GameCreateWithoutPackInput {
 
 type GameHand {
   atTurn: Boolean!
-  cards(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpCard!]!
   game: Game!
   id: ID!
   player: User!
@@ -52,22 +51,22 @@ input GameHandCreateManyWithoutHandsInput {
   create: [GameHandCreateWithoutGameInput!]
 }
 
-input GameHandCreateOneWithoutGameHandInput {
+input GameHandCreateOneWithoutHandInput {
   connect: GameHandWhereUniqueInput
-  create: GameHandCreateWithoutCardsInput
-}
-
-input GameHandCreateWithoutCardsInput {
-  atTurn: Boolean!
-  game: GameCreateOneWithoutGameInput!
-  id: ID
-  player: UserCreateOneWithoutPlayerInput!
-  score: Int!
+  create: GameHandCreateWithoutPilesInput
 }
 
 input GameHandCreateWithoutGameInput {
   atTurn: Boolean!
-  cards: TrumpCardCreateManyWithoutCardsInput
+  id: ID
+  piles: GameHandPileCreateManyWithoutPilesInput
+  player: UserCreateOneWithoutPlayerInput!
+  score: Int!
+}
+
+input GameHandCreateWithoutPilesInput {
+  atTurn: Boolean!
+  game: GameCreateOneWithoutGameInput!
   id: ID
   player: UserCreateOneWithoutPlayerInput!
   score: Int!
@@ -75,10 +74,43 @@ input GameHandCreateWithoutGameInput {
 
 input GameHandCreateWithoutPlayerInput {
   atTurn: Boolean!
-  cards: TrumpCardCreateManyWithoutCardsInput
   game: GameCreateOneWithoutGameInput!
   id: ID
+  piles: GameHandPileCreateManyWithoutPilesInput
   score: Int!
+}
+
+type GameHandPile {
+  cards(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpCard!]!
+  hand: GameHand!
+  id: ID!
+  name: String!
+}
+
+input GameHandPileCreateManyWithoutPilesInput {
+  connect: [GameHandPileWhereUniqueInput!]
+  create: [GameHandPileCreateWithoutHandInput!]
+}
+
+input GameHandPileCreateOneWithoutGameHandPileInput {
+  connect: GameHandPileWhereUniqueInput
+  create: GameHandPileCreateWithoutCardsInput
+}
+
+input GameHandPileCreateWithoutCardsInput {
+  hand: GameHandCreateOneWithoutHandInput!
+  id: ID
+  name: String!
+}
+
+input GameHandPileCreateWithoutHandInput {
+  cards: TrumpCardCreateManyWithoutCardsInput
+  id: ID
+  name: String!
+}
+
+input GameHandPileWhereUniqueInput {
+  id: ID
 }
 
 input GameHandWhereUniqueInput {
@@ -128,7 +160,7 @@ type LoginResponse {
 }
 
 type Mutation {
-  bidGoofenspiel(cardId: ID!, gameId: ID!): Game!
+  bidGoofenspiel(cardId: ID!, gameId: ID!): Boolean!
   createOneTrumpAttribute(data: TrumpAttributeCreateInput!): TrumpAttribute!
   createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
@@ -238,7 +270,7 @@ type TrumpCard {
 input TrumpCardCreateInput {
   attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
   description: String
-  gameHand: GameHandCreateOneWithoutGameHandInput
+  gameHandPile: GameHandPileCreateOneWithoutGameHandPileInput
   gamePile: GamePileCreateOneWithoutGamePileInput
   id: ID
   imageUrl: String
@@ -258,7 +290,7 @@ input TrumpCardCreateOneWithoutCardInput {
 
 input TrumpCardCreateWithoutAttributeValuesInput {
   description: String
-  gameHand: GameHandCreateOneWithoutGameHandInput
+  gameHandPile: GameHandPileCreateOneWithoutGameHandPileInput
   gamePile: GamePileCreateOneWithoutGamePileInput
   id: ID
   imageUrl: String
@@ -269,7 +301,7 @@ input TrumpCardCreateWithoutAttributeValuesInput {
 input TrumpCardCreateWithoutPackInput {
   attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
   description: String
-  gameHand: GameHandCreateOneWithoutGameHandInput
+  gameHandPile: GameHandPileCreateOneWithoutGameHandPileInput
   gamePile: GamePileCreateOneWithoutGamePileInput
   id: ID
   imageUrl: String
