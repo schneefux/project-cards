@@ -37,6 +37,7 @@ type GameHand {
   atTurn: Boolean!
   game: Game!
   id: ID!
+  piles(after: ID, before: ID, first: Int, last: Int, skip: Int): [GameHandPile!]!
   player: User!
   score: Int!
 }
@@ -87,14 +88,14 @@ type GameHandPile {
   name: String!
 }
 
+input GameHandPileCreateManyWithoutHandPilesInput {
+  connect: [GameHandPileWhereUniqueInput!]
+  create: [GameHandPileCreateWithoutCardsInput!]
+}
+
 input GameHandPileCreateManyWithoutPilesInput {
   connect: [GameHandPileWhereUniqueInput!]
   create: [GameHandPileCreateWithoutHandInput!]
-}
-
-input GameHandPileCreateOneWithoutGameHandPileInput {
-  connect: GameHandPileWhereUniqueInput
-  create: GameHandPileCreateWithoutCardsInput
 }
 
 input GameHandPileCreateWithoutCardsInput {
@@ -129,17 +130,6 @@ input GamePileCreateManyWithoutPilesInput {
   create: [GamePileCreateWithoutGameInput!]
 }
 
-input GamePileCreateOneWithoutGamePileInput {
-  connect: GamePileWhereUniqueInput
-  create: GamePileCreateWithoutCardsInput
-}
-
-input GamePileCreateWithoutCardsInput {
-  game: GameCreateOneWithoutGameInput!
-  id: ID
-  name: String!
-}
-
 input GamePileCreateWithoutGameInput {
   cards: TrumpCardCreateManyWithoutCardsInput
   id: ID
@@ -166,16 +156,18 @@ type Mutation {
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
   login(email: String!, password: String!): LoginResponse
   register(email: String!, name: String!, password: String!): LoginResponse
-  startGoofenspiel(opponent: String!, pack: String!): Game!
+  startGoofenspiel(opponent: ID!, pack: ID!): ID!
   uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
 
 type Query {
+  game(where: GameWhereUniqueInput!): Game
   games(after: ID, before: ID, first: Int, last: Int, skip: Int): [Game!]!
   me: User
   trumpPack(where: TrumpPackWhereUniqueInput!): TrumpPack
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
   user(where: UserWhereUniqueInput!): User
+  users(after: ID, before: ID, first: Int, last: Int, skip: Int): [User!]!
 }
 
 type Subscription {
@@ -270,12 +262,12 @@ type TrumpCard {
 input TrumpCardCreateInput {
   attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
   description: String
-  gameHandPile: GameHandPileCreateOneWithoutGameHandPileInput
-  gamePile: GamePileCreateOneWithoutGamePileInput
+  handPiles: GameHandPileCreateManyWithoutHandPilesInput
   id: ID
   imageUrl: String
   name: String!
   pack: TrumpPackCreateOneWithoutPackInput!
+  piles: GamePileCreateManyWithoutPilesInput
 }
 
 input TrumpCardCreateManyWithoutCardsInput {
@@ -290,22 +282,22 @@ input TrumpCardCreateOneWithoutCardInput {
 
 input TrumpCardCreateWithoutAttributeValuesInput {
   description: String
-  gameHandPile: GameHandPileCreateOneWithoutGameHandPileInput
-  gamePile: GamePileCreateOneWithoutGamePileInput
+  handPiles: GameHandPileCreateManyWithoutHandPilesInput
   id: ID
   imageUrl: String
   name: String!
   pack: TrumpPackCreateOneWithoutPackInput!
+  piles: GamePileCreateManyWithoutPilesInput
 }
 
 input TrumpCardCreateWithoutPackInput {
   attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
   description: String
-  gameHandPile: GameHandPileCreateOneWithoutGameHandPileInput
-  gamePile: GamePileCreateOneWithoutGamePileInput
+  handPiles: GameHandPileCreateManyWithoutHandPilesInput
   id: ID
   imageUrl: String
   name: String!
+  piles: GamePileCreateManyWithoutPilesInput
 }
 
 input TrumpCardWhereUniqueInput {

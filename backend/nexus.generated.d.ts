@@ -71,13 +71,13 @@ export interface NexusGenInputs {
     piles?: NexusGenInputs['GameHandPileCreateManyWithoutPilesInput'] | null; // GameHandPileCreateManyWithoutPilesInput
     score: number; // Int!
   }
+  GameHandPileCreateManyWithoutHandPilesInput: { // input type
+    connect?: NexusGenInputs['GameHandPileWhereUniqueInput'][] | null; // [GameHandPileWhereUniqueInput!]
+    create?: NexusGenInputs['GameHandPileCreateWithoutCardsInput'][] | null; // [GameHandPileCreateWithoutCardsInput!]
+  }
   GameHandPileCreateManyWithoutPilesInput: { // input type
     connect?: NexusGenInputs['GameHandPileWhereUniqueInput'][] | null; // [GameHandPileWhereUniqueInput!]
     create?: NexusGenInputs['GameHandPileCreateWithoutHandInput'][] | null; // [GameHandPileCreateWithoutHandInput!]
-  }
-  GameHandPileCreateOneWithoutGameHandPileInput: { // input type
-    connect?: NexusGenInputs['GameHandPileWhereUniqueInput'] | null; // GameHandPileWhereUniqueInput
-    create?: NexusGenInputs['GameHandPileCreateWithoutCardsInput'] | null; // GameHandPileCreateWithoutCardsInput
   }
   GameHandPileCreateWithoutCardsInput: { // input type
     hand: NexusGenInputs['GameHandCreateOneWithoutHandInput']; // GameHandCreateOneWithoutHandInput!
@@ -98,15 +98,6 @@ export interface NexusGenInputs {
   GamePileCreateManyWithoutPilesInput: { // input type
     connect?: NexusGenInputs['GamePileWhereUniqueInput'][] | null; // [GamePileWhereUniqueInput!]
     create?: NexusGenInputs['GamePileCreateWithoutGameInput'][] | null; // [GamePileCreateWithoutGameInput!]
-  }
-  GamePileCreateOneWithoutGamePileInput: { // input type
-    connect?: NexusGenInputs['GamePileWhereUniqueInput'] | null; // GamePileWhereUniqueInput
-    create?: NexusGenInputs['GamePileCreateWithoutCardsInput'] | null; // GamePileCreateWithoutCardsInput
-  }
-  GamePileCreateWithoutCardsInput: { // input type
-    game: NexusGenInputs['GameCreateOneWithoutGameInput']; // GameCreateOneWithoutGameInput!
-    id?: string | null; // ID
-    name: string; // String!
   }
   GamePileCreateWithoutGameInput: { // input type
     cards?: NexusGenInputs['TrumpCardCreateManyWithoutCardsInput'] | null; // TrumpCardCreateManyWithoutCardsInput
@@ -173,12 +164,12 @@ export interface NexusGenInputs {
   TrumpCardCreateInput: { // input type
     attributeValues?: NexusGenInputs['TrumpAttributeValueCreateManyWithoutAttributeValuesInput'] | null; // TrumpAttributeValueCreateManyWithoutAttributeValuesInput
     description?: string | null; // String
-    gameHandPile?: NexusGenInputs['GameHandPileCreateOneWithoutGameHandPileInput'] | null; // GameHandPileCreateOneWithoutGameHandPileInput
-    gamePile?: NexusGenInputs['GamePileCreateOneWithoutGamePileInput'] | null; // GamePileCreateOneWithoutGamePileInput
+    handPiles?: NexusGenInputs['GameHandPileCreateManyWithoutHandPilesInput'] | null; // GameHandPileCreateManyWithoutHandPilesInput
     id?: string | null; // ID
     imageUrl?: string | null; // String
     name: string; // String!
     pack: NexusGenInputs['TrumpPackCreateOneWithoutPackInput']; // TrumpPackCreateOneWithoutPackInput!
+    piles?: NexusGenInputs['GamePileCreateManyWithoutPilesInput'] | null; // GamePileCreateManyWithoutPilesInput
   }
   TrumpCardCreateManyWithoutCardsInput: { // input type
     connect?: NexusGenInputs['TrumpCardWhereUniqueInput'][] | null; // [TrumpCardWhereUniqueInput!]
@@ -190,21 +181,21 @@ export interface NexusGenInputs {
   }
   TrumpCardCreateWithoutAttributeValuesInput: { // input type
     description?: string | null; // String
-    gameHandPile?: NexusGenInputs['GameHandPileCreateOneWithoutGameHandPileInput'] | null; // GameHandPileCreateOneWithoutGameHandPileInput
-    gamePile?: NexusGenInputs['GamePileCreateOneWithoutGamePileInput'] | null; // GamePileCreateOneWithoutGamePileInput
+    handPiles?: NexusGenInputs['GameHandPileCreateManyWithoutHandPilesInput'] | null; // GameHandPileCreateManyWithoutHandPilesInput
     id?: string | null; // ID
     imageUrl?: string | null; // String
     name: string; // String!
     pack: NexusGenInputs['TrumpPackCreateOneWithoutPackInput']; // TrumpPackCreateOneWithoutPackInput!
+    piles?: NexusGenInputs['GamePileCreateManyWithoutPilesInput'] | null; // GamePileCreateManyWithoutPilesInput
   }
   TrumpCardCreateWithoutPackInput: { // input type
     attributeValues?: NexusGenInputs['TrumpAttributeValueCreateManyWithoutAttributeValuesInput'] | null; // TrumpAttributeValueCreateManyWithoutAttributeValuesInput
     description?: string | null; // String
-    gameHandPile?: NexusGenInputs['GameHandPileCreateOneWithoutGameHandPileInput'] | null; // GameHandPileCreateOneWithoutGameHandPileInput
-    gamePile?: NexusGenInputs['GamePileCreateOneWithoutGamePileInput'] | null; // GamePileCreateOneWithoutGamePileInput
+    handPiles?: NexusGenInputs['GameHandPileCreateManyWithoutHandPilesInput'] | null; // GameHandPileCreateManyWithoutHandPilesInput
     id?: string | null; // ID
     imageUrl?: string | null; // String
     name: string; // String!
+    piles?: NexusGenInputs['GamePileCreateManyWithoutPilesInput'] | null; // GamePileCreateManyWithoutPilesInput
   }
   TrumpCardWhereUniqueInput: { // input type
     id?: string | null; // ID
@@ -321,15 +312,13 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   GameHandCreateWithoutGameInput: NexusGenInputs['GameHandCreateWithoutGameInput'];
   GameHandCreateWithoutPilesInput: NexusGenInputs['GameHandCreateWithoutPilesInput'];
   GameHandCreateWithoutPlayerInput: NexusGenInputs['GameHandCreateWithoutPlayerInput'];
+  GameHandPileCreateManyWithoutHandPilesInput: NexusGenInputs['GameHandPileCreateManyWithoutHandPilesInput'];
   GameHandPileCreateManyWithoutPilesInput: NexusGenInputs['GameHandPileCreateManyWithoutPilesInput'];
-  GameHandPileCreateOneWithoutGameHandPileInput: NexusGenInputs['GameHandPileCreateOneWithoutGameHandPileInput'];
   GameHandPileCreateWithoutCardsInput: NexusGenInputs['GameHandPileCreateWithoutCardsInput'];
   GameHandPileCreateWithoutHandInput: NexusGenInputs['GameHandPileCreateWithoutHandInput'];
   GameHandPileWhereUniqueInput: NexusGenInputs['GameHandPileWhereUniqueInput'];
   GameHandWhereUniqueInput: NexusGenInputs['GameHandWhereUniqueInput'];
   GamePileCreateManyWithoutPilesInput: NexusGenInputs['GamePileCreateManyWithoutPilesInput'];
-  GamePileCreateOneWithoutGamePileInput: NexusGenInputs['GamePileCreateOneWithoutGamePileInput'];
-  GamePileCreateWithoutCardsInput: NexusGenInputs['GamePileCreateWithoutCardsInput'];
   GamePileCreateWithoutGameInput: NexusGenInputs['GamePileCreateWithoutGameInput'];
   GamePileWhereUniqueInput: NexusGenInputs['GamePileWhereUniqueInput'];
   GameWhereUniqueInput: NexusGenInputs['GameWhereUniqueInput'];
@@ -374,6 +363,7 @@ export interface NexusGenFieldTypes {
     atTurn: boolean; // Boolean!
     game: NexusGenRootTypes['Game']; // Game!
     id: string; // ID!
+    piles: NexusGenRootTypes['GameHandPile'][]; // [GameHandPile!]!
     player: NexusGenRootTypes['User']; // User!
     score: number; // Int!
   }
@@ -400,15 +390,17 @@ export interface NexusGenFieldTypes {
     createOneTrumpPack: NexusGenRootTypes['TrumpPack']; // TrumpPack!
     login: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
     register: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
-    startGoofenspiel: NexusGenRootTypes['Game']; // Game!
+    startGoofenspiel: string; // ID!
     uploadTrumpCardImage: boolean; // Boolean!
   }
   Query: { // field return type
+    game: NexusGenRootTypes['Game'] | null; // Game
     games: NexusGenRootTypes['Game'][]; // [Game!]!
     me: NexusGenRootTypes['User'] | null; // User
     trumpPack: NexusGenRootTypes['TrumpPack'] | null; // TrumpPack
     trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
     user: NexusGenRootTypes['User'] | null; // User
+    users: NexusGenRootTypes['User'][]; // [User!]!
   }
   Subscription: { // field return type
     createdGame: NexusGenRootTypes['Game']; // Game!
@@ -469,6 +461,15 @@ export interface NexusGenArgTypes {
       skip?: number | null; // Int
     }
   }
+  GameHand: {
+    piles: { // args
+      after?: string | null; // ID
+      before?: string | null; // ID
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
+    }
+  }
   GameHandPile: {
     cards: { // args
       after?: string | null; // ID
@@ -511,8 +512,8 @@ export interface NexusGenArgTypes {
       password: string; // String!
     }
     startGoofenspiel: { // args
-      opponent: string; // String!
-      pack: string; // String!
+      opponent: string; // ID!
+      pack: string; // ID!
     }
     uploadTrumpCardImage: { // args
       cardId: string; // ID!
@@ -520,6 +521,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    game: { // args
+      where: NexusGenInputs['GameWhereUniqueInput']; // GameWhereUniqueInput!
+    }
     games: { // args
       after?: string | null; // ID
       before?: string | null; // ID
@@ -539,6 +543,13 @@ export interface NexusGenArgTypes {
     }
     user: { // args
       where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
+    }
+    users: { // args
+      after?: string | null; // ID
+      before?: string | null; // ID
+      first?: number | null; // Int
+      last?: number | null; // Int
+      skip?: number | null; // Int
     }
   }
   TrumpCard: {
@@ -591,7 +602,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "Game" | "GameHand" | "GameHandPile" | "GamePile" | "LoginResponse" | "Mutation" | "Query" | "Subscription" | "TrumpAttribute" | "TrumpAttributeValue" | "TrumpCard" | "TrumpPack" | "User";
 
-export type NexusGenInputNames = "GameCreateManyWithoutGamesInput" | "GameCreateOneWithoutGameInput" | "GameCreateWithoutHandsInput" | "GameCreateWithoutPackInput" | "GameHandCreateManyWithoutGameHandsInput" | "GameHandCreateManyWithoutHandsInput" | "GameHandCreateOneWithoutHandInput" | "GameHandCreateWithoutGameInput" | "GameHandCreateWithoutPilesInput" | "GameHandCreateWithoutPlayerInput" | "GameHandPileCreateManyWithoutPilesInput" | "GameHandPileCreateOneWithoutGameHandPileInput" | "GameHandPileCreateWithoutCardsInput" | "GameHandPileCreateWithoutHandInput" | "GameHandPileWhereUniqueInput" | "GameHandWhereUniqueInput" | "GamePileCreateManyWithoutPilesInput" | "GamePileCreateOneWithoutGamePileInput" | "GamePileCreateWithoutCardsInput" | "GamePileCreateWithoutGameInput" | "GamePileWhereUniqueInput" | "GameWhereUniqueInput" | "TrumpAttributeCreateInput" | "TrumpAttributeCreateManyWithoutAttributesInput" | "TrumpAttributeCreateOneWithoutAttributeInput" | "TrumpAttributeCreateWithoutPackInput" | "TrumpAttributeCreateWithoutTrumpAttributeValuesInput" | "TrumpAttributeValueCreateManyWithoutAttributeValuesInput" | "TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput" | "TrumpAttributeValueCreateWithoutAttributeInput" | "TrumpAttributeValueCreateWithoutCardInput" | "TrumpAttributeValueWhereUniqueInput" | "TrumpAttributeWhereUniqueInput" | "TrumpCardCreateInput" | "TrumpCardCreateManyWithoutCardsInput" | "TrumpCardCreateOneWithoutCardInput" | "TrumpCardCreateWithoutAttributeValuesInput" | "TrumpCardCreateWithoutPackInput" | "TrumpCardWhereUniqueInput" | "TrumpPackCreateInput" | "TrumpPackCreateManyWithoutTrumpPacksInput" | "TrumpPackCreateOneWithoutPackInput" | "TrumpPackCreateWithoutAttributesInput" | "TrumpPackCreateWithoutAuthorInput" | "TrumpPackWhereUniqueInput" | "UserCreateOneWithoutAuthorInput" | "UserCreateOneWithoutPlayerInput" | "UserCreateWithoutGameHandsInput" | "UserCreateWithoutTrumpPacksInput" | "UserWhereUniqueInput";
+export type NexusGenInputNames = "GameCreateManyWithoutGamesInput" | "GameCreateOneWithoutGameInput" | "GameCreateWithoutHandsInput" | "GameCreateWithoutPackInput" | "GameHandCreateManyWithoutGameHandsInput" | "GameHandCreateManyWithoutHandsInput" | "GameHandCreateOneWithoutHandInput" | "GameHandCreateWithoutGameInput" | "GameHandCreateWithoutPilesInput" | "GameHandCreateWithoutPlayerInput" | "GameHandPileCreateManyWithoutHandPilesInput" | "GameHandPileCreateManyWithoutPilesInput" | "GameHandPileCreateWithoutCardsInput" | "GameHandPileCreateWithoutHandInput" | "GameHandPileWhereUniqueInput" | "GameHandWhereUniqueInput" | "GamePileCreateManyWithoutPilesInput" | "GamePileCreateWithoutGameInput" | "GamePileWhereUniqueInput" | "GameWhereUniqueInput" | "TrumpAttributeCreateInput" | "TrumpAttributeCreateManyWithoutAttributesInput" | "TrumpAttributeCreateOneWithoutAttributeInput" | "TrumpAttributeCreateWithoutPackInput" | "TrumpAttributeCreateWithoutTrumpAttributeValuesInput" | "TrumpAttributeValueCreateManyWithoutAttributeValuesInput" | "TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput" | "TrumpAttributeValueCreateWithoutAttributeInput" | "TrumpAttributeValueCreateWithoutCardInput" | "TrumpAttributeValueWhereUniqueInput" | "TrumpAttributeWhereUniqueInput" | "TrumpCardCreateInput" | "TrumpCardCreateManyWithoutCardsInput" | "TrumpCardCreateOneWithoutCardInput" | "TrumpCardCreateWithoutAttributeValuesInput" | "TrumpCardCreateWithoutPackInput" | "TrumpCardWhereUniqueInput" | "TrumpPackCreateInput" | "TrumpPackCreateManyWithoutTrumpPacksInput" | "TrumpPackCreateOneWithoutPackInput" | "TrumpPackCreateWithoutAttributesInput" | "TrumpPackCreateWithoutAuthorInput" | "TrumpPackWhereUniqueInput" | "UserCreateOneWithoutAuthorInput" | "UserCreateOneWithoutPlayerInput" | "UserCreateWithoutGameHandsInput" | "UserCreateWithoutTrumpPacksInput" | "UserWhereUniqueInput";
 
 export type NexusGenEnumNames = never;
 

@@ -62,6 +62,7 @@ const GameHand = objectType({
     t.model.game()
     t.model.player()
     t.model.score()
+    t.model.piles()
     t.model.atTurn()
   },
 })
@@ -126,8 +127,10 @@ const Query = objectType({
   name: 'Query',
   definition(t: any) {
     t.crud.user()
+    t.crud.users() // TODO restrict access
     t.crud.trumpPack()
     t.crud.trumpPacks()
+    t.crud.game()
     t.crud.games()
 
     t.field('me', {
@@ -499,11 +502,11 @@ const Mutation = objectType({
     })
 
     t.field('startGoofenspiel', {
-      type: 'Game',
+      type: 'ID',
       nullable: false,
       args: {
-        opponent: stringArg({ required: true }),
-        pack: stringArg({ required: true }),
+        opponent: idArg({ required: true }),
+        pack: idArg({ required: true }),
       },
       resolve: async (
         parent: any,
@@ -512,14 +515,25 @@ const Mutation = objectType({
       ) => {
         const user = await getUserId(ctx)
         if (user == null) {
-          return new Error('Not authenticated')
+          throw new Error('Not authenticated')
         }
 
         const trumpCards = await ctx.photon.trumpCards.findMany({
           where: { pack: { id: pack } },
         })
+        /*
         if (trumpCards.length < 10) {
           throw new Error('Not enough cards in pack')
+        }
+        */
+
+        if ((await ctx.photon.users.findOne({ where: { id: user } })) == null) {
+          throw new Error('User does not exist')
+        }
+        if (
+          (await ctx.photon.users.findOne({ where: { id: opponent } })) == null
+        ) {
+          throw new Error('Opponent does not exist')
         }
 
         const player1 = opponent
@@ -592,7 +606,7 @@ const Mutation = objectType({
           createdGame: game,
         })
 
-        return game
+        return game.id
       },
     })
   },

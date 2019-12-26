@@ -65,6 +65,8 @@ model TrumpCard {
   description     String?
   attributeValues TrumpAttributeValue[]
   imageUrl        String?
+  piles           GamePile[]
+  handPiles       GameHandPile[]
 }
 
 model TrumpAttribute {

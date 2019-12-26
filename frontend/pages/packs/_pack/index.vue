@@ -1,6 +1,10 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
     <h1 class="page-heading">Pack "{{ trumpPack.name }}"</h1>
+    <nuxt-link
+      :to="`/packs/${trumpPack.id}/play`"
+      class="button button--secondary button--lg float-left my-2 ml-4 mr-6"
+    >Play</nuxt-link>
     <p>Description: {{ trumpPack.description }}</p>
     <p>Author: {{ trumpPack.author.name }}</p>
 
