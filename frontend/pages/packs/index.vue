@@ -57,32 +57,6 @@ export default {
         }
       }
     `,
-    trumpGames: {
-      query: gql`
-        query {
-          trumpGames {
-            id
-          }
-        }
-      `,
-      subscribeToMore: {
-        document: gql`
-          subscription trumpGames {
-            createdTrumpGame {
-              id
-            }
-          }
-        `,
-        updateQuery: (previousResult, { subscriptionData }) => {
-          return {
-            trumpGames: [
-              ...previousResult.trumpGames,
-              subscriptionData.data.createdTrumpGame
-            ]
-          }
-        }
-      }
-    }
   }
 }
 </script>
