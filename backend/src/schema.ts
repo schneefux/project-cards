@@ -3,10 +3,11 @@ import * as fs from 'fs'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 import { nexusPrismaPlugin } from 'nexus-prisma'
-import { makeSchema, objectType, stringArg, arg, intArg, idArg } from 'nexus'
+import { makeSchema, objectType, stringArg, arg, idArg } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
-import { getUserId } from './util'
+import { getUserId, shuffle } from './util'
+import { TrumpCard, TrumpAttributeValue } from '@prisma/photon'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
 const JWT_SECRET = process.env.JWT_SECRET || ''
@@ -30,18 +31,39 @@ const User = objectType({
     t.model.name()
     t.model.email()
     t.model.trumpPacks()
-    t.model.trumpGames()
-    t.model.trumpGamesAtTurn()
+    t.model.gameHands()
   },
 })
 
-const TrumpGame = objectType({
-  name: 'TrumpGame',
+const Game = objectType({
+  name: 'Game',
   definition(t: any) {
     t.model.id()
-    t.model.players()
     t.model.pack()
-    t.model.playerAtTurn()
+    t.model.piles()
+    t.model.hands()
+  },
+})
+
+const GamePile = objectType({
+  name: 'GamePile',
+  definition(t: any) {
+    t.model.id()
+    t.model.game()
+    t.model.cards()
+    t.model.name()
+  },
+})
+
+const GameHand = objectType({
+  name: 'GameHand',
+  definition(t: any) {
+    t.model.id()
+    t.model.game()
+    t.model.player()
+    t.model.score()
+    t.model.cards()
+    t.model.atTurn()
   },
 })
 
@@ -97,7 +119,7 @@ const Query = objectType({
     t.crud.user()
     t.crud.trumpPack()
     t.crud.trumpPacks()
-    t.crud.trumpGames()
+    t.crud.games()
 
     t.field('me', {
       type: 'User',
@@ -247,51 +269,311 @@ const Mutation = objectType({
       },
     })
 
-    t.field('startTrumpGame', {
-      type: 'TrumpGame',
+    t.field('bidGoofenspiel', {
+      type: 'Game',
+      // TODO check that the return value is indeed a valid 'Game'
+      // - unfetched relations might be missing
       nullable: false,
       args: {
-        player1: stringArg({ nullable: false }),
-        player2: stringArg({ nullable: false }),
-        pack: stringArg({ nullable: false }),
+        gameId: idArg({ required: true }),
+        cardId: idArg({ required: true }),
       },
       resolve: async (
         parent: any,
-        {
-          player1,
-          player2,
-          pack,
-        }: { player1: string; player2: string; pack: string },
+        { gameId, cardId }: { gameId: string; cardId: string },
         ctx: Context,
       ) => {
-        const trumpGame = await ctx.photon.trumpGames.create({
-          data: {
-            players: {
-              connect: [
-                {
-                  id: player1,
-                },
-                {
-                  id: player2,
-                },
-              ],
-            },
-            pack: {
-              connect: {
-                id: pack,
+        /**
+         * All cards are divided into 3 piles.
+         * One pile is reserved for prices, the other two are the players' hands.
+         * Each round, a card from the reserve is revealed.
+         * Both players place a secret bid on the card.
+         * Highest bid wins the price. On draw, next round begins.
+         *
+         * Reserve pile: name='reserve'
+         * Price pile: name='price'
+         * Player bids: name=player id
+         */
+        const user = await getUserId(ctx)
+        if (user == null) {
+          return new Error('Not authenticated')
+        }
+
+        const game = await ctx.photon.games.findOne({
+          where: { id: gameId },
+          include: {
+            hands: {
+              include: {
+                player: true,
+                cards: true,
               },
             },
-            playerAtTurn: {
-              connect: {
-                id: player1,
+            piles: {
+              include: {
+                cards: true,
               },
             },
           },
         })
-        ctx.pubsub.publish('CREATED_TRUMP_GAME', {
-          createdTrumpGame: trumpGame,
+        if (game == null) {
+          throw new Error('Game does not exist')
+        }
+
+        const playerHand = game.hands.find(h => h.player.id == user)
+        if (playerHand == null) {
+          throw new Error('User is not in game')
+        }
+
+        if (!playerHand.atTurn) {
+          throw new Error('Player is not at turn')
+        }
+
+        const opponentHand = game.hands.find(h => h.player.id != user)
+        const userHand = game.hands.find(h => h.player.id == user)
+        if (opponentHand == null || userHand == null) {
+          throw new Error('Hands do not exist - this should not happen')
+        }
+
+        const opponent = opponentHand.player.id
+
+        const bids = game.piles.find(p => p.name == user)
+        if (bids == null) {
+          throw new Error(
+            'User bid pile does not exist - this should not happen',
+          )
+        }
+
+        const bidIndex = bids.cards.findIndex(c => c.id == cardId)
+        if (bidIndex == -1) {
+          throw new Error('Player does not own card')
+        }
+
+        const bid = userHand.cards[bidIndex]
+        await ctx.photon.gameHands.update({
+          where: { id: userHand.id },
+          data: {
+            cards: { disconnect: [{ id: bid.id }] },
+            atTurn: false,
+          },
         })
-        return trumpGame
+
+        await ctx.photon.gamePiles.update({
+          where: { id: user },
+          data: {
+            cards: { connect: [{ id: bid.id }] },
+          },
+        })
+
+        // refetch new state
+        const newGame = await ctx.photon.games.findOne({
+          where: { id: gameId },
+          include: {
+            hands: {
+              include: {
+                player: true,
+                cards: {
+                  include: {
+                    attributeValues: true,
+                  },
+                },
+              },
+            },
+            piles: {
+              include: {
+                cards: {
+                  include: {
+                    attributeValues: true,
+                  },
+                },
+              },
+            },
+          },
+        })
+
+        if (newGame == null) {
+          throw new Error('Game is gone - this should not happen')
+        }
+
+        if (opponentHand.atTurn) {
+          // wait until next turn
+          return newGame
+        }
+
+        const prices = newGame.piles.find(p => p.name == 'price')
+        const userBids = newGame.piles.find(p => p.name == user)
+        const opponentBids = newGame.piles.find(p => p.name == opponent)
+        if (prices == null || userBids == null || opponentBids == null) {
+          throw new Error('Piles do not exist - this should not happen')
+        }
+
+        const cardScore = (attributeValues: TrumpAttributeValue[]) =>
+          attributeValues[0].value
+
+        const price = prices.cards.reduce(
+          (sum, card) => sum + cardScore(card.attributeValues),
+          0,
+        )
+        const opponentBid = opponentBids.cards.reduce(
+          (sum, card) => sum + cardScore(card.attributeValues),
+          0,
+        )
+        const userBid = userBids.cards.reduce(
+          (sum, card) => sum + cardScore(card.attributeValues),
+          0,
+        )
+
+        // add price score to winner
+        if (userBid > opponentBid) {
+          await ctx.photon.gameHands.update({
+            where: { id: playerHand.id },
+            data: {
+              score: playerHand.score + price,
+            },
+          })
+        }
+        if (userBid < opponentBid) {
+          await ctx.photon.gameHands.update({
+            where: { id: opponentHand.id },
+            data: {
+              score: opponentHand.score + price,
+            },
+          })
+        }
+
+        if (userBid != opponentBid) {
+          // clear bid & price piles
+          await ctx.photon.gamePiles.update({
+            where: { id: userBids.id },
+            data: {
+              cards: {
+                disconnect: userBids.cards.map(c => ({ id: c.id })),
+              },
+            },
+          })
+          await ctx.photon.gamePiles.update({
+            where: { id: opponentBids.id },
+            data: {
+              cards: {
+                disconnect: opponentBids.cards.map(c => ({ id: c.id })),
+              },
+            },
+          })
+          await ctx.photon.gamePiles.update({
+            where: { id: prices.id },
+            data: {
+              cards: {
+                disconnect: prices.cards.map(c => ({ id: c.id })),
+              },
+            },
+          })
+        }
+
+        // draw new price
+        const reserves = newGame.piles.find(p => p.name == 'reserve')
+        if (reserves == null) {
+          throw new Error('Reserve pile not found - this should not happen')
+        }
+
+        // TODO end game if reserve is empty
+        const newPrices = reserves.cards.splice(0, 1)
+        await ctx.photon.gamePiles.update({
+          where: { id: reserves.id },
+          data: {
+            cards: {
+              disconnect: newPrices.map(c => ({ id: c.id })),
+            },
+          },
+        })
+        await ctx.photon.gamePiles.update({
+          where: { id: prices.id },
+          data: {
+            cards: {
+              connect: newPrices.map(c => ({ id: c.id })),
+            },
+          },
+        })
+
+        return await ctx.photon.games.findOne({ where: { id: gameId } })
+      },
+    })
+
+    t.field('startGoofenspiel', {
+      type: 'Game',
+      nullable: false,
+      args: {
+        opponent: stringArg({ required: true }),
+        pack: stringArg({ required: true }),
+      },
+      resolve: async (
+        parent: any,
+        { opponent, pack }: { opponent: string; pack: string },
+        ctx: Context,
+      ) => {
+        const user = await getUserId(ctx)
+        if (user == null) {
+          return new Error('Not authenticated')
+        }
+
+        const trumpCards = await ctx.photon.trumpCards.findMany({
+          where: { pack: { id: pack } },
+        })
+        if (trumpCards.length < 10) {
+          throw new Error('Not enough cards in pack')
+        }
+
+        const player1 = opponent
+        const player2 = user
+
+        const cards = shuffle(
+          trumpCards.concat(trumpCards, trumpCards, trumpCards),
+        )
+        const third = Math.floor(cards.length / 3)
+        const hand1Cards = cards.splice(0, third)
+        const hand2Cards = cards.splice(0, third)
+        const priceCards = cards.splice(0, 1)
+        const reserveCards = cards
+
+        const game = await ctx.photon.games.create({
+          data: {
+            piles: {
+              create: [
+                {
+                  name: 'reserve',
+                  cards: { connect: reserveCards.map(c => ({ id: c.id })) },
+                },
+                {
+                  name: 'price',
+                  cards: { connect: priceCards.map(c => ({ id: c.id })) },
+                },
+                { name: player1 },
+                { name: player2 },
+              ],
+            },
+            hands: {
+              create: [
+                {
+                  player: { connect: { id: player1 } },
+                  score: 0,
+                  cards: { connect: hand1Cards.map(c => ({ id: c.id })) },
+                  atTurn: true,
+                },
+                {
+                  player: { connect: { id: player2 } },
+                  score: 0,
+                  cards: { connect: hand2Cards.map(c => ({ id: c.id })) },
+                  atTurn: true,
+                },
+              ],
+            },
+            pack: { connect: { id: pack } },
+          },
+        })
+
+        ctx.pubsub.publish('STARTED_GAME', {
+          createdGame: game,
+        })
+
+        return game
       },
     })
   },
@@ -300,11 +582,11 @@ const Mutation = objectType({
 const Subscription = objectType({
   name: 'Subscription',
   definition(t: any) {
-    t.field('createdTrumpGame', {
-      type: 'TrumpGame',
+    t.field('createdGame', {
+      type: 'Game',
       nullable: false,
       subscribe: (parent: any, {}, ctx: Context) =>
-        ctx.pubsub.asyncIterator('CREATED_TRUMP_GAME'),
+        ctx.pubsub.asyncIterator('STARTED_GAME'),
     })
   },
 })
@@ -317,7 +599,9 @@ export const schema = makeSchema({
     Upload,
     User,
     LoginResponse,
-    TrumpGame,
+    Game,
+    GamePile,
+    GameHand,
     TrumpPack,
     TrumpCard,
     TrumpAttribute,
