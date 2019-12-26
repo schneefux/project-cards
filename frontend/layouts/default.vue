@@ -7,7 +7,7 @@
         <nuxt-link to="/" class="font-semibold text-xl text-white tracking-tighter">Title Goes Here</nuxt-link>
         <div class="md:hidden float-right mt-1">
           <nuxt-link
-            v-show="me != undefined"
+            v-if="me != undefined"
             to="/login"
             class="px-2 py-1 border border-primary-200 rounded-sm text-primary-200 hover:bg-primary-600"
           >{{ me.name }}</nuxt-link>
@@ -21,7 +21,7 @@
             <nuxt-link v-show="me == undefined" to="/login" class="nav-link">Login</nuxt-link>
             <div class="hidden md:inline-block">
               <nuxt-link
-                v-show="me != undefined"
+                v-if="me != undefined"
                 to="/login"
                 class="inline font-medium border-b border-primary-200 text-primary-200 hover:text-primary-100"
               >{{ me.name }}</nuxt-link>
