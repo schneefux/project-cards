@@ -8,6 +8,7 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
 import { getUserId, shuffle } from './util'
 import { TrumpCard, TrumpAttributeValue } from '@prisma/photon'
+import { withFilter } from 'graphql-yoga'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
 const JWT_SECRET = process.env.JWT_SECRET || ''
@@ -50,8 +51,17 @@ const GamePile = objectType({
   definition(t: any) {
     t.model.id()
     t.model.game()
-    t.model.cards()
+    t.model.pileCards()
     t.model.name()
+  },
+})
+
+const GamePileCard = objectType({
+  name: 'GamePileCard',
+  definition(t: any) {
+    t.model.id()
+    t.model.index()
+    t.model.card()
   },
 })
 
@@ -72,7 +82,7 @@ const GameHandPile = objectType({
   definition(t: any) {
     t.model.id()
     t.model.hand()
-    t.model.cards()
+    t.model.pileCards()
     t.model.name()
   },
 })
@@ -286,11 +296,11 @@ const Mutation = objectType({
       nullable: false,
       args: {
         gameId: idArg({ required: true }),
-        cardId: idArg({ required: true }),
+        pileCardId: idArg({ required: true }),
       },
       resolve: async (
         parent: any,
-        { gameId, cardId }: { gameId: string; cardId: string },
+        { gameId, pileCardId }: { gameId: string; pileCardId: string },
         ctx: Context,
       ) => {
         /**
@@ -317,9 +327,11 @@ const Mutation = objectType({
                 player: true,
                 piles: {
                   include: {
-                    cards: {
+                    pileCards: {
                       include: {
-                        attributeValues: true,
+                        card: {
+                          include: { attributeValues: true },
+                        },
                       },
                     },
                   },
@@ -328,9 +340,13 @@ const Mutation = objectType({
             },
             piles: {
               include: {
-                cards: {
+                pileCards: {
                   include: {
-                    attributeValues: true,
+                    card: {
+                      include: {
+                        attributeValues: true,
+                      },
+                    },
                   },
                 },
               },
@@ -361,12 +377,14 @@ const Mutation = objectType({
           throw new Error('User piles do not exist - this should not happen')
         }
 
-        const bidIndex = userBidPile.cards.findIndex(c => c.id == cardId)
-        if (bidIndex == -1) {
+        const handIndex = userHandPile.pileCards.findIndex(
+          p => p.id == pileCardId,
+        )
+        if (handIndex == -1) {
           throw new Error('Player does not own card')
         }
 
-        const userBid = userBidPile.cards[bidIndex]
+        const userBid = userHandPile.pileCards[handIndex]
         // user at turn = false
         userHand.atTurn = false
         await ctx.photon.gameHands.update({
@@ -376,23 +394,27 @@ const Mutation = objectType({
           },
         })
         // move card from hand pile to bid pile
-        userHandPile.cards.splice(bidIndex, 1)
+        userHandPile.pileCards.splice(handIndex, 1)
         await ctx.photon.gameHandPiles.update({
           where: { id: userHandPile.id },
           data: {
-            cards: { disconnect: [{ id: userBid.id }] },
+            pileCards: { disconnect: [{ id: userBid.id }] },
           },
         })
-        userBidPile.cards.push(userBid)
+        userBidPile.pileCards.push(userBid)
         await ctx.photon.gameHandPiles.update({
           where: { id: userBidPile.id },
           data: {
-            cards: { connect: [{ id: userBid.id }] },
+            pileCards: { connect: [{ id: userBid.id }] },
           },
         })
 
         if (opponentHand.atTurn) {
           // wait for opponent
+          ctx.pubsub.publish('UPDATED_GAME', {
+            updatedGame: { id: game.id },
+          })
+
           return true
         }
 
@@ -413,16 +435,16 @@ const Mutation = objectType({
         const cardScore = (attributeValues: TrumpAttributeValue[]) =>
           attributeValues[0].value
 
-        const price = pricePile.cards.reduce(
-          (sum, card) => sum + cardScore(card.attributeValues),
+        const price = pricePile.pileCards.reduce(
+          (sum, pileCard) => sum + cardScore(pileCard.card.attributeValues),
           0,
         )
-        const opponentScore = opponentBidPile.cards.reduce(
-          (sum, card) => sum + cardScore(card.attributeValues),
+        const opponentScore = opponentBidPile.pileCards.reduce(
+          (sum, pileCard) => sum + cardScore(pileCard.card.attributeValues),
           0,
         )
-        const userScore = userBidPile.cards.reduce(
-          (sum, card) => sum + cardScore(card.attributeValues),
+        const userScore = userBidPile.pileCards.reduce(
+          (sum, pileCard) => sum + cardScore(pileCard.card.attributeValues),
           0,
         )
 
@@ -444,59 +466,83 @@ const Mutation = objectType({
           })
         }
 
-        if (userScore != opponentScore) {
+        const reservePile = game.piles.find(p => p.name == 'reserve')
+        if (reservePile == null) {
+          throw new Error('Reserve pile not found - this should not happen')
+        }
+
+        if (userScore != opponentScore || reservePile.pileCards.length == 0) {
           // clear bid & price piles
           await ctx.photon.gameHandPiles.update({
             where: { id: userBidPile.id },
             data: {
-              cards: {
-                disconnect: userBidPile.cards.map(c => ({ id: c.id })),
+              pileCards: {
+                disconnect: userBidPile.pileCards.map(p => ({ id: p.id })),
               },
             },
           })
           await ctx.photon.gameHandPiles.update({
             where: { id: opponentBidPile.id },
             data: {
-              cards: {
-                disconnect: opponentBidPile.cards.map(c => ({ id: c.id })),
+              pileCards: {
+                disconnect: opponentBidPile.pileCards.map(p => ({ id: p.id })),
               },
             },
           })
           await ctx.photon.gamePiles.update({
             where: { id: pricePile.id },
             data: {
-              cards: {
-                disconnect: pricePile.cards.map(c => ({ id: c.id })),
+              pileCards: {
+                disconnect: pricePile.pileCards.map(p => ({ id: p.id })),
               },
             },
           })
         }
 
-        // draw new price
-        const reservePile = game.piles.find(p => p.name == 'reserve')
-        if (reservePile == null) {
-          throw new Error('Reserve pile not found - this should not happen')
+        if (reservePile.pileCards.length == 0) {
+          // end of game
+          ctx.pubsub.publish('UPDATED_GAME', {
+            updatedGame: { id: game.id },
+          })
+          return true
         }
 
-        // TODO end game if reserve is empty
-        const newPrices = reservePile.cards.splice(0, 1)
+        // draw new price
+        const newPrices = reservePile.pileCards.splice(0, 1)
         await ctx.photon.gamePiles.update({
           where: { id: reservePile.id },
           data: {
-            cards: {
-              disconnect: newPrices.map(c => ({ id: c.id })),
+            pileCards: {
+              disconnect: newPrices.map(p => ({ id: p.id })),
             },
           },
         })
         await ctx.photon.gamePiles.update({
-          where: { id: reservePile.id },
+          where: { id: pricePile.id },
           data: {
-            cards: {
-              connect: newPrices.map(c => ({ id: c.id })),
+            pileCards: {
+              connect: newPrices.map(p => ({ id: p.id })),
             },
           },
         })
 
+        // unlock hands
+        await ctx.photon.gameHands.update({
+          where: { id: userHand.id },
+          data: {
+            atTurn: true,
+          },
+        })
+        await ctx.photon.gameHands.update({
+          where: { id: opponentHand.id },
+          data: {
+            atTurn: true,
+          },
+        })
+
+        ctx.pubsub.publish('UPDATED_GAME', {
+          updatedGame: { id: game.id },
+        })
         return true
       },
     })
@@ -554,11 +600,19 @@ const Mutation = objectType({
               create: [
                 {
                   name: 'reserve',
-                  cards: { connect: reserveCards.map(c => ({ id: c.id })) },
+                  pileCards: {
+                    create: reserveCards.map(c => ({
+                      card: { connect: { id: c.id } },
+                    })),
+                  },
                 },
                 {
                   name: 'price',
-                  cards: { connect: priceCards.map(c => ({ id: c.id })) },
+                  pileCards: {
+                    create: priceCards.map(c => ({
+                      card: { connect: { id: c.id } },
+                    })),
+                  },
                 },
               ],
             },
@@ -572,7 +626,11 @@ const Mutation = objectType({
                     create: [
                       {
                         name: 'hand',
-                        cards: { connect: hand1Cards.map(c => ({ id: c.id })) },
+                        pileCards: {
+                          create: hand1Cards.map(c => ({
+                            card: { connect: { id: c.id } },
+                          })),
+                        },
                       },
                       {
                         name: 'bid',
@@ -588,7 +646,11 @@ const Mutation = objectType({
                     create: [
                       {
                         name: 'hand',
-                        cards: { connect: hand2Cards.map(c => ({ id: c.id })) },
+                        pileCards: {
+                          create: hand2Cards.map(c => ({
+                            card: { connect: { id: c.id } },
+                          })),
+                        },
                       },
                       {
                         name: 'bid',
@@ -621,6 +683,19 @@ const Subscription = objectType({
       subscribe: (parent: any, {}, ctx: Context) =>
         ctx.pubsub.asyncIterator('STARTED_GAME'),
     })
+
+    t.field('updatedGame', {
+      type: 'Game',
+      nullable: false,
+      args: {
+        id: idArg({ required: true }),
+      },
+      subscribe: withFilter(
+        (parent: any, { id }: { id: string }, ctx: Context) =>
+          ctx.pubsub.asyncIterator('UPDATED_GAME'),
+        (payload, { id }: { id: string }) => payload.updatedGame.id == id,
+      ),
+    })
   },
 })
 
@@ -636,6 +711,7 @@ export const schema = makeSchema({
     GamePile,
     GameHand,
     GameHandPile,
+    GamePileCard,
     TrumpPack,
     TrumpCard,
     TrumpAttribute,

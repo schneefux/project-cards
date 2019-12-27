@@ -25,10 +25,10 @@ model Game {
 }
 
 model GamePile {
-  id    String      @default(cuid()) @id
-  game  Game
-  cards TrumpCard[]
-  name  String
+  id        String         @default(cuid()) @id
+  game      Game
+  pileCards GamePileCard[]
+  name      String
 }
 
 model GameHand {
@@ -41,10 +41,10 @@ model GameHand {
 }
 
 model GameHandPile {
-  id    String      @default(cuid()) @id
-  hand  GameHand
-  cards TrumpCard[]
-  name  String
+  id        String         @default(cuid()) @id
+  hand      GameHand
+  pileCards GamePileCard[]
+  name      String
 }
 
 model TrumpPack {
@@ -58,6 +58,14 @@ model TrumpPack {
   updatedAt   DateTime         @updatedAt
 }
 
+model GamePileCard {
+  id        String         @default(cuid()) @id
+  index     Int?
+  card      TrumpCard
+  piles     GamePile[]
+  handPiles GameHandPile[]
+}
+
 model TrumpCard {
   id              String                @default(cuid()) @id
   name            String
@@ -65,8 +73,7 @@ model TrumpCard {
   description     String?
   attributeValues TrumpAttributeValue[]
   imageUrl        String?
-  piles           GamePile[]
-  handPiles       GameHandPile[]
+  pileCards       GamePileCard[]
 }
 
 model TrumpAttribute {

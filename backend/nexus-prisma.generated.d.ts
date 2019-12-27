@@ -213,6 +213,7 @@ interface ModelTypes {
   GameHand: photon.GameHand
   GameHandPile: photon.GameHandPile
   TrumpPack: photon.TrumpPack
+  GamePileCard: photon.GamePileCard
   TrumpCard: photon.TrumpCard
   TrumpAttribute: photon.TrumpAttribute
   TrumpAttributeValue: photon.TrumpAttributeValue
@@ -229,7 +230,7 @@ interface NexusPrismaInputs {
   ordering: 'id'
 }
     gamePiles: {
-  filtering: 'id' | 'cards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
+  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
   ordering: 'id' | 'name'
 }
     gameHands: {
@@ -237,15 +238,19 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'score' | 'atTurn'
 }
     gameHandPiles: {
-  filtering: 'id' | 'cards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
+  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
   ordering: 'id' | 'name'
 }
     trumpPacks: {
   filtering: 'id' | 'name' | 'description' | 'cards' | 'attributes' | 'createdAt' | 'updatedAt' | 'games' | 'AND' | 'OR' | 'NOT' | 'author'
   ordering: 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
 }
+    gamePileCards: {
+  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  ordering: 'id' | 'index'
+}
     trumpCards: {
-  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'pack'
+  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'pileCards' | 'AND' | 'OR' | 'NOT' | 'pack'
   ordering: 'id' | 'name' | 'description' | 'imageUrl'
 }
     trumpAttributes: {
@@ -270,7 +275,7 @@ interface NexusPrismaInputs {
 
   },  Game: {
     piles: {
-  filtering: 'id' | 'cards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
+  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
   ordering: 'id' | 'name'
 }
     hands: {
@@ -279,26 +284,26 @@ interface NexusPrismaInputs {
 }
 
   },  GamePile: {
-    cards: {
-  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'pack'
-  ordering: 'id' | 'name' | 'description' | 'imageUrl'
+    pileCards: {
+  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  ordering: 'id' | 'index'
 }
 
   },  GameHand: {
     piles: {
-  filtering: 'id' | 'cards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
+  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
   ordering: 'id' | 'name'
 }
 
   },  GameHandPile: {
-    cards: {
-  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'pack'
-  ordering: 'id' | 'name' | 'description' | 'imageUrl'
+    pileCards: {
+  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  ordering: 'id' | 'index'
 }
 
   },  TrumpPack: {
     cards: {
-  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'pack'
+  filtering: 'id' | 'name' | 'description' | 'attributeValues' | 'imageUrl' | 'pileCards' | 'AND' | 'OR' | 'NOT' | 'pack'
   ordering: 'id' | 'name' | 'description' | 'imageUrl'
 }
     attributes: {
@@ -310,18 +315,24 @@ interface NexusPrismaInputs {
   ordering: 'id'
 }
 
+  },  GamePileCard: {
+    piles: {
+  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
+  ordering: 'id' | 'name'
+}
+    handPiles: {
+  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
+  ordering: 'id' | 'name'
+}
+
   },  TrumpCard: {
     attributeValues: {
   filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'card' | 'attribute'
   ordering: 'id' | 'value'
 }
-    piles: {
-  filtering: 'id' | 'cards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
-  ordering: 'id' | 'name'
-}
-    handPiles: {
-  filtering: 'id' | 'cards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
-  ordering: 'id' | 'name'
+    pileCards: {
+  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  ordering: 'id' | 'index'
 }
 
   },  TrumpAttribute: {
@@ -350,6 +361,8 @@ interface NexusPrismaTypes {
     gameHandPiles: 'GameHandPile'
     trumpPack: 'TrumpPack'
     trumpPacks: 'TrumpPack'
+    gamePileCard: 'GamePileCard'
+    gamePileCards: 'GamePileCard'
     trumpCard: 'TrumpCard'
     trumpCards: 'TrumpCard'
     trumpAttribute: 'TrumpAttribute'
@@ -395,6 +408,12 @@ interface NexusPrismaTypes {
     deleteOneTrumpPack: 'TrumpPack'
     deleteManyTrumpPack: 'BatchPayload'
     upsertOneTrumpPack: 'TrumpPack'
+    createOneGamePileCard: 'GamePileCard'
+    updateOneGamePileCard: 'GamePileCard'
+    updateManyGamePileCard: 'BatchPayload'
+    deleteOneGamePileCard: 'GamePileCard'
+    deleteManyGamePileCard: 'BatchPayload'
+    upsertOneGamePileCard: 'GamePileCard'
     createOneTrumpCard: 'TrumpCard'
     updateOneTrumpCard: 'TrumpCard'
     updateManyTrumpCard: 'BatchPayload'
@@ -432,7 +451,7 @@ interface NexusPrismaTypes {
 },  GamePile: {
     id: 'String'
     game: 'Game'
-    cards: 'TrumpCard'
+    pileCards: 'GamePileCard'
     name: 'String'
 
 },  GameHand: {
@@ -446,7 +465,7 @@ interface NexusPrismaTypes {
 },  GameHandPile: {
     id: 'String'
     hand: 'GameHand'
-    cards: 'TrumpCard'
+    pileCards: 'GamePileCard'
     name: 'String'
 
 },  TrumpPack: {
@@ -460,6 +479,13 @@ interface NexusPrismaTypes {
     updatedAt: 'DateTime'
     games: 'Game'
 
+},  GamePileCard: {
+    id: 'String'
+    index: 'Int'
+    card: 'TrumpCard'
+    piles: 'GamePile'
+    handPiles: 'GameHandPile'
+
 },  TrumpCard: {
     id: 'String'
     name: 'String'
@@ -467,8 +493,7 @@ interface NexusPrismaTypes {
     description: 'String'
     attributeValues: 'TrumpAttributeValue'
     imageUrl: 'String'
-    piles: 'GamePile'
-    handPiles: 'GameHandPile'
+    pileCards: 'GamePileCard'
 
 },  TrumpAttribute: {
     id: 'String'
@@ -493,6 +518,7 @@ interface NexusPrismaMethods {
   GameHand: NexusPrismaFields<'GameHand'>
   GameHandPile: NexusPrismaFields<'GameHandPile'>
   TrumpPack: NexusPrismaFields<'TrumpPack'>
+  GamePileCard: NexusPrismaFields<'GamePileCard'>
   TrumpCard: NexusPrismaFields<'TrumpCard'>
   TrumpAttribute: NexusPrismaFields<'TrumpAttribute'>
   TrumpAttributeValue: NexusPrismaFields<'TrumpAttributeValue'>

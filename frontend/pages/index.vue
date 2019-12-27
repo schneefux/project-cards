@@ -28,6 +28,11 @@ export default {
           subscription games {
             createdGame {
               id
+              pack {
+                author {
+                  name
+                }
+              }
             }
           }
         `,
