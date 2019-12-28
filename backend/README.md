@@ -1,9 +1,9 @@
 Environment variables:
 
+- JWT_SECRET (required)
 - CORS_ORIGIN (request origin if unset)
 - DATABASE_URL (local sqlite if unset)
-- IMAGE_DIR
-- JWT_SECRET
+- IMAGE_DIR (`./images` if unset)
 
 RangeError during upload? Run `npx npm-force-resolutions` for Node 13 compatibility, see [this issue](https://github.com/apollographql/apollo-server/issues/3579)
 

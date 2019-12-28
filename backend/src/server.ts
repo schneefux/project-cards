@@ -3,9 +3,13 @@ import { GraphQLServer } from 'graphql-yoga'
 import { shield, rule } from 'graphql-shield'
 import { schema } from './schema'
 import { createContext, Context } from './context'
-import { getUserId } from './util'
+import { getUserId, JWT_SECRET } from './util'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
+
+if (JWT_SECRET == '') {
+  throw new Error('JWT_SECRET needs to be set')
+}
 
 function shutdown() {
   // Any sync or async graceful shutdown procedures can be run before exiting…
