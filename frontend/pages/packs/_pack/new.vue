@@ -48,8 +48,12 @@
       </div>
 
       <div class="w-full mt-2 flex flex-wrap justify-end">
-        <button @click="saveAndReset" class="button button--secondary">Save and Create Another</button>
-        <button type="submit" class="button button--secondary ml-1 mt-1">Save and Return to Packs</button>
+        <button
+          type="button"
+          @click="saveAndReset"
+          class="button button--secondary mb-1"
+        >Save and Create Another</button>
+        <button type="submit" class="button button--secondary ml-1 mb-1">Save and Return to Packs</button>
       </div>
     </form>
   </div>

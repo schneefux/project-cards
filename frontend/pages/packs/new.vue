@@ -32,11 +32,13 @@
               <button
                 @click="addAttribute"
                 v-show="attributes.length < 5"
+                type="button"
                 class="button button--sm mt-1"
               >Add</button>
               <button
                 @click="removeAttribute"
                 v-show="attributes.length > 1"
+                type="button"
                 class="button button--sm mt-1"
               >Remove</button>
             </div>
