@@ -405,12 +405,13 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     bidGoofenspiel: boolean; // Boolean!
+    createGoofenspiel: string; // ID!
     createOneTrumpAttribute: NexusGenRootTypes['TrumpAttribute']; // TrumpAttribute!
     createOneTrumpCard: NexusGenRootTypes['TrumpCard']; // TrumpCard!
     createOneTrumpPack: NexusGenRootTypes['TrumpPack']; // TrumpPack!
+    joinGoofenspiel: boolean; // Boolean!
     login: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
     register: NexusGenRootTypes['LoginResponse'] | null; // LoginResponse
-    startGoofenspiel: string; // ID!
     uploadTrumpCardImage: boolean; // Boolean!
   }
   Query: { // field return type
@@ -514,6 +515,9 @@ export interface NexusGenArgTypes {
       gameId: string; // ID!
       pileCardId: string; // ID!
     }
+    createGoofenspiel: { // args
+      pack: string; // ID!
+    }
     createOneTrumpAttribute: { // args
       data: NexusGenInputs['TrumpAttributeCreateInput']; // TrumpAttributeCreateInput!
     }
@@ -523,6 +527,9 @@ export interface NexusGenArgTypes {
     createOneTrumpPack: { // args
       data: NexusGenInputs['TrumpPackCreateInput']; // TrumpPackCreateInput!
     }
+    joinGoofenspiel: { // args
+      gameId: string; // ID!
+    }
     login: { // args
       email: string; // String!
       password: string; // String!
@@ -531,10 +538,6 @@ export interface NexusGenArgTypes {
       email: string; // String!
       name: string; // String!
       password: string; // String!
-    }
-    startGoofenspiel: { // args
-      opponent: string; // ID!
-      pack: string; // ID!
     }
     uploadTrumpCardImage: { // args
       cardId: string; // ID!

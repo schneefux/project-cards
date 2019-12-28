@@ -173,12 +173,13 @@ type LoginResponse {
 
 type Mutation {
   bidGoofenspiel(gameId: ID!, pileCardId: ID!): Boolean!
+  createGoofenspiel(pack: ID!): ID!
   createOneTrumpAttribute(data: TrumpAttributeCreateInput!): TrumpAttribute!
   createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
+  joinGoofenspiel(gameId: ID!): Boolean!
   login(email: String!, password: String!): LoginResponse
   register(email: String!, name: String!, password: String!): LoginResponse
-  startGoofenspiel(opponent: ID!, pack: ID!): ID!
   uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
 

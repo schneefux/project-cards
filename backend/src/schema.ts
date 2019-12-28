@@ -547,16 +547,15 @@ const Mutation = objectType({
       },
     })
 
-    t.field('startGoofenspiel', {
-      type: 'ID',
+    t.field('joinGoofenspiel', {
+      type: 'Boolean',
       nullable: false,
       args: {
-        opponent: idArg({ required: true }),
-        pack: idArg({ required: true }),
+        gameId: idArg({ required: true }),
       },
       resolve: async (
         parent: any,
-        { opponent, pack }: { opponent: string; pack: string },
+        { gameId }: { gameId: string },
         ctx: Context,
       ) => {
         const user = await getUserId(ctx)
@@ -564,29 +563,42 @@ const Mutation = objectType({
           throw new Error('Not authenticated')
         }
 
-        const trumpCards = await ctx.photon.trumpCards.findMany({
-          where: { pack: { id: pack } },
-        })
-        /*
-        if (trumpCards.length < 10) {
-          throw new Error('Not enough cards in pack')
-        }
-        */
-
         if ((await ctx.photon.users.findOne({ where: { id: user } })) == null) {
           throw new Error('User does not exist')
         }
-        if (
-          (await ctx.photon.users.findOne({ where: { id: opponent } })) == null
-        ) {
-          throw new Error('Opponent does not exist')
+
+        const game = await ctx.photon.games.findOne({
+          where: { id: gameId },
+          include: {
+            hands: {
+              include: {
+                player: true,
+              },
+            },
+            pack: {
+              include: {
+                cards: true,
+              },
+            },
+          },
+        })
+
+        if (game == null) {
+          throw new Error('Game does not exist')
         }
 
-        const player1 = opponent
-        const player2 = user
+        if (game.hands.length == 2) {
+          throw new Error('Game already full')
+        }
+
+        const opponentHand = game.hands[0]
 
         const cards = shuffle(
-          trumpCards.concat(trumpCards, trumpCards, trumpCards),
+          game.pack.cards.concat(
+            game.pack.cards,
+            game.pack.cards,
+            game.pack.cards,
+          ),
         )
         const third = Math.floor(cards.length / 3)
         const hand1Cards = cards.splice(0, third)
@@ -594,7 +606,31 @@ const Mutation = objectType({
         const priceCards = cards.splice(0, 1)
         const reserveCards = cards
 
-        const game = await ctx.photon.games.create({
+        await ctx.photon.gameHands.update({
+          where: { id: opponentHand.id },
+          data: {
+            score: 0,
+            atTurn: true,
+            piles: {
+              create: [
+                {
+                  name: 'hand',
+                  pileCards: {
+                    create: hand1Cards.map(c => ({
+                      card: { connect: { id: c.id } },
+                    })),
+                  },
+                },
+                {
+                  name: 'bid',
+                },
+              ],
+            },
+          },
+        })
+
+        await ctx.photon.games.update({
+          where: { id: game.id },
           data: {
             piles: {
               create: [
@@ -619,27 +655,7 @@ const Mutation = objectType({
             hands: {
               create: [
                 {
-                  player: { connect: { id: player1 } },
-                  score: 0,
-                  atTurn: true,
-                  piles: {
-                    create: [
-                      {
-                        name: 'hand',
-                        pileCards: {
-                          create: hand1Cards.map(c => ({
-                            card: { connect: { id: c.id } },
-                          })),
-                        },
-                      },
-                      {
-                        name: 'bid',
-                      },
-                    ],
-                  },
-                },
-                {
-                  player: { connect: { id: player2 } },
+                  player: { connect: { id: user } },
                   score: 0,
                   atTurn: true,
                   piles: {
@@ -657,6 +673,57 @@ const Mutation = objectType({
                       },
                     ],
                   },
+                },
+              ],
+            },
+          },
+        })
+
+        ctx.pubsub.publish('UPDATED_GAME', {
+          updatedGame: game,
+        })
+
+        return true
+      },
+    })
+
+    t.field('createGoofenspiel', {
+      type: 'ID',
+      nullable: false,
+      args: {
+        pack: idArg({ required: true }),
+      },
+      resolve: async (
+        parent: any,
+        { pack }: { pack: string },
+        ctx: Context,
+      ) => {
+        const user = await getUserId(ctx)
+        if (user == null) {
+          throw new Error('Not authenticated')
+        }
+
+        /*
+        const trumpCards = await ctx.photon.trumpCards.findMany({
+          where: { pack: { id: pack } },
+        })
+        if (trumpCards.length < 10) {
+          throw new Error('Not enough cards in pack')
+        }
+        */
+
+        if ((await ctx.photon.users.findOne({ where: { id: user } })) == null) {
+          throw new Error('User does not exist')
+        }
+
+        const game = await ctx.photon.games.create({
+          data: {
+            hands: {
+              create: [
+                {
+                  player: { connect: { id: user } },
+                  score: 0,
+                  atTurn: false,
                 },
               ],
             },

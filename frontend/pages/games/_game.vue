@@ -2,41 +2,19 @@
   <div v-if="me != undefined && game != undefined" class="container container--page">
     <h1 class="page-heading">Game {{ game.id }}</h1>
 
-    <p>{{ pricePile.name }}</p>
-    <div
-      v-for="pileCard in pricePile.pileCards"
-      :key="pileCard.id"
-      class="playingcard playingcard--md"
-    >
-      <div class="playingcard__container">
-        <p class="playingcard__title">{{ pileCard.card.name }}</p>
-        <div class="playingcard__image boxedimage">
-          <div class="boxedimage__container">
-            <img class="boxedimage__image" :src="imagesRoot + pileCard.card.imageUrl" />
-          </div>
-        </div>
-        <table class="playingcard__attributes">
-          <tr v-for="attributeValue in pileCard.card.attributeValues" :key="attributeValue.id">
-            <td>{{ attributeValue.attribute.name }}</td>
-            <td>{{ attributeValue.value }}</td>
-          </tr>
-        </table>
+    <p>Players: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
+    <button
+      @click="joinGame"
+      v-show="game.hands.length < 2"
+      class="button button--secondary mb-1"
+    >Join</button>
 
-        <p class="playingcard__attribution">created by {{ game.pack.author.name }}</p>
-      </div>
-    </div>
-
-    <p
-      class="my-2 text-red-500"
-    >{{ myHand.player.name }} ({{ myHand.score }} points - {{ myHand.atTurn ? 'at turn' : 'not at turn' }})</p>
-
-    <div v-for="pile in myHand.piles" :key="pile.id">
-      <p>{{ pile.name }}</p>
-      <button
-        v-for="pileCard in pile.pileCards"
+    <div v-if="pricePile != undefined">
+      <p>{{ pricePile.name }}</p>
+      <div
+        v-for="pileCard in pricePile.pileCards"
         :key="pileCard.id"
-        @click="bidCard(pileCard)"
-        class="playingcard playingcard--md playingcard--interactive"
+        class="playingcard playingcard--md"
       >
         <div class="playingcard__container">
           <p class="playingcard__title">{{ pileCard.card.name }}</p>
@@ -54,7 +32,38 @@
 
           <p class="playingcard__attribution">created by {{ game.pack.author.name }}</p>
         </div>
-      </button>
+      </div>
+
+      <p
+        class="my-2 text-red-500"
+      >{{ myHand.player.name }} ({{ myHand.score }} points - {{ myHand.atTurn ? 'at turn' : 'not at turn' }})</p>
+
+      <div v-for="pile in myHand.piles" :key="pile.id">
+        <p>{{ pile.name }}</p>
+        <button
+          v-for="pileCard in pile.pileCards"
+          :key="pileCard.id"
+          @click="bidCard(pileCard)"
+          class="playingcard playingcard--md playingcard--interactive"
+        >
+          <div class="playingcard__container">
+            <p class="playingcard__title">{{ pileCard.card.name }}</p>
+            <div class="playingcard__image boxedimage">
+              <div class="boxedimage__container">
+                <img class="boxedimage__image" :src="imagesRoot + pileCard.card.imageUrl" />
+              </div>
+            </div>
+            <table class="playingcard__attributes">
+              <tr v-for="attributeValue in pileCard.card.attributeValues" :key="attributeValue.id">
+                <td>{{ attributeValue.attribute.name }}</td>
+                <td>{{ attributeValue.value }}</td>
+              </tr>
+            </table>
+
+            <p class="playingcard__attribution">created by {{ game.pack.author.name }}</p>
+          </div>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -184,6 +193,20 @@ export default {
     }
   },
   methods: {
+    async joinGame() {
+      await this.$apollo.mutate({
+        mutation: gql`
+          mutation($gameId: ID!) {
+            joinGoofenspiel(gameId: $gameId)
+          }
+        `,
+        variables: {
+          gameId: this.gameId
+        }
+      })
+
+      await this.$apollo.queries.game.refetch()
+    },
     async bidCard(pileCard) {
       await this.$apollo.mutate({
         mutation: gql`
