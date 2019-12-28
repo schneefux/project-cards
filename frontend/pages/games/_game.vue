@@ -6,7 +6,7 @@
     <div
       v-for="pileCard in pricePile.pileCards"
       :key="pileCard.id"
-      class="playingcard playingcard--ml"
+      class="playingcard playingcard--md"
     >
       <div class="playingcard__container">
         <p class="playingcard__title">{{ pileCard.card.name }}</p>
