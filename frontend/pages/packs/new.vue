@@ -29,7 +29,16 @@
                 />
                 <input type="text" maxlength="8" required class="w-1/4 textinput" />
               </div>
-              <button @click="addAttribute" class="button button--sm mt-1">Add</button>
+              <button
+                @click="addAttribute"
+                v-show="attributes.length < 5"
+                class="button button--sm mt-1"
+              >Add</button>
+              <button
+                @click="removeAttribute"
+                v-show="attributes.length > 1"
+                class="button button--sm mt-1"
+              >Remove</button>
             </div>
             <p class="playingcard__attribution">
               created by
@@ -84,6 +93,9 @@ export default {
         name: '',
         aimHigh: true
       })
+    },
+    removeAttribute() {
+      this.attributes.pop()
     },
     async createPack() {
       const response = await this.$apollo.mutate({
