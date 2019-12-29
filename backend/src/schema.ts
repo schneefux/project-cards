@@ -3,7 +3,16 @@ import * as fs from 'fs'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 import { nexusPrismaPlugin } from 'nexus-prisma'
-import { makeSchema, objectType, stringArg, arg, idArg } from 'nexus'
+import {
+  makeSchema,
+  objectType,
+  stringArg,
+  arg,
+  idArg,
+  enumType,
+  queryType,
+  mutationType,
+} from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
 import { getUserId, shuffle } from './util'
@@ -43,7 +52,13 @@ const Game = objectType({
     t.model.pack()
     t.model.piles()
     t.model.hands()
+    t.model.state()
   },
+})
+
+const GameState = enumType({
+  name: 'GameState',
+  members: ['OPEN', 'RUNNING', 'FINISHED'],
 })
 
 const GamePile = objectType({
@@ -133,15 +148,13 @@ const TrumpAttributeValue = objectType({
   },
 })
 
-const Query = objectType({
-  name: 'Query',
+const Query = queryType({
   definition(t: any) {
     t.crud.user()
     t.crud.users() // TODO restrict access
     t.crud.trumpPack()
     t.crud.trumpPacks()
     t.crud.game()
-    t.crud.games()
 
     t.field('me', {
       type: 'User',
@@ -154,11 +167,22 @@ const Query = objectType({
         return await ctx.photon.users.findOne({ where: { id } })
       },
     })
+
+    t.list.field('openGames', {
+      type: 'Game',
+      nullable: false,
+      resolve: async (parent: any, {}, ctx: Context) => {
+        return await ctx.photon.games.findMany({
+          where: {
+            state: 'OPEN',
+          },
+        })
+      },
+    })
   },
 })
 
-const Mutation = objectType({
-  name: 'Mutation',
+const Mutation = mutationType({
   definition(t: any) {
     t.crud.createOneTrumpPack()
     t.crud.createOneTrumpCard()
@@ -362,6 +386,14 @@ const Mutation = objectType({
           throw new Error('User is not in game')
         }
 
+        if (game.state == 'OPEN') {
+          throw new Error('Game has not started yet')
+        }
+
+        if (game.state == 'FINISHED') {
+          throw new Error('Game has closed')
+        }
+
         if (!userHand.atTurn) {
           throw new Error('User is not at turn')
         }
@@ -383,6 +415,14 @@ const Mutation = objectType({
         if (handIndex == -1) {
           throw new Error('Player does not own card')
         }
+
+        game.state = 'RUNNING'
+        await ctx.photon.games.update({
+          where: { id: game.id },
+          data: {
+            state: 'RUNNING',
+          },
+        })
 
         const userBid = userHandPile.pileCards[handIndex]
         // user at turn = false
@@ -587,8 +627,12 @@ const Mutation = objectType({
           throw new Error('Game does not exist')
         }
 
-        if (game.hands.length == 2) {
-          throw new Error('Game already full')
+        if (game.state == 'RUNNING') {
+          throw new Error('Game has already started')
+        }
+
+        if (game.state == 'FINISHED') {
+          throw new Error('Game has already finished')
         }
 
         const opponentHand = game.hands[0]
@@ -629,9 +673,12 @@ const Mutation = objectType({
           },
         })
 
+        const isFull = game.hands.length + 1 == 2
+
         await ctx.photon.games.update({
           where: { id: game.id },
           data: {
+            state: isFull ? 'RUNNING' : 'OPEN',
             piles: {
               create: [
                 {
@@ -718,6 +765,7 @@ const Mutation = objectType({
 
         const game = await ctx.photon.games.create({
           data: {
+            state: 'OPEN',
             hands: {
               create: [
                 {
@@ -775,6 +823,7 @@ export const schema = makeSchema({
     User,
     LoginResponse,
     Game,
+    GameState,
     GamePile,
     GameHand,
     GameHandPile,

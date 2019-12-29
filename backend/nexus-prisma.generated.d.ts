@@ -226,8 +226,8 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'email' | 'password' | 'name'
 }
     games: {
-  filtering: 'id' | 'piles' | 'hands' | 'AND' | 'OR' | 'NOT' | 'pack'
-  ordering: 'id'
+  filtering: 'id' | 'piles' | 'hands' | 'state' | 'AND' | 'OR' | 'NOT' | 'pack'
+  ordering: 'id' | 'state'
 }
     gamePiles: {
   filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
@@ -311,8 +311,8 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'name' | 'aimHigh'
 }
     games: {
-  filtering: 'id' | 'piles' | 'hands' | 'AND' | 'OR' | 'NOT' | 'pack'
-  ordering: 'id'
+  filtering: 'id' | 'piles' | 'hands' | 'state' | 'AND' | 'OR' | 'NOT' | 'pack'
+  ordering: 'id' | 'state'
 }
 
   },  GamePileCard: {
@@ -447,6 +447,7 @@ interface NexusPrismaTypes {
     pack: 'TrumpPack'
     piles: 'GamePile'
     hands: 'GameHand'
+    state: 'GameState'
 
 },  GamePile: {
     id: 'String'

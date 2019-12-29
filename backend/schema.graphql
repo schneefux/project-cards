@@ -9,6 +9,7 @@ type Game {
   id: ID!
   pack: TrumpPack!
   piles(after: ID, before: ID, first: Int, last: Int, skip: Int): [GamePile!]!
+  state: GameState!
 }
 
 input GameCreateManyWithoutGamesInput {
@@ -25,12 +26,14 @@ input GameCreateWithoutHandsInput {
   id: ID
   pack: TrumpPackCreateOneWithoutPackInput!
   piles: GamePileCreateManyWithoutPilesInput
+  state: GameState!
 }
 
 input GameCreateWithoutPackInput {
   hands: GameHandCreateManyWithoutHandsInput
   id: ID
   piles: GamePileCreateManyWithoutPilesInput
+  state: GameState!
 }
 
 type GameHand {
@@ -162,6 +165,12 @@ input GamePileWhereUniqueInput {
   id: ID
 }
 
+enum GameState {
+  FINISHED
+  OPEN
+  RUNNING
+}
+
 input GameWhereUniqueInput {
   id: ID
 }
@@ -185,8 +194,8 @@ type Mutation {
 
 type Query {
   game(where: GameWhereUniqueInput!): Game
-  games(after: ID, before: ID, first: Int, last: Int, skip: Int): [Game!]!
   me: User
+  openGames: [Game!]!
   trumpPack(where: TrumpPackWhereUniqueInput!): TrumpPack
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
   user(where: UserWhereUniqueInput!): User

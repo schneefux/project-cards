@@ -22,6 +22,13 @@ model Game {
   pack  TrumpPack
   piles GamePile[]
   hands GameHand[]
+  state GameState
+}
+
+enum GameState {
+  OPEN
+  RUNNING
+  FINISHED
 }
 
 model GamePile {
