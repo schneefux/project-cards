@@ -87,16 +87,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .feature {
   @apply flex items-center flex-wrap mb-20;
-}
 
-.feature__heading {
-  @apply text-3xl text-gray-800 font-bold mb-3;
-}
+  &__heading {
+    @apply text-3xl text-gray-800 font-bold mb-3;
+  }
 
-.feature__text {
-  @apply text-gray-600 mb-8;
+  &__text {
+    @apply text-gray-600 mb-8;
+  }
 }
 </style>
