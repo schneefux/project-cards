@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="w-full mt-2 flex flex-wrap justify-end">
+      <div class="w-full mt-4 flex flex-wrap justify-end">
         <nuxt-link :to="`/packs/${trumpPack.id}`" class="button ml-1 mb-1">Cancel</nuxt-link>
         <button
           type="button"

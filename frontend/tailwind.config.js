@@ -1,5 +1,26 @@
 module.exports = {
   theme: {
+    linearGradients: theme => ({
+      colors: {
+        ...theme('colors'),
+        'primary-to-light': [
+          theme('colors.primary.500'),
+          theme('colors.primary.300')
+        ],
+        'primary-to-dark': [
+          theme('colors.primary.500'),
+          theme('colors.primary.800')
+        ],
+        'secondary-to-light': [
+          theme('colors.secondary.400'),
+          theme('colors.secondary.300')
+        ],
+        'secondary-to-dark': [
+          theme('colors.secondary.500'),
+          theme('colors.secondary.800')
+        ]
+      }
+    }),
     extend: {
       colors: {
         secondary: {
@@ -28,5 +49,5 @@ module.exports = {
     }
   },
   variants: {},
-  plugins: []
+  plugins: [require('tailwindcss-gradients')()]
 }

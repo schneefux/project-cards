@@ -58,7 +58,7 @@
       </div>
 
       <div class="w-full mt-2 flex justify-end">
-        <button type="submit" class="button button--secondary">Save</button>
+        <button type="submit" class="button button--secondary button--lg">Save</button>
       </div>
     </form>
   </div>

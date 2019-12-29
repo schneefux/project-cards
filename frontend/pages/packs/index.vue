@@ -2,8 +2,11 @@
   <div v-if="me != undefined" class="container container--page">
     <h1 class="page-heading">Your Packs</h1>
 
-    <div class="flex justify-center my-2">
-      <nuxt-link to="/packs/new" class="button button--secondary font-semibold">Create New</nuxt-link>
+    <div class="flex justify-center my-4">
+      <nuxt-link
+        to="/packs/new"
+        class="button button--lg button--round button--secondary shadow-md font-semibold"
+      >Create New</nuxt-link>
     </div>
 
     <div class="flex flex-wrap justify-center">
@@ -56,7 +59,7 @@ export default {
           }
         }
       }
-    `,
+    `
   }
 }
 </script>

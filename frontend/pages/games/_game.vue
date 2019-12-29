@@ -6,7 +6,7 @@
     <button
       @click="joinGame"
       v-show="game.hands.length < 2"
-      class="button button--secondary mb-1"
+      class="button button--lg button--secondary my-3"
     >Join</button>
 
     <div v-if="pricePile != undefined">

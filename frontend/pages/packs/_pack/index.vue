@@ -3,12 +3,12 @@
     <h1 class="page-heading">Pack "{{ trumpPack.name }}"</h1>
     <button
       @click="createGoofenspiel"
-      class="button button--secondary button--lg float-left my-2 ml-4 mr-6"
+      class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
     >Start Game</button>
     <p>Description: {{ trumpPack.description }}</p>
     <p>Author: {{ trumpPack.author.name }}</p>
 
-    <div class="mt-2">
+    <div class="mt-4">
       <h2 class="page-subheading">Cards ({{ trumpPack.cards.length }})</h2>
 
       <div class="flex flex-wrap">

@@ -90,7 +90,7 @@
 }
 
 .button {
-  @apply bg-primary-500 py-1 px-3 rounded-sm text-white;
+  @apply bg-primary-500 py-1 px-3 shadow-md rounded-sm text-white;
 
   &:hover {
     @apply bg-primary-400;
@@ -106,6 +106,14 @@
 
   &--sm {
     @apply py-px px-2;
+  }
+
+  &--lg {
+    @apply py-2 px-4 rounded-full tracking-wide font-semibold;
+  }
+
+  &--xl {
+    @apply py-4 px-8 shadow-lg rounded-full uppercase tracking-wider font-bold;
   }
 
   &--round {
