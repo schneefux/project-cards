@@ -49,6 +49,12 @@
         <div class="w-full md:w-1/2 pl-10">
           <h4 class="feature__heading">Print at Home</h4>
           <p class="feature__text">Print card games and play offline.</p>
+          <div class="block -mt-6 mb-6">
+            <span
+              class="bg-primary-400 text-white px-2 pt-px pb-1 rounded-full text-xs font-semibold tracking-wide"
+              >coming soon</span
+            >
+          </div>
         </div>
         <div class="w-full md:w-1/2">
           <PrintInvoiceIllustration />
