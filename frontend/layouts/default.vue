@@ -18,6 +18,7 @@
           <div class="py-2 md:py-0">
             <nuxt-link to="/" class="nav-link">Home</nuxt-link>
             <nuxt-link v-show="me != undefined" to="/packs" class="nav-link">Packs</nuxt-link>
+            <nuxt-link v-show="me != undefined" to="/games" class="nav-link">Live Games</nuxt-link>
             <nuxt-link v-show="me == undefined" to="/login" class="nav-link">Login</nuxt-link>
             <div class="hidden md:inline-block">
               <nuxt-link
