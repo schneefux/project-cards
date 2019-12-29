@@ -28,13 +28,13 @@
           </p>
         </div>
         <div class="w-full md:w-1/2">
-          <img src="~assets/images/playing-cards.svg" alt="playing cards" />
+          <PlayingCardsIllustration />
         </div>
       </div>
 
       <div class="feature">
         <div class="w-full md:w-1/2">
-          <img src="~assets/images/game-day.svg" alt="game day" />
+          <GameDayIllustration />
         </div>
         <div class="w-full md:w-1/2 pl-10">
           <h4 class="feature__heading">Online Battles</h4>
@@ -51,7 +51,7 @@
           <p class="feature__text">Print card games and play offline.</p>
         </div>
         <div class="w-full md:w-1/2">
-          <img src="~assets/images/print-invoice.svg" alt="print invoice" />
+          <PrintInvoiceIllustration />
         </div>
       </div>
     </section>
@@ -74,8 +74,17 @@
 
 <script>
 import gql from 'graphql-tag'
+import PlayingCardsIllustration from '~/assets/images/playing-cards.svg'
+import GameDayIllustration from '~/assets/images/game-day.svg'
+import PrintInvoiceIllustration from '~/assets/images/print-invoice.svg'
 
-export default {}
+export default {
+  components: {
+    PlayingCardsIllustration,
+    GameDayIllustration,
+    PrintInvoiceIllustration
+  }
+}
 </script>
 
 <style scoped>

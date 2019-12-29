@@ -119,6 +119,37 @@
   &--round {
     @apply rounded-full;
   }
+
+  &__icon {
+    @apply stroke-current;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+
+  &--fab {
+    @apply p-1 rounded-full h-10 w-10 flex items-center justify-center;
+
+    .button__icon {
+      stroke-width: 3;
+    }
+  }
+
+  &--fab-sm {
+    @apply p-1 rounded-full h-8 w-8 flex items-center justify-center;
+
+    .button__icon {
+      stroke-width: 2;
+    }
+  }
+
+  &--fab-lg {
+    @apply p-1 rounded-full h-16 w-16 flex items-center justify-center;
+
+    .button__icon {
+      stroke-width: 4;
+    }
+  }
 }
 
 .page-heading {

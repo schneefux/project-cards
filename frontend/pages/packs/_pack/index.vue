@@ -4,7 +4,9 @@
     <button
       @click="createGoofenspiel"
       class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
-    >Start Game</button>
+    >
+      Start Game
+    </button>
     <p>Description: {{ trumpPack.description }}</p>
     <p>Author: {{ trumpPack.author.name }}</p>
 
@@ -17,9 +19,11 @@
           class="playingcard playingcard--md playingcard--interactive"
         >
           <div class="playingcard__container">
-            <div class="w-full h-full flex flex-wrap justify-center items-center">
-              <div class="button button--secondary button--round h-16 w-16 flex">
-                <span class="text-4xl font-bold leading-none mx-auto mt-1">+</span>
+            <div
+              class="w-full h-full flex flex-wrap justify-center items-center"
+            >
+              <div class="button button--secondary button--fab-lg">
+                <PlusIcon class="button__icon" />
               </div>
               <p class="w-full text-center text-lg">Create New</p>
             </div>
@@ -35,17 +39,30 @@
             <p class="playingcard__title">{{ card.name }}</p>
             <div class="playingcard__image boxedimage">
               <div class="boxedimage__container">
-                <img class="boxedimage__image" :src="imagesRoot + card.imageUrl" />
+                <img
+                  class="boxedimage__image"
+                  :src="imagesRoot + card.imageUrl"
+                />
               </div>
             </div>
             <table class="playingcard__attributes">
-              <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
+              <tr
+                v-for="attributeValue in card.attributeValues"
+                :key="attributeValue.id"
+              >
                 <td>{{ attributeValue.attribute.name }}</td>
                 <td>{{ attributeValue.value }}</td>
               </tr>
             </table>
 
-            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
+            <button
+              class="absolute bottom-0 left-0 ml-2 mb-2 button button--fab-sm"
+            >
+              <BinIcon class="button__icon" />
+            </button>
+            <p class="playingcard__attribution">
+              created by {{ trumpPack.author.name }}
+            </p>
           </div>
         </div>
       </div>
@@ -54,6 +71,8 @@
 </template>
 
 <script>
+import PlusIcon from 'ikonate/icons/plus.svg'
+import BinIcon from 'ikonate/icons/bin.svg'
 import gql from 'graphql-tag'
 
 export default {
@@ -95,6 +114,10 @@ export default {
     return {
       trumpPackId: params.pack
     }
+  },
+  components: {
+    PlusIcon,
+    BinIcon
   },
   data() {
     return {

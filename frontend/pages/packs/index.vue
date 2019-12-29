@@ -6,7 +6,9 @@
       <nuxt-link
         to="/packs/new"
         class="button button--lg button--round button--secondary shadow-md font-semibold"
-      >Create New</nuxt-link>
+      >
+        Create New
+      </nuxt-link>
     </div>
 
     <div class="flex flex-wrap justify-center">
@@ -18,14 +20,18 @@
       >
         <div class="playingcard__container">
           <div class="playingcard__container">
-            <div class="playingcard__container leading-loose">
-              <p class="playingcard__title text-primary-500 underline">{{ pack.name }}</p>
+            <div class="playingcard__container leading-loose relative">
+              <button class="playingcard__title text-primary-500">
+                {{ pack.name }}
+              </button>
               <p>Author: {{ pack.author.name }}</p>
               <p>Description: {{ pack.description }}</p>
               <div class="playingcard__attributes">
                 <p class="text-left mt-2 pt-1 mb-1 border-t">Attributes:</p>
                 <ul class="ml-6">
-                  <li v-for="attribute in pack.attributes" :key="attribute.id">{{ attribute.name }}</li>
+                  <li v-for="attribute in pack.attributes" :key="attribute.id">
+                    {{ attribute.name }}
+                  </li>
                 </ul>
               </div>
             </div>

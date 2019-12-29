@@ -38,7 +38,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ['@nuxtjs/pwa'],
+  modules: ['@nuxtjs/pwa', 'nuxt-svg-loader'],
 
   env: {
     imagesRoot: process.env.IMAGES_ROOT || 'http://localhost:4000/static/images'
