@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="py-20 bg-gradient-r-secondary-to-light">
+    <div class="py-20 bg-gradient-r-dark-to-secondary">
       <div class="container mx-auto px-6">
         <h2 class="text-4xl font-bold mb-2 text-white">[Project Name]</h2>
         <h3 class="text-2xl mb-8 text-gray-100">Design, play and print custom card games.</h3>
