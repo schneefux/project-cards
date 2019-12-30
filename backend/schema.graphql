@@ -193,14 +193,27 @@ type Mutation {
   uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
 
+enum OrderByArg {
+  asc
+  desc
+}
+
 type Query {
-  featuredTrumpPacks(last: Int = 3): [TrumpPack!]!
   game(where: GameWhereUniqueInput!): Game
+  games(after: ID, before: ID, first: Int, last: Int, skip: Int, where: QueryGamesWhereInput): [Game!]!
   me: User
-  openGames: [Game!]!
   trumpPack(where: TrumpPackWhereUniqueInput!): TrumpPack
+  trumpPacks(after: ID, before: ID, first: Int, last: Int, orderBy: QueryTrumpPacksOrderByInput, skip: Int): [TrumpPack!]!
   user(where: UserWhereUniqueInput!): User
   users(after: ID, before: ID, first: Int, last: Int, skip: Int): [User!]!
+}
+
+input QueryGamesWhereInput {
+  state: GameState
+}
+
+input QueryTrumpPacksOrderByInput {
+  createdAt: OrderByArg
 }
 
 type Subscription {

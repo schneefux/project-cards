@@ -160,7 +160,18 @@ const Query = queryType({
     t.crud.user()
     t.crud.users() // TODO restrict access
     t.crud.trumpPack()
+    // TODO add 'featured' flag / rating metric
+    t.crud.trumpPacks({
+      ordering: {
+        createdAt: true,
+      },
+    })
     t.crud.game()
+    t.crud.games({
+      filtering: {
+        state: true,
+      },
+    })
 
     t.field('me', {
       type: 'User',
@@ -172,39 +183,6 @@ const Query = queryType({
         }
         return await ctx.photon.users.findOne({
           where: { id: credentials.id },
-        })
-      },
-    })
-
-    t.list.field('openGames', {
-      type: 'Game',
-      nullable: false,
-      resolve: async (parent: any, {}, ctx: Context) => {
-        return await ctx.photon.games.findMany({
-          where: {
-            state: 'OPEN',
-          },
-        })
-      },
-    })
-
-    t.list.field('featuredTrumpPacks', {
-      type: 'TrumpPack',
-      nullable: false,
-      args: {
-        last: intArg({ default: 3 }),
-      },
-      resolve: async (
-        parent: any,
-        { last }: { last: number },
-        ctx: Context,
-      ) => {
-        // TODO add a 'featured' flag or a rating metric
-        return await ctx.photon.trumpPacks.findMany({
-          orderBy: {
-            createdAt: 'desc',
-          },
-          last,
         })
       },
     })

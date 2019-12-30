@@ -42,7 +42,7 @@
 
     <div class="flex flex-wrap justify-center mb-16">
       <nuxt-link
-        v-for="pack in featuredTrumpPacks"
+        v-for="pack in trumpPacks"
         :key="pack.id"
         :to="`/packs/${pack.id}`"
         class="playingcard playingcard--interactive mr-8"
@@ -101,9 +101,11 @@ export default {
         }
       }
     `,
-    featuredTrumpPacks: gql`
+    trumpPacks: gql`
       query {
-        featuredTrumpPacks(last: 3) {
+        trumpPacks(orderBy: {
+          createdAt: desc
+        }, last: 3) {
           ${trumpPackAttributes}
         }
       }
