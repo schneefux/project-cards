@@ -21,7 +21,7 @@ export default {
     games: {
       query: gql`
         query {
-          games(where: { state: 'OPEN' }) {
+          games(where: { state: OPEN }) {
             id
             pack {
               name
