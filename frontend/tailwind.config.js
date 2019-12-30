@@ -5,19 +5,19 @@ module.exports = {
         ...theme('colors'),
         'primary-to-light': [
           theme('colors.primary.500'),
-          theme('colors.primary.300')
+          theme('colors.primary.400')
         ],
         'primary-to-dark': [
           theme('colors.primary.500'),
-          theme('colors.primary.800')
+          theme('colors.primary.600')
         ],
         'secondary-to-light': [
-          theme('colors.secondary.400'),
-          theme('colors.secondary.300')
+          theme('colors.secondary.500'),
+          theme('colors.secondary.400')
         ],
         'secondary-to-dark': [
           theme('colors.secondary.500'),
-          theme('colors.secondary.800')
+          theme('colors.secondary.600')
         ]
       }
     }),
