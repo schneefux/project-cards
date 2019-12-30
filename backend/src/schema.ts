@@ -12,7 +12,6 @@ import {
   enumType,
   queryType,
   mutationType,
-  intArg,
 } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
@@ -192,7 +191,9 @@ const Query = queryType({
 const Mutation = mutationType({
   definition(t: any) {
     t.crud.createOneTrumpPack()
+    // TODO add authorization
     t.crud.createOneTrumpCard()
+    // TODO add authorization
     t.crud.createOneTrumpAttribute()
 
     t.field('registerGuest', {
@@ -354,20 +355,18 @@ const Mutation = mutationType({
           throw new Error('Not authenticated')
         }
 
-        const card = await context.photon.trumpCards.findOne({
-          where: { id: cardId },
-          include: {
-            pack: {
-              include: { author: true },
-            },
-          },
-        })
+        const author = await context.photon.trumpCards
+          .findOne({
+            where: { id: cardId },
+          })
+          .pack()
+          .author()
 
-        if (card == null) {
+        if (author == null) {
           throw new Error('Card does not exist')
         }
 
-        if (userCredentials.id != card.pack.author.id) {
+        if (userCredentials.id != author.id) {
           throw new Error('User does not own pack')
         }
 

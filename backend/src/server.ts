@@ -22,31 +22,24 @@ process.on('SIGHUP', shutdown)
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   async (parent: any, args: any, context: Context) => {
-    return (await getCredentials(context)).subscriptionTier == null
+    return (await getCredentials(context)).subscriptionTier != null
   },
 )
 
-const isTrumpCardOwner = rule({ cache: 'contextual' })(
-  async (parent: any, { cardId }: { cardId: string }, context: Context) => {
-    const credentials = await getCredentials(context)
-    const author = await context.photon.trumpCards
-      .findOne({
-        where: { id: cardId },
-      })
-      .pack()
-      .author()
-    return (
-      author != null && credentials.id != null && author.id == credentials.id
-    )
+const isRegistered = rule({ cache: 'contextual' })(
+  async (parent: any, args: any, context: Context) => {
+    const subscriptionTier = (await getCredentials(context)).subscriptionTier
+    return subscriptionTier != null && subscriptionTier != 'GUEST'
   },
 )
 
-// TODO set up all permissions
+// permissions are used for generated CRUD queries
 const permissions = shield({
   Query: {},
   Mutation: {
-    createOneTrumpCard: isAuthenticated,
-    uploadTrumpCardImage: isTrumpCardOwner,
+    createOneTrumpPack: isRegistered,
+    createOneTrumpCard: isRegistered,
+    createOneTrumpAttribute: isRegistered,
   },
 })
 
