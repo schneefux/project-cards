@@ -11,12 +11,8 @@
 
     <div v-if="pricePile != undefined">
       <p>{{ pricePile.name }}</p>
-      <div
-        v-for="pileCard in pricePile.pileCards"
-        :key="pileCard.id"
-        class="playingcard playingcard--md"
-      >
-        <div class="playingcard__container">
+      <div v-for="pileCard in pricePile.pileCards" :key="pileCard.id" class="playingcard">
+        <div class="playingcard__container playingcard__container--md">
           <p class="playingcard__title">{{ pileCard.card.name }}</p>
           <div class="playingcard__image boxedimage">
             <div class="boxedimage__container">
@@ -44,9 +40,9 @@
           v-for="pileCard in pile.pileCards"
           :key="pileCard.id"
           @click="bidCard(pileCard)"
-          class="playingcard playingcard--md playingcard--interactive"
+          class="playingcard playingcard--interactive"
         >
-          <div class="playingcard__container">
+          <div class="playingcard__container playingcard__container--md">
             <p class="playingcard__title">{{ pileCard.card.name }}</p>
             <div class="playingcard__image boxedimage">
               <div class="boxedimage__container">

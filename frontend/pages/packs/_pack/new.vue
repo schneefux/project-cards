@@ -4,8 +4,8 @@
 
     <form ref="card-form" @submit.prevent="saveAndReturn" class="mt-2 flex flex-wrap">
       <div class="w-full mt-2 flex justify-center">
-        <div class="playingcard playingcard--lg">
-          <div class="playingcard__container">
+        <div class="playingcard">
+          <div class="playingcard__container playingcard__container--lg">
             <input
               type="text"
               v-model="cardName"

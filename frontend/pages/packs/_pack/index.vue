@@ -16,12 +16,10 @@
       <div class="flex flex-wrap">
         <nuxt-link
           :to="`/packs/${trumpPack.id}/new`"
-          class="playingcard playingcard--md playingcard--interactive"
+          class="playingcard playingcard--interactive"
         >
-          <div class="playingcard__container">
-            <div
-              class="w-full h-full flex flex-wrap justify-center items-center"
-            >
+          <div class="playingcard__container playingcard__container--md">
+            <div class="w-full h-full flex flex-wrap justify-center items-center">
               <div class="button button--secondary button--fab-lg">
                 <PlusIcon class="button__icon" />
               </div>
@@ -33,9 +31,9 @@
         <div
           v-for="card in trumpPack.cards"
           :key="card.id"
-          class="playingcard playingcard--md playingcard--interactive"
+          class="playingcard playingcard--interactive"
         >
-          <div class="playingcard__container">
+          <div class="playingcard__container playingcard__container--md">
             <p class="playingcard__title">{{ card.name }}</p>
             <div class="playingcard__image boxedimage">
               <div class="boxedimage__container">

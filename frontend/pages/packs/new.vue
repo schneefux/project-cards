@@ -9,8 +9,8 @@
       </div>
 
       <div class="w-full mt-2 flex justify-center">
-        <div class="playingcard playingcard--lg">
-          <div class="playingcard__container">
+        <div class="playingcard">
+          <div class="playingcard__container playingcard__container--lg">
             <p class="playingcard__title">Card Title</p>
             <div class="playingcard__image boxedimage relative">
               <div class="boxedimage__container">
