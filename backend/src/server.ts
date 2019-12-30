@@ -3,7 +3,7 @@ import { GraphQLServer } from 'graphql-yoga'
 import { shield, rule } from 'graphql-shield'
 import { schema } from './schema'
 import { createContext, Context } from './context'
-import { getUserId, JWT_SECRET } from './util'
+import { getCredentials, JWT_SECRET } from './util'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
 
@@ -22,20 +22,22 @@ process.on('SIGHUP', shutdown)
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   async (parent: any, args: any, context: Context) => {
-    return (await getUserId(context)) != null
+    return (await getCredentials(context)).subscriptionTier == null
   },
 )
 
 const isTrumpCardOwner = rule({ cache: 'contextual' })(
   async (parent: any, { cardId }: { cardId: string }, context: Context) => {
-    const userId = await getUserId(context)
+    const credentials = await getCredentials(context)
     const author = await context.photon.trumpCards
       .findOne({
         where: { id: cardId },
       })
       .pack()
       .author()
-    return author?.id == userId
+    return (
+      author != null && credentials.id != null && author.id == credentials.id
+    )
   },
 )
 

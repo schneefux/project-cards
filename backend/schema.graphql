@@ -189,6 +189,7 @@ type Mutation {
   joinGoofenspiel(gameId: ID!): Boolean!
   login(email: String!, password: String!): LoginResponse
   register(email: String!, name: String!, password: String!): LoginResponse
+  registerGuest(name: String!): LoginResponse!
   uploadTrumpCardImage(cardId: ID!, file: Upload): Boolean!
 }
 
@@ -205,6 +206,11 @@ type Query {
 type Subscription {
   createdGame: Game!
   updatedGame(id: ID!): Game!
+}
+
+enum SubscriptionTier {
+  FREE
+  GUEST
 }
 
 type TrumpAttribute {
@@ -397,10 +403,11 @@ input TrumpPackWhereUniqueInput {
 scalar Upload
 
 type User {
-  email: String!
+  email: String
   gameHands(after: ID, before: ID, first: Int, last: Int, skip: Int): [GameHand!]!
   id: ID!
   name: String!
+  subscriptionTier: SubscriptionTier!
   trumpPacks(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpPack!]!
 }
 
@@ -415,19 +422,21 @@ input UserCreateOneWithoutPlayerInput {
 }
 
 input UserCreateWithoutGameHandsInput {
-  email: String!
+  email: String
   id: ID
   name: String!
-  password: String!
+  password: String
+  subscriptionTier: SubscriptionTier!
   trumpPacks: TrumpPackCreateManyWithoutTrumpPacksInput
 }
 
 input UserCreateWithoutTrumpPacksInput {
-  email: String!
+  email: String
   gameHands: GameHandCreateManyWithoutGameHandsInput
   id: ID
   name: String!
-  password: String!
+  password: String
+  subscriptionTier: SubscriptionTier!
 }
 
 input UserWhereUniqueInput {

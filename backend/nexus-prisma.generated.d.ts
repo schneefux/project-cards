@@ -222,8 +222,8 @@ interface ModelTypes {
 interface NexusPrismaInputs {
   Query: {
     users: {
-  filtering: 'id' | 'email' | 'password' | 'name' | 'trumpPacks' | 'gameHands' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id' | 'email' | 'password' | 'name'
+  filtering: 'id' | 'subscriptionTier' | 'email' | 'password' | 'name' | 'trumpPacks' | 'gameHands' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'subscriptionTier' | 'email' | 'password' | 'name'
 }
     games: {
   filtering: 'id' | 'piles' | 'hands' | 'state' | 'AND' | 'OR' | 'NOT' | 'pack'
@@ -436,6 +436,7 @@ interface NexusPrismaTypes {
   },
   User: {
     id: 'String'
+    subscriptionTier: 'SubscriptionTier'
     email: 'String'
     password: 'String'
     name: 'String'

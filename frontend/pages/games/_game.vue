@@ -1,15 +1,15 @@
 <template>
-  <div v-if="me != undefined && game != undefined" class="container container--page">
+  <div v-if="game != undefined" class="container container--page">
     <h1 class="page-heading">Game {{ game.id }}</h1>
 
     <p>Players: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
     <button
       @click="joinGame"
-      v-show="game.hands.length < 2"
+      v-if="game.state == 'OPEN'"
       class="button button--lg button--secondary my-3"
     >Join</button>
 
-    <div v-if="pricePile != undefined">
+    <div v-if="game.state == 'RUNNING' && myHand != undefined">
       <p>{{ pricePile.name }}</p>
       <div v-for="pileCard in pricePile.pileCards" :key="pileCard.id" class="playingcard">
         <div class="playingcard__container playingcard__container--md">
@@ -69,6 +69,7 @@ import gql from 'graphql-tag'
 
 const gameAttrs = `
   id
+  state
   pack {
     author {
       name
@@ -218,6 +219,7 @@ export default {
 
       await this.$apollo.queries.game.refetch()
     }
-  }
+  },
+  middleware: ['guest']
 }
 </script>

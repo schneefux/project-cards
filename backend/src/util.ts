@@ -1,17 +1,23 @@
 import * as jwt from 'jsonwebtoken'
 import { Context } from './context'
+import { SubscriptionTier } from '@prisma/photon'
 
 export const JWT_SECRET = process.env.JWT_SECRET || ''
 
-export const getUserId = async (context: Context) => {
-  const token = context.request.get('Authorization')?.replace('Bearer ', '')
-  let userId: string | null = null
+export interface JwtCredentials {
+  id: string | null
+  subscriptionTier: SubscriptionTier | null
+}
 
-  if (token !== undefined) {
-    userId = ((await jwt.verify(token, JWT_SECRET)) as { id: string }).id
+export async function getCredentials(
+  context: Context,
+): Promise<JwtCredentials> {
+  const token = context.request.get('Authorization')?.replace('Bearer ', '')
+  if (token == undefined) {
+    return { id: null, subscriptionTier: null }
   }
 
-  return userId
+  return (await jwt.verify(token, JWT_SECRET)) as JwtCredentials
 }
 
 export function shuffle<T>(array: T[]): T[] {

@@ -1,12 +1,12 @@
 <template>
   <div class="container container--page">
-    <div v-if="me != undefined" class="mb-16">
+    <div v-if="me != undefined && me.subscriptionTier != 'GUEST'" class="mb-16">
       <h1 class="page-heading">Your Card Packs</h1>
 
       <div class="flex justify-center my-4">
         <nuxt-link
           to="/packs/new"
-          class="button button--lg button--round button--secondary shadow-md font-semibold"
+          class="button button--lg button--round button--secondary"
         >Create New</nuxt-link>
       </div>
 
@@ -38,11 +38,9 @@
       </div>
     </div>
 
-    <div>
-      <h2 class="page-subheading">Explore Card Packs by the Community</h2>
-    </div>
+    <h2 class="page-subheading">Explore Card Packs by the Community</h2>
 
-    <div class="flex flex-wrap justify-center">
+    <div class="flex flex-wrap justify-center mb-16">
       <nuxt-link
         v-for="pack in featuredTrumpPacks"
         :key="pack.id"
@@ -65,6 +63,12 @@
           </div>
         </div>
       </nuxt-link>
+    </div>
+
+    <div v-if="me == undefined || me.subscriptionTier == 'GUEST'" class="mb-16">
+      <h2 class="page-subheading">Register and design your own</h2>
+      <p class="mb-2">With a free account, you can create your own card packs.</p>
+      <nuxt-link to="/packs/new" class="inline-block button button--lg button--secondary">Sign Up</nuxt-link>
     </div>
   </div>
 </template>
@@ -90,6 +94,7 @@ export default {
       query {
         me {
           id
+          subscriptionTier
           trumpPacks {
             ${trumpPackAttributes}
           }

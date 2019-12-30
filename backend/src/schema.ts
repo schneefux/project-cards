@@ -16,8 +16,13 @@ import {
 } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
-import { getUserId, shuffle } from './util'
-import { TrumpCard, TrumpAttributeValue } from '@prisma/photon'
+import { shuffle, JwtCredentials, getCredentials } from './util'
+import {
+  TrumpCard,
+  TrumpAttributeValue,
+  UserCreateInput,
+  User,
+} from '@prisma/photon'
 import { withFilter } from 'graphql-yoga'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
@@ -39,6 +44,7 @@ const User = objectType({
   name: 'User',
   definition(t: any) {
     t.model.id()
+    t.model.subscriptionTier()
     t.model.name()
     t.model.email()
     t.model.trumpPacks()
@@ -160,11 +166,13 @@ const Query = queryType({
       type: 'User',
       nullable: true,
       resolve: async (parent: any, {}, ctx: Context) => {
-        const id = await getUserId(ctx)
-        if (id == null) {
+        const credentials = await getCredentials(ctx)
+        if (credentials.id == null) {
           return null
         }
-        return await ctx.photon.users.findOne({ where: { id } })
+        return await ctx.photon.users.findOne({
+          where: { id: credentials.id },
+        })
       },
     })
 
@@ -184,15 +192,19 @@ const Query = queryType({
       type: 'TrumpPack',
       nullable: false,
       args: {
-        last: intArg({ default: 3 })
+        last: intArg({ default: 3 }),
       },
-      resolve: async (parent: any, { last }: { last: number }, ctx: Context) => {
+      resolve: async (
+        parent: any,
+        { last }: { last: number },
+        ctx: Context,
+      ) => {
         // TODO add a 'featured' flag or a rating metric
         return await ctx.photon.trumpPacks.findMany({
           orderBy: {
             createdAt: 'desc',
           },
-          last
+          last,
         })
       },
     })
@@ -204,6 +216,39 @@ const Mutation = mutationType({
     t.crud.createOneTrumpPack()
     t.crud.createOneTrumpCard()
     t.crud.createOneTrumpAttribute()
+
+    t.field('registerGuest', {
+      type: 'LoginResponse',
+      nullable: false,
+      args: {
+        name: stringArg({ required: true }),
+      },
+      resolve: async (
+        parent: any,
+        { name }: { name: string },
+        ctx: Context,
+      ) => {
+        const user = await ctx.photon.users.create({
+          data: {
+            name: name + ' (Guest)',
+            subscriptionTier: 'GUEST',
+          },
+        })
+
+        const token = jwt.sign(
+          {
+            id: user.id,
+            subscriptionTier: 'GUEST',
+          } as JwtCredentials,
+          JWT_SECRET,
+        )
+
+        return {
+          token,
+          user,
+        }
+      },
+    })
 
     t.field('register', {
       type: 'LoginResponse',
@@ -225,23 +270,39 @@ const Mutation = mutationType({
         const existingUser = await ctx.photon.users.findOne({
           where: { email },
         })
-        if (existingUser !== null) {
+        if (existingUser != null) {
           return null
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
-        const user = await ctx.photon.users.create({
-          data: {
-            email,
-            name,
-            password: hashedPassword,
-          },
-        })
+        const data = {
+          email,
+          name,
+          subscriptionTier: 'FREE',
+          password: hashedPassword,
+        } as UserCreateInput
+
+        const guestUserCredentials = await getCredentials(ctx)
+
+        let user: User
+
+        // upgrade guest account if available
+        if (guestUserCredentials.id != null) {
+          user = await ctx.photon.users.update({
+            where: { id: guestUserCredentials.id },
+            data,
+          })
+        } else {
+          user = await ctx.photon.users.create({
+            data,
+          })
+        }
 
         const token = jwt.sign(
           {
             id: user.id,
-          },
+            subscriptionTier: 'FREE',
+          } as JwtCredentials,
           JWT_SECRET,
         )
 
@@ -274,6 +335,10 @@ const Mutation = mutationType({
           return null
         }
 
+        if (user.password == null) {
+          throw new Error('Account is locked')
+        }
+
         const passwordMatch = await bcrypt.compare(password, user.password)
         if (!passwordMatch) {
           return null
@@ -282,7 +347,8 @@ const Mutation = mutationType({
         const token = jwt.sign(
           {
             id: user.id,
-          },
+            subscriptionTier: user.subscriptionTier,
+          } as JwtCredentials,
           JWT_SECRET,
         )
 
@@ -305,9 +371,30 @@ const Mutation = mutationType({
         { file, cardId }: { file: FileUpload; cardId: string },
         context: Context,
       ) => {
+        const userCredentials = await getCredentials(context)
+        if (userCredentials.id == null) {
+          throw new Error('Not authenticated')
+        }
+
+        const card = await context.photon.trumpCards.findOne({
+          where: { id: cardId },
+          include: {
+            pack: {
+              include: { author: true },
+            },
+          },
+        })
+
+        if (card == null) {
+          throw new Error('Card does not exist')
+        }
+
+        if (userCredentials.id != card.pack.author.id) {
+          throw new Error('User does not own pack')
+        }
+
         // TODO validate file (size, type)
         // TODO use a directory structure
-        // TODO validate ownership
         // TODO validate destination path
         const { filename, createReadStream } = await file
         const readStream = createReadStream()
@@ -355,8 +442,8 @@ const Mutation = mutationType({
          * Price pile: name='price'
          * Player bids: name=player id
          */
-        const user = await getUserId(ctx)
-        if (user == null) {
+        const userCredentials = await getCredentials(ctx)
+        if (userCredentials.id == null) {
           return new Error('Not authenticated')
         }
 
@@ -398,7 +485,7 @@ const Mutation = mutationType({
           throw new Error('Game does not exist')
         }
 
-        const userHand = game.hands.find(h => h.player.id == user)
+        const userHand = game.hands.find(h => h.player.id == userCredentials.id)
         if (userHand == null) {
           throw new Error('User is not in game')
         }
@@ -415,7 +502,9 @@ const Mutation = mutationType({
           throw new Error('User is not at turn')
         }
 
-        const opponentHand = game.hands.find(h => h.player.id != user)
+        const opponentHand = game.hands.find(
+          h => h.player.id != userCredentials.id,
+        )
         if (opponentHand == null) {
           throw new Error('Opponent does not exist - this should not happen')
         }
@@ -615,12 +704,16 @@ const Mutation = mutationType({
         { gameId }: { gameId: string },
         ctx: Context,
       ) => {
-        const user = await getUserId(ctx)
-        if (user == null) {
+        const userCredentials = await getCredentials(ctx)
+        if (userCredentials.id == null) {
           throw new Error('Not authenticated')
         }
 
-        if ((await ctx.photon.users.findOne({ where: { id: user } })) == null) {
+        if (
+          (await ctx.photon.users.findOne({
+            where: { id: userCredentials.id },
+          })) == null
+        ) {
           throw new Error('User does not exist')
         }
 
@@ -719,7 +812,7 @@ const Mutation = mutationType({
             hands: {
               create: [
                 {
-                  player: { connect: { id: user } },
+                  player: { connect: { id: userCredentials.id } },
                   score: 0,
                   atTurn: true,
                   piles: {
@@ -762,9 +855,13 @@ const Mutation = mutationType({
         { pack }: { pack: string },
         ctx: Context,
       ) => {
-        const user = await getUserId(ctx)
-        if (user == null) {
+        const userCredentials = await getCredentials(ctx)
+        if (userCredentials.id == null) {
           throw new Error('Not authenticated')
+        }
+
+        if (userCredentials.subscriptionTier == 'GUEST') {
+          throw new Error('Not allowed for Guests')
         }
 
         /*
@@ -776,7 +873,11 @@ const Mutation = mutationType({
         }
         */
 
-        if ((await ctx.photon.users.findOne({ where: { id: user } })) == null) {
+        if (
+          (await ctx.photon.users.findOne({
+            where: { id: userCredentials.id },
+          })) == null
+        ) {
           throw new Error('User does not exist')
         }
 
@@ -786,7 +887,7 @@ const Mutation = mutationType({
             hands: {
               create: [
                 {
-                  player: { connect: { id: user } },
+                  player: { connect: { id: userCredentials.id } },
                   score: 0,
                   atTurn: false,
                 },

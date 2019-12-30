@@ -133,6 +133,7 @@ export default {
       const trumpPackId = response.data.createOneTrumpPack.id
       this.$router.push(`/packs/${trumpPackId}`)
     }
-  }
+  },
+  middleware: ['free']
 }
 </script>

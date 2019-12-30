@@ -7,16 +7,23 @@
       <span class="text-gray-700">{{ trumpPack.author.name }}</span>
     </h1>
 
-    <div class="flex">
+    <div class="flex flex-wrap">
       <button
-        v-if="me != undefined"
+        v-if="me != undefined && me.state != 'GUEST'"
         @click="createGoofenspiel"
         class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
       >Start Game</button>
+      <div v-else class="block">
+        <p>With a free account, you can start this game.</p>
+        <div class="mt-4 mb-6">
+          <nuxt-link :to="currentRoute" class="button button--lg button--secondary">Sign Up</nuxt-link>
+          <nuxt-link to="/games" class="ml-2 button button--lg">Play started Games</nuxt-link>
+        </div>
+      </div>
       <p>{{ trumpPack.description }}</p>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-8">
       <h2 class="page-subheading">Cards ({{ trumpPack.cards.length }})</h2>
 
       <div class="flex flex-wrap">
@@ -124,6 +131,11 @@ export default {
   components: {
     PlusIcon,
     BinIcon
+  },
+  computed: {
+    currentRoute() {
+      return this.$router.currentRoute
+    }
   },
   data() {
     return {
