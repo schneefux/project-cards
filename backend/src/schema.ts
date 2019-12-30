@@ -722,6 +722,11 @@ const Mutation = mutationType({
           throw new Error('Game has already finished')
         }
 
+        const userHand = game.hands.find(h => h.player.id == userCredentials.id)
+        if (userHand != null) {
+          throw new Error('User is already in game')
+        }
+
         const opponentHand = game.hands[0]
 
         const cards = shuffle(

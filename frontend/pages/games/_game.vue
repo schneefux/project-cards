@@ -2,12 +2,9 @@
   <div v-if="game != undefined" class="container container--page">
     <h1 class="page-heading">Game {{ game.id }}</h1>
 
+    <p>Waiting for players…</p>
     <p>Players: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
-    <button
-      @click="joinGame"
-      v-if="game.state == 'OPEN'"
-      class="button button--lg button--secondary my-3"
-    >Join</button>
+    <button @click="joinGame" v-if="canJoin" class="button button--lg button--secondary my-3">Join</button>
 
     <div v-if="game.state == 'RUNNING' && myHand != undefined">
       <p>{{ pricePile.name }}</p>
@@ -180,6 +177,12 @@ export default {
     }
   },
   computed: {
+    canJoin() {
+      return (
+        this.game.state == 'OPEN' &&
+        this.game.hands.find(h => h.player.id == this.me.id) == undefined
+      )
+    },
     // TODO add a 'hidden' attribute to piles
     pricePile() {
       return this.game.piles.find(p => p.name == 'price')
