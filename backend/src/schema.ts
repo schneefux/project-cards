@@ -12,6 +12,7 @@ import {
   enumType,
   queryType,
   mutationType,
+  intArg,
 } from 'nexus'
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
@@ -153,7 +154,6 @@ const Query = queryType({
     t.crud.user()
     t.crud.users() // TODO restrict access
     t.crud.trumpPack()
-    t.crud.trumpPacks()
     t.crud.game()
 
     t.field('me', {
@@ -176,6 +176,23 @@ const Query = queryType({
           where: {
             state: 'OPEN',
           },
+        })
+      },
+    })
+
+    t.list.field('featuredTrumpPacks', {
+      type: 'TrumpPack',
+      nullable: false,
+      args: {
+        last: intArg({ default: 3 })
+      },
+      resolve: async (parent: any, { last }: { last: number }, ctx: Context) => {
+        // TODO add a 'featured' flag or a rating metric
+        return await ctx.photon.trumpPacks.findMany({
+          orderBy: {
+            createdAt: 'desc',
+          },
+          last
         })
       },
     })

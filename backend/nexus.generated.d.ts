@@ -420,11 +420,11 @@ export interface NexusGenFieldTypes {
     uploadTrumpCardImage: boolean; // Boolean!
   }
   Query: { // field return type
+    featuredTrumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
     game: NexusGenRootTypes['Game'] | null; // Game
     me: NexusGenRootTypes['User'] | null; // User
     openGames: NexusGenRootTypes['Game'][]; // [Game!]!
     trumpPack: NexusGenRootTypes['TrumpPack'] | null; // TrumpPack
-    trumpPacks: NexusGenRootTypes['TrumpPack'][]; // [TrumpPack!]!
     user: NexusGenRootTypes['User'] | null; // User
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
@@ -550,18 +550,14 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    featuredTrumpPacks: { // args
+      last?: number | null; // Int
+    }
     game: { // args
       where: NexusGenInputs['GameWhereUniqueInput']; // GameWhereUniqueInput!
     }
     trumpPack: { // args
       where: NexusGenInputs['TrumpPackWhereUniqueInput']; // TrumpPackWhereUniqueInput!
-    }
-    trumpPacks: { // args
-      after?: string | null; // ID
-      before?: string | null; // ID
-      first?: number | null; // Int
-      last?: number | null; // Int
-      skip?: number | null; // Int
     }
     user: { // args
       where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!

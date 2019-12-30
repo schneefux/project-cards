@@ -1,20 +1,27 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
-    <h1 class="page-heading">Pack "{{ trumpPack.name }}"</h1>
-    <button
-      @click="createGoofenspiel"
-      class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
-    >
-      Start Game
-    </button>
-    <p>Description: {{ trumpPack.description }}</p>
-    <p>Author: {{ trumpPack.author.name }}</p>
+    <h1 class="page-heading">
+      Card Pack
+      <span class="text-primary-700">{{ trumpPack.name }}</span>
+      by
+      <span class="text-gray-700">{{ trumpPack.author.name }}</span>
+    </h1>
+
+    <div class="flex">
+      <button
+        v-if="me != undefined"
+        @click="createGoofenspiel"
+        class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
+      >Start Game</button>
+      <p>{{ trumpPack.description }}</p>
+    </div>
 
     <div class="mt-4">
       <h2 class="page-subheading">Cards ({{ trumpPack.cards.length }})</h2>
 
       <div class="flex flex-wrap">
         <nuxt-link
+          v-if="me != undefined && trumpPack.author.id == me.id"
           :to="`/packs/${trumpPack.id}/new`"
           class="playingcard playingcard--interactive"
         >
@@ -37,30 +44,23 @@
             <p class="playingcard__title">{{ card.name }}</p>
             <div class="playingcard__image boxedimage">
               <div class="boxedimage__container">
-                <img
-                  class="boxedimage__image"
-                  :src="imagesRoot + card.imageUrl"
-                />
+                <img class="boxedimage__image" :src="imagesRoot + card.imageUrl" />
               </div>
             </div>
             <table class="playingcard__attributes">
-              <tr
-                v-for="attributeValue in card.attributeValues"
-                :key="attributeValue.id"
-              >
+              <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
                 <td>{{ attributeValue.attribute.name }}</td>
                 <td>{{ attributeValue.value }}</td>
               </tr>
             </table>
 
             <button
+              v-if="me != undefined && trumpPack.author.id == me.id"
               class="absolute bottom-0 left-0 ml-2 mb-2 button button--fab-sm"
             >
               <BinIcon class="button__icon" />
             </button>
-            <p class="playingcard__attribution">
-              created by {{ trumpPack.author.name }}
-            </p>
+            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
           </div>
         </div>
       </div>
@@ -75,6 +75,13 @@ import gql from 'graphql-tag'
 
 export default {
   apollo: {
+    me: gql`
+      query {
+        me {
+          id
+        }
+      }
+    `,
     trumpPack: {
       query: gql`
         query($trumpPackId: ID!) {
@@ -82,6 +89,7 @@ export default {
             id
             name
             author {
+              id
               name
             }
             cards {
