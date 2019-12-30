@@ -91,7 +91,8 @@ export default {
         return [
           {
             to: '/',
-            title: 'Home'
+            title: 'Home',
+            exact: true
           },
           {
             to: '/login',
