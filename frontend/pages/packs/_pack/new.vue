@@ -85,6 +85,7 @@ export default {
             id
             name
             author {
+              id
               name
             }
             attributes {

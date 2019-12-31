@@ -42,6 +42,7 @@ export default {
     me: gql`
       query {
         me {
+          id
           name
         }
       }

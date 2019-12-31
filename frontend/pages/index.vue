@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import PlayingCardsIllustration from '~/assets/images/playing-cards.svg'
 import GameDayIllustration from '~/assets/images/game-day.svg'
 import PrintInvoiceIllustration from '~/assets/images/print-invoice.svg'
