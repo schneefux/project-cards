@@ -5,6 +5,14 @@
       <label for="username" class="mr-1">Nickname</label>
       <input id="username" type="username" v-model="username" required class="textinput" />
       <button type="submit" class="button button--secondary ml-3">Go</button>
+
+      <p class="mt-8">
+        Already have an account?
+        <nuxt-link
+          :to="'/login' + (redirect != undefined ? `?redirect=${redirect}` : '')"
+          class="ml-1 button button--sm"
+        >Go to Login</nuxt-link>
+      </p>
     </form>
   </div>
 </template>

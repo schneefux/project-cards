@@ -8,7 +8,7 @@
         <div class="md:hidden float-right mt-1">
           <nuxt-link
             v-if="me != undefined"
-            to="/login"
+            :to="me.subscriptionTier == 'GUEST' ? '/register' : '/account'"
             class="px-2 py-1 border rounded-sm nav-link"
           >{{ me.name }}</nuxt-link>
         </div>
@@ -24,7 +24,11 @@
               class="inline mr-4 font-medium nav-link"
             >{{ link.title }}</nuxt-link>
             <div class="hidden md:inline-block">
-              <nuxt-link v-if="me != undefined" to="/login" class="inline nav-link">{{ me.name }}</nuxt-link>
+              <nuxt-link
+                v-if="me != undefined"
+                :to="me.subscriptionTier == 'GUEST' ? '/register' : '/account'"
+                class="inline nav-link"
+              >{{ me.name }}</nuxt-link>
             </div>
           </div>
         </div>
@@ -49,32 +53,14 @@ export default {
       query {
         me {
           name
+          subscriptionTier
         }
       }
     `
   },
   computed: {
-    loggedIn() {
-      return this.me != undefined
-    },
     links() {
-      if (this.loggedIn) {
-        return [
-          {
-            to: '/',
-            title: 'Home',
-            exact: true
-          },
-          {
-            to: '/packs',
-            title: 'Packs'
-          },
-          {
-            to: '/games',
-            title: 'Live Games'
-          }
-        ]
-      } else {
+      if (this.me == null) {
         return [
           {
             to: '/',
@@ -90,6 +76,38 @@ export default {
             title: 'Login'
           }
         ]
+      }
+
+      switch (this.me.subscriptionTier) {
+        case 'GUEST':
+          return [
+            {
+              to: '/',
+              title: 'Home',
+              exact: true
+            },
+            {
+              to: '/packs',
+              title: 'Packs'
+            }
+          ]
+
+        case 'FREE':
+          return [
+            {
+              to: '/',
+              title: 'Home',
+              exact: true
+            },
+            {
+              to: '/packs',
+              title: 'Packs'
+            },
+            {
+              to: '/games',
+              title: 'Live Games'
+            }
+          ]
       }
     }
   }
