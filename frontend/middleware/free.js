@@ -7,14 +7,16 @@ export default async function({ app, redirect, route, $apollo }) {
     return
   }
 
-  const apollo = this.app.apolloProvider.defaultClient
-  const response = await apollo.query(gql`
-    query {
-      me {
-        subscriptionTier
+  const apollo = app.apolloProvider.defaultClient
+  const response = await apollo.query({
+    query: gql`
+      query {
+        me {
+          subscriptionTier
+        }
       }
-    }
-  `)
+    `
+  })
 
   if (response.data.me.subscriptionTier == 'GUEST') {
     redirect('/login?redirect=' + route.path)
