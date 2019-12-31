@@ -167,6 +167,23 @@ export default {
           pack: this.trumpPack.id,
           description: '',
           attributeValues: attributeValuesInput
+        },
+        update: (store, { data: { createOneTrumpCard } }) => {
+          const query = gql`
+            query($id: ID!) {
+              trumpPack(where: { id: $id }) {
+                id
+                cards {
+                  id
+                }
+              }
+            }
+          `
+          const variables = { id: this.trumpPack.id }
+
+          const data = store.readQuery({ query, variables })
+          data.trumpPack.cards.push(createOneTrumpCard)
+          store.writeQuery({ query, variables, data })
         }
       })
 

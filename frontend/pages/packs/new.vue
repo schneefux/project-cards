@@ -142,6 +142,22 @@ export default {
           name: this.packName,
           description: this.packDescription,
           attributes: this.attributes
+        },
+        update: (store, { data: { createOneTrumpPack } }) => {
+          const query = gql`
+            query {
+              me {
+                id
+                trumpPacks {
+                  id
+                }
+              }
+            }
+          `
+
+          const data = store.readQuery({ query })
+          data.me.trumpPacks.push(createOneTrumpPack)
+          store.writeQuery({ query, data })
         }
       })
 
