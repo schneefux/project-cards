@@ -254,8 +254,8 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'name' | 'description' | 'imageUrl'
 }
     trumpAttributes: {
-  filtering: 'id' | 'name' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'pack'
-  ordering: 'id' | 'name' | 'aimHigh'
+  filtering: 'id' | 'name' | 'unit' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'pack'
+  ordering: 'id' | 'name' | 'unit' | 'aimHigh'
 }
     trumpAttributeValues: {
   filtering: 'id' | 'value' | 'AND' | 'OR' | 'NOT' | 'card' | 'attribute'
@@ -307,8 +307,8 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'name' | 'description' | 'imageUrl'
 }
     attributes: {
-  filtering: 'id' | 'name' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'pack'
-  ordering: 'id' | 'name' | 'aimHigh'
+  filtering: 'id' | 'name' | 'unit' | 'aimHigh' | 'trumpAttributeValues' | 'AND' | 'OR' | 'NOT' | 'pack'
+  ordering: 'id' | 'name' | 'unit' | 'aimHigh'
 }
     games: {
   filtering: 'id' | 'piles' | 'hands' | 'state' | 'AND' | 'OR' | 'NOT' | 'pack'
@@ -501,6 +501,7 @@ interface NexusPrismaTypes {
     id: 'String'
     pack: 'TrumpPack'
     name: 'String'
+    unit: 'String'
     aimHigh: 'Boolean'
     trumpAttributeValues: 'TrumpAttributeValue'
 

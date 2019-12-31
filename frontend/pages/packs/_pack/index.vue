@@ -20,7 +20,7 @@
           <nuxt-link to="/games" class="ml-2 button button--lg">Play started Games</nuxt-link>
         </div>
       </div>
-      <p>{{ trumpPack.description }}</p>
+      <p class="flex items-center">{{ trumpPack.description }}</p>
     </div>
 
     <div class="mt-8">
@@ -56,8 +56,9 @@
             </div>
             <table class="playingcard__attributes">
               <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
-                <td>{{ attributeValue.attribute.name }}</td>
-                <td>{{ attributeValue.value }}</td>
+                <td class="w-8/12">{{ attributeValue.attribute.name }}</td>
+                <td class="w-2/12">{{ attributeValue.value }}</td>
+                <td class="w-2/12">{{ attributeValue.attribute.unit }}</td>
               </tr>
             </table>
 
@@ -95,6 +96,7 @@ export default {
           trumpPack(where: { id: $trumpPackId }) {
             id
             name
+            description
             author {
               id
               name
@@ -109,6 +111,7 @@ export default {
                 attribute {
                   id
                   name
+                  unit
                   aimHigh
                 }
               }

@@ -93,6 +93,7 @@ model TrumpAttribute {
   id      String    @default(cuid()) @id
   pack    TrumpPack
   name    String
+  unit    String
   aimHigh Boolean   @default(true)
 }
 

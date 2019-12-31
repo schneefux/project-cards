@@ -231,6 +231,7 @@ type TrumpAttribute {
   id: ID!
   name: String!
   pack: TrumpPack!
+  unit: String!
 }
 
 input TrumpAttributeCreateInput {
@@ -239,6 +240,7 @@ input TrumpAttributeCreateInput {
   name: String!
   pack: TrumpPackCreateOneWithoutPackInput!
   trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
+  unit: String!
 }
 
 input TrumpAttributeCreateManyWithoutAttributesInput {
@@ -256,6 +258,7 @@ input TrumpAttributeCreateWithoutPackInput {
   id: ID
   name: String!
   trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
+  unit: String!
 }
 
 input TrumpAttributeCreateWithoutTrumpAttributeValuesInput {
@@ -263,6 +266,7 @@ input TrumpAttributeCreateWithoutTrumpAttributeValuesInput {
   id: ID
   name: String!
   pack: TrumpPackCreateOneWithoutPackInput!
+  unit: String!
 }
 
 type TrumpAttributeValue {

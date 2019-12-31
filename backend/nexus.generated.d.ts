@@ -137,6 +137,7 @@ export interface NexusGenInputs {
     name: string; // String!
     pack: NexusGenInputs['TrumpPackCreateOneWithoutPackInput']; // TrumpPackCreateOneWithoutPackInput!
     trumpAttributeValues?: NexusGenInputs['TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput'] | null; // TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
+    unit: string; // String!
   }
   TrumpAttributeCreateManyWithoutAttributesInput: { // input type
     connect?: NexusGenInputs['TrumpAttributeWhereUniqueInput'][] | null; // [TrumpAttributeWhereUniqueInput!]
@@ -151,12 +152,14 @@ export interface NexusGenInputs {
     id?: string | null; // ID
     name: string; // String!
     trumpAttributeValues?: NexusGenInputs['TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput'] | null; // TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
+    unit: string; // String!
   }
   TrumpAttributeCreateWithoutTrumpAttributeValuesInput: { // input type
     aimHigh?: boolean | null; // Boolean
     id?: string | null; // ID
     name: string; // String!
     pack: NexusGenInputs['TrumpPackCreateOneWithoutPackInput']; // TrumpPackCreateOneWithoutPackInput!
+    unit: string; // String!
   }
   TrumpAttributeValueCreateManyWithoutAttributeValuesInput: { // input type
     connect?: NexusGenInputs['TrumpAttributeValueWhereUniqueInput'][] | null; // [TrumpAttributeValueWhereUniqueInput!]
@@ -452,6 +455,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     name: string; // String!
     pack: NexusGenRootTypes['TrumpPack']; // TrumpPack!
+    unit: string; // String!
   }
   TrumpAttributeValue: { // field return type
     attribute: NexusGenRootTypes['TrumpAttribute']; // TrumpAttribute!

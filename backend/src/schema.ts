@@ -140,6 +140,7 @@ const TrumpAttribute = objectType({
     t.model.id()
     t.model.pack()
     t.model.name()
+    t.model.unit()
     t.model.aimHigh()
   },
 })

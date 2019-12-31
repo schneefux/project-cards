@@ -1,21 +1,38 @@
 <template>
   <div class="container container--page">
-    <h1 class="page-heading">Create a Pack</h1>
+    <h1 class="page-heading">Create a Card Pack</h1>
 
-    <form @submit.prevent="createPack" class="flex flex-wrap">
-      <div class="w-full">
-        <label for="name" class="mr-1">Title</label>
-        <input type="text" v-model="packName" maxlength="20" required class="textinput" />
+    <form @submit.prevent="createPack" class="mt-6">
+      <div class="block w-64 mx-auto md:mx-0">
+        <div class="block flex">
+          <label for="name" class="mr-1 w-4/12">Title</label>
+          <input type="text" v-model="packName" maxlength="20" required class="textinput w-8/12" />
+        </div>
+
+        <div class="block flex mt-2">
+          <label for="name" class="mr-1 w-4/12">Description</label>
+          <input
+            type="text"
+            v-model="packDescription"
+            maxlength="20"
+            required
+            class="textinput w-8/12"
+          />
+        </div>
       </div>
 
-      <div class="w-full mt-2 flex justify-center">
+      <div class="mt-6">
+        <h2 class="page-subheading">Card Design</h2>
+      </div>
+
+      <div class="block mt-2 flex justify-center">
         <div class="playingcard">
           <div class="playingcard__container playingcard__container--lg">
             <p class="playingcard__title">Card Title</p>
             <div class="playingcard__image boxedimage relative">
               <div class="boxedimage__container">
-                <img class="boxedimage__image" src="/snowman.png" />
-                <span class="absolute inset-0">card image</span>
+                <div class="boxedimage__image"></div>
+                <span class="absolute bottom-0 inset-x-0 text-center text-gray-400">card image</span>
               </div>
             </div>
             <div class="playingcard__attributes">
@@ -25,9 +42,18 @@
                   v-model="attribute.name"
                   maxlength="16"
                   required
-                  class="w-3/4 mr-px textinput"
+                  placeholder="Attribute Name"
+                  class="w-8/12 mr-px textinput"
                 />
-                <input type="text" maxlength="8" required class="w-1/4 textinput" />
+                <span class="w-2/12">999</span>
+                <input
+                  type="text"
+                  v-model="attribute.unit"
+                  maxlength="8"
+                  required
+                  placeholder="unit"
+                  class="w-2/12 textinput"
+                />
               </div>
               <button
                 @click="addAttribute"
@@ -42,22 +68,12 @@
                 class="button button--sm mt-1"
               >Remove</button>
             </div>
-            <p class="playingcard__attribution">
-              created by
-              <input
-                type="text"
-                v-model="author"
-                maxlength="16"
-                required
-                class="textinput"
-                :style="`min-width: 8ch; width: ${author.length}ch;`"
-              />
-            </p>
+            <p class="playingcard__attribution">created by {{ me.name }}</p>
           </div>
         </div>
       </div>
 
-      <div class="w-full mt-2 flex justify-end">
+      <div class="block mt-2 flex justify-end">
         <button type="submit" class="button button--secondary button--lg">Save</button>
       </div>
     </form>
@@ -73,6 +89,7 @@ export default {
       query {
         me {
           id
+          name
         }
       }
     `
@@ -80,7 +97,7 @@ export default {
   data() {
     return {
       packName: '',
-      author: '',
+      packDescription: '',
       attributes: [
         {
           name: '',
@@ -123,10 +140,8 @@ export default {
         variables: {
           author: this.me.id,
           name: this.packName,
-          description: '',
+          description: this.packDescription,
           attributes: this.attributes
-          // TODO add author
-          // TODO add unit
         }
       })
 

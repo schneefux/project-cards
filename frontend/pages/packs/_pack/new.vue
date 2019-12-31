@@ -1,6 +1,9 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
-    <h1 class="page-heading">New Card for "{{ trumpPack.name }}"</h1>
+    <h1 class="page-heading">
+      New Card for
+      <span class="text-gray-700">{{ trumpPack.name }}</span>
+    </h1>
 
     <form ref="card-form" @submit.prevent="saveAndReturn" class="mt-2 flex flex-wrap">
       <div class="w-full mt-2 flex justify-center">
@@ -32,14 +35,14 @@
             </div>
             <div class="playingcard__attributes">
               <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
-                <span class="w-1/2">{{ attribute.name }}</span>
+                <span class="w-8/12">{{ attribute.name }}</span>
                 <input
                   type="number"
                   v-model="attribute.value"
                   required
-                  class="w-1/4 mr-px textinput"
+                  class="w-2/12 mr-px textinput"
                 />
-                <span class="w-1/4">u</span>
+                <span class="w-2/12">{{ attribute.unit }}</span>
               </div>
             </div>
             <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
@@ -47,14 +50,16 @@
         </div>
       </div>
 
-      <div class="w-full mt-4 flex flex-wrap justify-end">
-        <nuxt-link :to="`/packs/${trumpPack.id}`" class="button ml-1 mb-1">Cancel</nuxt-link>
-        <button
-          type="button"
-          @click="saveAndReset"
-          class="button button--secondary ml-1 mb-1"
-        >Save and Create Another</button>
-        <button type="submit" class="button button--secondary ml-1 mb-1">Save and Return to Packs</button>
+      <div class="w-full mt-4">
+        <div class="ml-auto w-2/3 flex flex-wrap justify-end">
+          <nuxt-link :to="`/packs/${trumpPack.id}`" class="button ml-1 mb-1">Cancel</nuxt-link>
+          <button
+            type="button"
+            @click="saveAndReset"
+            class="button button--secondary ml-1 mb-1"
+          >Save and Create Another</button>
+          <button type="submit" class="button button--secondary ml-1 mb-1">Save and Return to Packs</button>
+        </div>
       </div>
     </form>
   </div>
@@ -85,6 +90,7 @@ export default {
             attributes {
               id
               name
+              unit
             }
           }
         }
