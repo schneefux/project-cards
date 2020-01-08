@@ -8,25 +8,22 @@
         :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
       >
         <template v-if="side == 2">
-          <div
-            v-for="n in cardsPrice"
-            :key="n"
-            class="playingcard__container"
-            :style="
+          <draggable v-model="cards" :group="`cards-${side}`" class="flex justify-center">
+            <div
+              v-for="card in cardsPrice"
+              :key="card"
+              :style="
               `
-              position: absolute;
-              left: calc(50% - ${CENTER_CARD_W / 2}rem - ${(n -
-                1 +
-                0.5 -
-                cardsPrice / 2) *
-                CENTER_CARD_W *
-                1.5}rem);
+              margin-top: -${(CENTER_CARD_W * CARD_RATIO) / 2}rem;
+              margin-left: ${CENTER_CARD_W / 4}rem;
+              margin-right: ${CENTER_CARD_W / 4}rem;
               width: ${CENTER_CARD_W}rem;
-              top: -${(CENTER_CARD_W * CARD_RATIO) / 2}rem;
               height: ${CENTER_CARD_W * CARD_RATIO}rem;
               `
             "
-          ></div>
+              class="playingcard__container"
+            >{{ card }}</div>
+          </draggable>
         </template>
       </div>
       <div
@@ -57,7 +54,7 @@
         >
           <div
             v-for="(card, index) in cards"
-            :key="`${card}`"
+            :key="card"
             :style="
               `
               grid-column: auto / span ${HAND_CARD_OVERLAP};
@@ -101,7 +98,7 @@ export default {
         'card 8',
         'card 9'
       ],
-      cardsPrice: 2,
+      cardsPrice: ['price 1', 'price 2'],
       CARD_RATIO: 9 / 6,
       CENTER_CARD_W: 4,
       HAND_CARD_W: 4,
