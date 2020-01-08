@@ -30,7 +30,7 @@
         </template>
       </div>
       <div
-        class="border border-gray-700 relative mx-auto rounded-full flex"
+        class="border border-gray-700 relative mx-auto rounded-full flex justify-center"
         :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
         :style="
           `
@@ -45,28 +45,30 @@
           :style="`
             margin-top: -5rem;
             display: grid;
-            grid-template-columns: repeat(${cards.length * 4}, 1fr);
+            grid-template-columns: repeat(${cards.length * HAND_CARD_OVERLAP}, 1fr);
+            transition: all 0.3s;
+            ${spread || side == 1 ? `padding-right: ${HAND_CARD_W / 2}rem;` : ''}
+            ${spread || side == 1 ? '' : `margin-right: calc(-50vw + 50%);`}
+            ${spread || side == 1 ? '' : `margin-left: calc(-50vw + 50%);`}
           `"
-          class="mx-auto h-full"
+          class="h-full"
           @start="spread = false"
           @end="spread = true"
         >
-          <!-- TODO find an alternative to commenting out spread styles -->
           <div
             v-for="(card, index) in cards"
             :key="`${card}`"
             :style="
               `
-              grid-column: auto / span 4;
+              grid-column: auto / span ${HAND_CARD_OVERLAP};
               grid-row: 1;
               width: ${HAND_CARD_W}rem;
               height: ${HAND_CARD_W * CARD_RATIO}rem;
-              ${spread ? '' : '/*'}
-              transform: rotate(${-30 + ((index + 0.5) / cards.length) * 60}deg);
-              ${spread ? '' : '*/'}
-              ${spread ? '' : '/*'}
-              margin-top: ${Math.abs(index + 0.5 - cards.length / 2) / 2}rem;
-              ${spread ? '' : '*/'}
+              transition: all 0.3s;
+              ${spread || side == 1 ? `transform: rotate(${-30 + ((index + 0.5) / cards.length) * 60}deg);` : ''}
+              ${spread || side == 1 ? `margin-top: ${Math.abs(index + 0.5 - cards.length / 2) / 2}rem;` : ''}
+              ${spread || side == 1 ? '' : 'transform: scale(1.2);'}
+              ${spread || side == 1 ? '' : 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'}
             `
             "
             class="playingcard__container"
@@ -105,6 +107,7 @@ export default {
       HAND_CARD_W: 4,
       HAND_SPACE_W: 20,
       HAND_SPACE_H: 8,
+      HAND_CARD_OVERLAP: 4,
       dragging: undefined,
       spread: true
     }
