@@ -94,9 +94,7 @@ export default {
         'card 4',
         'card 5',
         'card 6',
-        'card 7',
-        'card 8',
-        'card 9'
+        'card 7'
       ],
       cardsPrice: ['price 1', 'price 2'],
       CARD_RATIO: 9 / 6,
@@ -125,5 +123,9 @@ export default {
 
 .sortable-chosen {
   transform: scale(1.5) !important;
+}
+
+.sortable-fallback {
+  @apply hidden;
 }
 </style>
