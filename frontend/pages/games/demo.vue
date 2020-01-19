@@ -4,26 +4,69 @@
 
     <div class="w-full" v-for="side in 2" :key="side" :class="{ 'transform-flip-y': side == 1 }">
       <div
-        class="relative w-full h-40 rounded-b-lg"
+        class="relative w-full h-40 rounded-b-lg z-0"
         :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
       >
         <template v-if="side == 2">
-          <draggable v-model="cards" :group="`cards-${side}`" class="flex justify-center">
+          <div class="flex justify-center z-10">
             <div
               v-for="card in cardsPrice"
               :key="card"
-              :style="
-              `
+              :style="`
               margin-top: -${(CENTER_CARD_W * CARD_RATIO) / 2}rem;
               margin-left: ${CENTER_CARD_W / 4}rem;
               margin-right: ${CENTER_CARD_W / 4}rem;
               width: ${CENTER_CARD_W}rem;
               height: ${CENTER_CARD_W * CARD_RATIO}rem;
-              `
-            "
+              `"
               class="playingcard__container"
             >{{ card }}</div>
+          </div>
+          <draggable
+            v-show="!spread"
+            v-model="bets[side - 1]"
+            :group="`cards-${side}`"
+            class="border-gray-700 border-dashed border-4 px-2 py-1 mx-auto flex justify-center items-center relative z-20"
+            :style="`
+              margin-top: -${CENTER_CARD_W * CARD_RATIO * 1.25}rem;
+              width: ${HAND_SPACE_W}rem;
+              height: ${CENTER_CARD_W * CARD_RATIO * 1.5}rem;
+              background: rgba(0, 0, 0, 0.25);
+            `"
+          >
+            <p
+              class="absolute top-0 left-0 text-gray-200 font-semibold"
+            >Drag card here to place your bet.</p>
           </draggable>
+          <div
+            v-for="betSide in 2"
+            :key="betSide"
+            :style="`
+              margin-top: -${(CENTER_CARD_W * CARD_RATIO) * 0.75}rem;
+              margin-left: -${CENTER_CARD_W * 3/4}rem;
+            `"
+            :class="{ 'hidden md:block': betSide == 1 }"
+            class="absolute top-0 right-0 mr-1"
+          >
+            <p
+              class="text-center text-sm flex md:block flex-col justify-end"
+              :style="`
+                width: ${CENTER_CARD_W}rem;
+                height: ${CENTER_CARD_W * CARD_RATIO * 0.5}rem;
+              `"
+            >{{ betSide == 2 ? 'Your Bet' : 'Opponent Bet' }}</p>
+            <div
+              v-for="card in bets[betSide - 1]"
+              :key="card"
+              :style="`
+              margin-bottom: -${(CENTER_CARD_W * CARD_RATIO) * 0.75}rem;
+              ${betSide == 1 ? `margin-right: ${CENTER_CARD_W * 1.25}rem;` : ''}
+              width: ${CENTER_CARD_W}rem;
+              height: ${CENTER_CARD_W * CARD_RATIO}rem;
+              `"
+              class="playingcard__container"
+            >{{ card }}</div>
+          </div>
         </template>
       </div>
       <div
@@ -96,6 +139,7 @@ export default {
         'card 6',
         'card 7'
       ],
+      bets: [['bet 1'], ['bet 2']],
       cardsPrice: ['price 1', 'price 2'],
       CARD_RATIO: 9 / 6,
       CENTER_CARD_W: 4,
@@ -103,7 +147,6 @@ export default {
       HAND_SPACE_W: 20,
       HAND_SPACE_H: 8,
       HAND_CARD_OVERLAP: 4,
-      dragging: undefined,
       spread: true
     }
   },
