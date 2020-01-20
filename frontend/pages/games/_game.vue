@@ -8,16 +8,22 @@
 
     <div v-if="game.state == 'RUNNING' && pricePile != undefined">
       <div
-        v-for="side in 2"
-        :key="side"
-        :class="{ 'transform-flip-y': side == 1, 'opacity-75': !gameHands[2 - side].atTurn }"
+        v-for="(side, sideIndex) in sides.slice().reverse()"
+        :key="side.id"
+        :class="{
+          'transform-flip-y': sideIndex == 0,
+          'opacity-75': !side.atTurn,
+        }"
         class="w-full"
       >
         <div
           class="relative w-full h-40 rounded-b-lg z-0"
-          :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
+          :class="{
+            'bg-secondary-500': sideIndex == 0,
+            'bg-primary-500': sideIndex == 1,
+          }"
         >
-          <template v-if="side == 2">
+          <template v-if="sideIndex == 1">
             <div class="flex justify-center z-10">
               <div
                 v-for="pileCard in pricePile.pileCards"
@@ -34,8 +40,8 @@
             </div>
             <draggable
               v-show="!spread"
-              :list="hands[side - 1].pileCards"
-              :group="`cards-${side}`"
+              :list="hands[sideIndex].pileCards"
+              :group="`cards-${sideIndex}`"
               class="border-gray-700 border-dashed border-4 px-2 py-1 mx-auto flex justify-center items-center relative z-20"
               :style="`
                 margin-top: -${CENTER_CARD_W * CARD_RATIO * 1.25}rem;
@@ -43,7 +49,7 @@
                 height: ${CENTER_CARD_W * CARD_RATIO * 1.5}rem;
                 background: rgba(0, 0, 0, 0.25);
               `"
-              @add="event => addBid(side - 1, event)"
+              @add="event => addBid(sideIndex, event)"
             >
               <p
                 class="absolute top-0 left-0 text-gray-200 font-semibold"
@@ -97,30 +103,33 @@
         </div>
         <div
           class="border border-gray-700 relative mx-auto rounded-full flex justify-center"
-          :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
+          :class="{
+            'bg-secondary-500': sideIndex == 0,
+            'bg-primary-500': sideIndex == 1,
+          }"
           :style="`
             width: ${HAND_SPACE_W}rem;
             height: ${HAND_SPACE_H}rem;
           `"
         >
           <draggable
-            :list="hands[side - 1].pileCards"
-            :group="`cards-${side}`"
+            :list="hands[sideIndex].pileCards"
+            :group="`cards-${sideIndex}`"
             :style="`
               margin-top: -5rem;
               display: grid;
-              grid-template-columns: repeat(${hands[side - 1].pileCards * HAND_CARD_OVERLAP}, 1fr);
+              grid-template-columns: repeat(${hands[sideIndex].pileCards * HAND_CARD_OVERLAP}, 1fr);
               transition: all 0.3s;
-              ${spread || side == 1 ? `padding-right: ${HAND_CARD_W / 2}rem;` : ''}
-              ${spread || side == 1 ? '' : `margin-right: calc(-50vw + 50%);`}
-              ${spread || side == 1 ? '' : `margin-left: calc(-50vw + 50%);`}
+              ${spread || sideIndex == 0 ? `padding-right: ${HAND_CARD_W / 2}rem;` : ''}
+              ${spread || sideIndex == 0 ? '' : `margin-right: calc(-50vw + 50%);`}
+              ${spread || sideIndex == 0 ? '' : `margin-left: calc(-50vw + 50%);`}
             `"
             class="h-full"
             @start="spread = false"
             @end="spread = true"
           >
             <div
-              v-for="(pileCard, index) in hands[side - 1].pileCards"
+              v-for="(pileCard, index) in hands[sideIndex].pileCards"
               :key="pileCard.id"
               :style="`
                 grid-column: auto / span ${HAND_CARD_OVERLAP};
@@ -128,19 +137,19 @@
                 width: ${HAND_CARD_W}rem;
                 height: ${HAND_CARD_W * CARD_RATIO}rem;
                 transition: all 0.3s;
-                ${spread || side == 1 ? `transform: rotate(${-30 + ((index + 0.5) / hands[side - 1].pileCards.length) * 60}deg);` : ''}
-                ${spread || side == 1 ? `margin-top: ${Math.abs(index + 0.5 - hands[side - 1].pileCards.length / 2) / 2}rem;` : ''}
-                ${spread || side == 1 ? '' : 'transform: scale(1.2);'}
-                ${spread || side == 1 ? '' : 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'}
+                ${spread || sideIndex == 0 ? `transform: rotate(${-30 + ((index + 0.5) / hands[sideIndex].pileCards.length) * 60}deg);` : ''}
+                ${spread || sideIndex == 0 ? `margin-top: ${Math.abs(index + 0.5 - hands[sideIndex].pileCards.length / 2) / 2}rem;` : ''}
+                ${spread || sideIndex == 0 ? '' : 'transform: scale(1.2);'}
+                ${spread || sideIndex == 0 ? '' : 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'}
               `"
               class="playingcard__container"
             >{{ pileCard.card.name }}</div>
           </draggable>
           <p
             class="text-center w-full absolute font-semibold"
-            :class="{ 'transform-flip-y': side == 1 }"
+            :class="{ 'transform-flip-y': sideIndex == 0 }"
             style="top: 50%"
-          >1234 Punkte</p>
+          >{{ side.score }} Punkte</p>
         </div>
       </div>
     </div>
@@ -287,29 +296,17 @@ export default {
     // TODO write queries so that the other hand is kept secret
     hands: {
       get() {
-        const myHand = this.game.hands.find(h => h.player.id == this.me.id)
-        const opponentHand = this.game.hands.find(
-          h => h.player.id != this.me.id
-        )
-        return [myHand, opponentHand].map(h =>
-          h.piles.find(p => p.name == 'hand')
-        )
+        return this.sides.map(h => h.piles.find(p => p.name == 'hand'))
       },
       set(value) {}
     },
     bids: {
       get() {
-        const myHand = this.game.hands.find(h => h.player.id == this.me.id)
-        const opponentHand = this.game.hands.find(
-          h => h.player.id != this.me.id
-        )
-        return [myHand, opponentHand].map(h =>
-          h.piles.find(p => p.name == 'bid')
-        )
+        return this.sides.map(h => h.piles.find(p => p.name == 'bid'))
       },
       set(value) {}
     },
-    gameHands() {
+    sides() {
       const myHand = this.game.hands.find(h => h.player.id == this.me.id)
       const opponentHand = this.game.hands.find(h => h.player.id != this.me.id)
       return [myHand, opponentHand]
