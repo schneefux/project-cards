@@ -39,6 +39,21 @@
             >Drag card here to place your bet.</p>
           </draggable>
           <div
+            :style="`
+              margin-top: -${(CENTER_CARD_W * CARD_RATIO) * 0.5}rem;
+              margin-right: -${CENTER_CARD_W * 3/4}rem;
+            `"
+            class="absolute top-0 left-0 ml-1"
+          >
+            <div
+              :style="`
+                width: ${CENTER_CARD_W}rem;
+                height: ${CENTER_CARD_W * CARD_RATIO}rem;
+              `"
+              class="playingcard__container"
+            >{{ priceStashSize }} cards left</div>
+          </div>
+          <div
             v-for="betSide in 2"
             :key="betSide"
             :style="`
@@ -141,6 +156,7 @@ export default {
       ],
       bets: [['bet 1'], ['bet 2']],
       cardsPrice: ['price 1', 'price 2'],
+      priceStashSize: 123,
       CARD_RATIO: 9 / 6,
       CENTER_CARD_W: 4,
       HAND_CARD_W: 4,
