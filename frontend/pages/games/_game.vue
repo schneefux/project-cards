@@ -6,56 +6,142 @@
     <p>Players: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
     <button @click="joinGame" v-if="canJoin" class="button button--lg button--secondary my-3">Join</button>
 
-    <div v-if="game.state == 'RUNNING' && myHand != undefined">
-      <p>{{ pricePile.name }}</p>
-      <div v-for="pileCard in pricePile.pileCards" :key="pileCard.id" class="playingcard">
-        <div class="playingcard__container playingcard__container--md">
-          <p class="playingcard__title">{{ pileCard.card.name }}</p>
-          <div class="playingcard__image boxedimage">
-            <div class="boxedimage__container">
-              <img class="boxedimage__image" :src="imagesRoot + pileCard.card.imageUrl" />
-            </div>
-          </div>
-          <table class="playingcard__attributes">
-            <tr v-for="attributeValue in pileCard.card.attributeValues" :key="attributeValue.id">
-              <td>{{ attributeValue.attribute.name }}</td>
-              <td>{{ attributeValue.value }}</td>
-            </tr>
-          </table>
-
-          <p class="playingcard__attribution">created by {{ game.pack.author.name }}</p>
-        </div>
-      </div>
-
-      <p
-        class="my-2 text-red-500"
-      >{{ myHand.player.name }} ({{ myHand.score }} points - {{ myHand.atTurn ? 'at turn' : 'not at turn' }})</p>
-
-      <div v-for="pile in myHand.piles" :key="pile.id">
-        <p>{{ pile.name }}</p>
-        <button
-          v-for="pileCard in pile.pileCards"
-          :key="pileCard.id"
-          @click="bidCard(pileCard)"
-          class="playingcard playingcard--interactive"
+    <div v-if="game.state == 'RUNNING' && pricePile != undefined">
+      <div
+        v-for="side in 2"
+        :key="side"
+        :class="{ 'transform-flip-y': side == 1, 'opacity-75': !gameHands[2 - side].atTurn }"
+        class="w-full"
+      >
+        <div
+          class="relative w-full h-40 rounded-b-lg z-0"
+          :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
         >
-          <div class="playingcard__container playingcard__container--md">
-            <p class="playingcard__title">{{ pileCard.card.name }}</p>
-            <div class="playingcard__image boxedimage">
-              <div class="boxedimage__container">
-                <img class="boxedimage__image" :src="imagesRoot + pileCard.card.imageUrl" />
-              </div>
+          <template v-if="side == 2">
+            <div class="flex justify-center z-10">
+              <div
+                v-for="pileCard in pricePile.pileCards"
+                :key="pileCard.id"
+                :style="`
+                  margin-top: -${(CENTER_CARD_W * CARD_RATIO) / 2}rem;
+                  margin-left: ${CENTER_CARD_W / 4}rem;
+                  margin-right: ${CENTER_CARD_W / 4}rem;
+                  width: ${CENTER_CARD_W}rem;
+                  height: ${CENTER_CARD_W * CARD_RATIO}rem;
+                `"
+                class="playingcard__container"
+              >{{ pileCard.card.name }}</div>
             </div>
-            <table class="playingcard__attributes">
-              <tr v-for="attributeValue in pileCard.card.attributeValues" :key="attributeValue.id">
-                <td>{{ attributeValue.attribute.name }}</td>
-                <td>{{ attributeValue.value }}</td>
-              </tr>
-            </table>
-
-            <p class="playingcard__attribution">created by {{ game.pack.author.name }}</p>
-          </div>
-        </button>
+            <draggable
+              v-show="!spread"
+              :list="hands[side - 1].pileCards"
+              :group="`cards-${side}`"
+              class="border-gray-700 border-dashed border-4 px-2 py-1 mx-auto flex justify-center items-center relative z-20"
+              :style="`
+                margin-top: -${CENTER_CARD_W * CARD_RATIO * 1.25}rem;
+                width: ${HAND_SPACE_W}rem;
+                height: ${CENTER_CARD_W * CARD_RATIO * 1.5}rem;
+                background: rgba(0, 0, 0, 0.25);
+              `"
+              @add="event => addBid(side - 1, event)"
+            >
+              <p
+                class="absolute top-0 left-0 text-gray-200 font-semibold"
+              >Drag card here to place your bet.</p>
+            </draggable>
+            <div
+              :style="`
+                margin-top: -${(CENTER_CARD_W * CARD_RATIO) * 0.5}rem;
+                margin-right: -${CENTER_CARD_W * 3/4}rem;
+              `"
+              class="absolute top-0 left-0 ml-1"
+            >
+              <div
+                :style="`
+                  width: ${CENTER_CARD_W}rem;
+                  height: ${CENTER_CARD_W * CARD_RATIO}rem;
+                `"
+                class="playingcard__container"
+              >{{ pricePile.pileCards.length }} cards left</div>
+            </div>
+            <div
+              v-for="betSide in 2"
+              :key="betSide"
+              :style="`
+                margin-top: -${(CENTER_CARD_W * CARD_RATIO) * 0.75}rem;
+                margin-left: -${CENTER_CARD_W * 3/4}rem;
+              `"
+              :class="{ 'hidden md:block': betSide == 1 }"
+              class="absolute top-0 right-0 mr-1"
+            >
+              <p
+                class="text-center text-sm flex md:block flex-col justify-end"
+                :style="`
+                  width: ${CENTER_CARD_W}rem;
+                  height: ${CENTER_CARD_W * CARD_RATIO * 0.5}rem;
+                `"
+              >{{ betSide == 2 ? 'Your Bet' : 'Opponent Bet' }}</p>
+              <div
+                v-for="pileCard in bids[betSide - 1].pileCards"
+                :key="pileCard.id"
+                :style="`
+                  margin-bottom: -${(CENTER_CARD_W * CARD_RATIO) * 0.75}rem;
+                  ${betSide == 1 ? `margin-right: ${CENTER_CARD_W * 1.25}rem;` : ''}
+                  width: ${CENTER_CARD_W}rem;
+                  height: ${CENTER_CARD_W * CARD_RATIO}rem;
+                `"
+                class="playingcard__container"
+              >{{ pileCard.card.name }}</div>
+            </div>
+          </template>
+        </div>
+        <div
+          class="border border-gray-700 relative mx-auto rounded-full flex justify-center"
+          :class="{ 'bg-secondary-500': side == 1, 'bg-primary-500': side == 2 }"
+          :style="`
+            width: ${HAND_SPACE_W}rem;
+            height: ${HAND_SPACE_H}rem;
+          `"
+        >
+          <draggable
+            :list="hands[side - 1].pileCards"
+            :group="`cards-${side}`"
+            :style="`
+              margin-top: -5rem;
+              display: grid;
+              grid-template-columns: repeat(${hands[side - 1].pileCards * HAND_CARD_OVERLAP}, 1fr);
+              transition: all 0.3s;
+              ${spread || side == 1 ? `padding-right: ${HAND_CARD_W / 2}rem;` : ''}
+              ${spread || side == 1 ? '' : `margin-right: calc(-50vw + 50%);`}
+              ${spread || side == 1 ? '' : `margin-left: calc(-50vw + 50%);`}
+            `"
+            class="h-full"
+            @start="spread = false"
+            @end="spread = true"
+          >
+            <div
+              v-for="(pileCard, index) in hands[side - 1].pileCards"
+              :key="pileCard.id"
+              :style="`
+                grid-column: auto / span ${HAND_CARD_OVERLAP};
+                grid-row: 1;
+                width: ${HAND_CARD_W}rem;
+                height: ${HAND_CARD_W * CARD_RATIO}rem;
+                transition: all 0.3s;
+                ${spread || side == 1 ? `transform: rotate(${-30 + ((index + 0.5) / hands[side - 1].pileCards.length) * 60}deg);` : ''}
+                ${spread || side == 1 ? `margin-top: ${Math.abs(index + 0.5 - hands[side - 1].pileCards.length / 2) / 2}rem;` : ''}
+                ${spread || side == 1 ? '' : 'transform: scale(1.2);'}
+                ${spread || side == 1 ? '' : 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'}
+              `"
+              class="playingcard__container"
+            >{{ pileCard.card.name }}</div>
+          </draggable>
+          <p
+            class="text-center w-full absolute font-semibold"
+            :class="{ 'transform-flip-y': side == 1 }"
+            style="top: 50%"
+          >1234 Punkte</p>
+        </div>
       </div>
     </div>
   </div>
@@ -63,6 +149,7 @@
 
 <script>
 import gql from 'graphql-tag'
+import draggable from 'vuedraggable'
 
 const gameAttrs = `
   id
@@ -173,7 +260,14 @@ export default {
   },
   data() {
     return {
-      imagesRoot: process.env.imagesRoot
+      imagesRoot: process.env.imagesRoot,
+      CARD_RATIO: 9 / 6,
+      CENTER_CARD_W: 4,
+      HAND_CARD_W: 4,
+      HAND_SPACE_W: 20,
+      HAND_SPACE_H: 8,
+      HAND_CARD_OVERLAP: 4,
+      spread: true
     }
   },
   computed: {
@@ -184,13 +278,45 @@ export default {
       )
     },
     // TODO add a 'hidden' attribute to piles
-    pricePile() {
-      return this.game.piles.find(p => p.name == 'price')
+    pricePile: {
+      get() {
+        return this.game.piles.find(p => p.name == 'price')
+      },
+      set(value) {}
     },
-    // TODO write a query for this so that the other hand is kept secret
-    myHand() {
-      return this.game.hands.find(h => h.player.id == this.me.id)
+    // TODO write queries so that the other hand is kept secret
+    hands: {
+      get() {
+        const myHand = this.game.hands.find(h => h.player.id == this.me.id)
+        const opponentHand = this.game.hands.find(
+          h => h.player.id != this.me.id
+        )
+        return [myHand, opponentHand].map(h =>
+          h.piles.find(p => p.name == 'hand')
+        )
+      },
+      set(value) {}
+    },
+    bids: {
+      get() {
+        const myHand = this.game.hands.find(h => h.player.id == this.me.id)
+        const opponentHand = this.game.hands.find(
+          h => h.player.id != this.me.id
+        )
+        return [myHand, opponentHand].map(h =>
+          h.piles.find(p => p.name == 'bid')
+        )
+      },
+      set(value) {}
+    },
+    gameHands() {
+      const myHand = this.game.hands.find(h => h.player.id == this.me.id)
+      const opponentHand = this.game.hands.find(h => h.player.id != this.me.id)
+      return [myHand, opponentHand]
     }
+  },
+  components: {
+    draggable
   },
   methods: {
     async joinGame() {
@@ -206,6 +332,12 @@ export default {
       })
 
       await this.$apollo.queries.game.refetch()
+    },
+    async addBid(index, event) {
+      // index 0: player hand
+      const pileCard = this.hands[0].pileCards[event.newIndex]
+      console.log(pileCard)
+      await this.bidCard(pileCard)
     },
     async bidCard(pileCard) {
       await this.$apollo.mutate({
@@ -226,3 +358,17 @@ export default {
   middleware: ['guest']
 }
 </script>
+
+<style scoped lang="scss">
+.transform-flip-y {
+  transform: rotate(180deg);
+}
+
+.sortable-chosen {
+  transform: scale(1.5) !important;
+}
+
+.sortable-fallback {
+  @apply hidden;
+}
+</style>
