@@ -54,13 +54,7 @@
                 <img class="boxedimage__image" :src="imagesRoot + card.imageUrl" />
               </div>
             </div>
-            <table class="playingcard__attributes">
-              <tr v-for="attributeValue in card.attributeValues" :key="attributeValue.id">
-                <td class="w-8/12">{{ attributeValue.attribute.name }}</td>
-                <td class="w-2/12">{{ attributeValue.value }}</td>
-                <td class="w-2/12">{{ attributeValue.attribute.unit }}</td>
-              </tr>
-            </table>
+            <table class="playingcard__attributes">{{ card.description }}</table>
 
             <button
               v-if="me != undefined && trumpPack.author.id == me.id"
@@ -105,16 +99,7 @@ export default {
               id
               name
               imageUrl
-              attributeValues {
-                id
-                value
-                attribute {
-                  id
-                  name
-                  unit
-                  aimHigh
-                }
-              }
+              description
             }
           }
         }

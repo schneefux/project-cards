@@ -177,15 +177,6 @@ const gameAttrs = `
         id
         name
         imageUrl
-        attributeValues {
-          id
-          value
-          attribute {
-            id
-            name
-            aimHigh
-          }
-        }
       }
     }
   }
@@ -204,15 +195,6 @@ const gameAttrs = `
         card {
           name
           imageUrl
-          attributeValues {
-            id
-            value
-            attribute {
-              id
-              name
-              aimHigh
-            }
-          }
         }
       }
     }

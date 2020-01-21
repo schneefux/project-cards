@@ -16,12 +16,7 @@ import {
 import { GraphQLUpload, FileUpload } from 'graphql-upload'
 import { Context } from './context'
 import { shuffle, JwtCredentials, getCredentials } from './util'
-import {
-  TrumpCard,
-  TrumpAttributeValue,
-  UserCreateInput,
-  User,
-} from '@prisma/photon'
+import { TrumpCard, UserCreateInput, User } from '@prisma/photon'
 import { withFilter } from 'graphql-yoga'
 
 const IMAGE_DIR = process.env.IMAGE_DIR || './images'
@@ -116,7 +111,6 @@ const TrumpPack = objectType({
     t.model.author()
     t.model.description()
     t.model.cards()
-    t.model.attributes()
     t.model.createdAt()
     t.model.updatedAt()
   },
@@ -129,29 +123,8 @@ const TrumpCard = objectType({
     t.model.name()
     t.model.pack()
     t.model.description()
-    t.model.attributeValues()
     t.model.imageUrl()
-  },
-})
-
-const TrumpAttribute = objectType({
-  name: 'TrumpAttribute',
-  definition(t: any) {
-    t.model.id()
-    t.model.pack()
-    t.model.name()
-    t.model.unit()
-    t.model.aimHigh()
-  },
-})
-
-const TrumpAttributeValue = objectType({
-  name: 'TrumpAttributeValue',
-  definition(t: any) {
-    t.model.id()
-    t.model.card()
-    t.model.attribute()
-    t.model.value()
+    t.model.points()
   },
 })
 
@@ -194,8 +167,6 @@ const Mutation = mutationType({
     t.crud.createOneTrumpPack()
     // TODO add authorization
     t.crud.createOneTrumpCard()
-    // TODO add authorization
-    t.crud.createOneTrumpAttribute()
 
     t.field('registerGuest', {
       type: 'LoginResponse',
@@ -435,9 +406,7 @@ const Mutation = mutationType({
                   include: {
                     pileCards: {
                       include: {
-                        card: {
-                          include: { attributeValues: true },
-                        },
+                        card: true,
                       },
                     },
                   },
@@ -448,11 +417,7 @@ const Mutation = mutationType({
               include: {
                 pileCards: {
                   include: {
-                    card: {
-                      include: {
-                        attributeValues: true,
-                      },
-                    },
+                    card: true,
                   },
                 },
               },
@@ -556,19 +521,16 @@ const Mutation = mutationType({
           )
         }
 
-        const cardScore = (attributeValues: TrumpAttributeValue[]) =>
-          attributeValues[0].value
-
         const price = pricePile.pileCards.reduce(
-          (sum, pileCard) => sum + cardScore(pileCard.card.attributeValues),
+          (sum, pileCard) => sum + pileCard.card.points,
           0,
         )
         const opponentScore = opponentBidPile.pileCards.reduce(
-          (sum, pileCard) => sum + cardScore(pileCard.card.attributeValues),
+          (sum, pileCard) => sum + pileCard.card.points,
           0,
         )
         const userScore = userBidPile.pileCards.reduce(
-          (sum, pileCard) => sum + cardScore(pileCard.card.attributeValues),
+          (sum, pileCard) => sum + pileCard.card.points,
           0,
         )
 
@@ -931,8 +893,6 @@ export const schema = makeSchema({
     GamePileCard,
     TrumpPack,
     TrumpCard,
-    TrumpAttribute,
-    TrumpAttributeValue,
   ],
   plugins: [
     nexusPrismaPlugin({

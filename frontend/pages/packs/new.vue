@@ -22,7 +22,7 @@
       </div>
 
       <div class="mt-6">
-        <h2 class="page-subheading">Card Design</h2>
+        <h2 class="page-subheading">Card Design Preview</h2>
       </div>
 
       <div class="block mt-2 flex justify-center">
@@ -35,39 +35,7 @@
                 <span class="absolute bottom-0 inset-x-0 text-center text-gray-400">card image</span>
               </div>
             </div>
-            <div class="playingcard__attributes">
-              <div v-for="(attribute, index) in attributes" :key="index" class="flex">
-                <input
-                  type="text"
-                  v-model="attribute.name"
-                  maxlength="16"
-                  required
-                  placeholder="Attribute Name"
-                  class="w-8/12 mr-px textinput"
-                />
-                <span class="w-2/12">999</span>
-                <input
-                  type="text"
-                  v-model="attribute.unit"
-                  maxlength="8"
-                  required
-                  placeholder="unit"
-                  class="w-2/12 textinput"
-                />
-              </div>
-              <button
-                @click="addAttribute"
-                v-show="attributes.length < 5"
-                type="button"
-                class="button button--sm mt-1"
-              >Add</button>
-              <button
-                @click="removeAttribute"
-                v-show="attributes.length > 1"
-                type="button"
-                class="button button--sm mt-1"
-              >Remove</button>
-            </div>
+            <p class="playingcard__attributes text-gray-400">card text</p>
             <p class="playingcard__attribution">created by {{ me.name }}</p>
           </div>
         </div>
@@ -97,40 +65,19 @@ export default {
   data() {
     return {
       packName: '',
-      packDescription: '',
-      attributes: [
-        {
-          name: '',
-          aimHigh: true
-        }
-      ]
+      packDescription: ''
     }
   },
   methods: {
-    addAttribute() {
-      this.attributes.push({
-        name: '',
-        aimHigh: true
-      })
-    },
-    removeAttribute() {
-      this.attributes.pop()
-    },
     async createPack() {
       const response = await this.$apollo.mutate({
         mutation: gql`
-          mutation(
-            $author: ID!
-            $name: String!
-            $description: String!
-            $attributes: [TrumpAttributeCreateWithoutPackInput!]!
-          ) {
+          mutation($author: ID!, $name: String!, $description: String!) {
             createOneTrumpPack(
               data: {
                 name: $name
                 author: { connect: { id: $author } }
                 description: $description
-                attributes: { create: $attributes }
               }
             ) {
               id
@@ -140,8 +87,7 @@ export default {
         variables: {
           author: this.me.id,
           name: this.packName,
-          description: this.packDescription,
-          attributes: this.attributes
+          description: this.packDescription
         },
         update: (store, { data: { createOneTrumpPack } }) => {
           const query = gql`

@@ -9,13 +9,25 @@
       <div class="w-full mt-2 flex justify-center">
         <div class="playingcard">
           <div class="playingcard__container playingcard__container--lg">
-            <input
-              type="text"
-              v-model="cardName"
-              maxlength="20"
-              required
-              class="playingcard__title textinput"
-            />
+            <div class="flex justify-between">
+              <div class="w-8/12">
+                <input
+                  type="text"
+                  v-model="cardName"
+                  maxlength="20"
+                  required
+                  class="playingcard__title textinput"
+                />
+              </div>
+              <div class="w-3/12">
+                <input
+                  type="number"
+                  v-model.number="cardPoints"
+                  required
+                  class="playingcard__title textinput"
+                />
+              </div>
+            </div>
             <div class="playingcard__image boxedimage relative">
               <div class="boxedimage__container">
                 <img class="boxedimage__image" :src="image" />
@@ -34,16 +46,7 @@
               </label>
             </div>
             <div class="playingcard__attributes">
-              <div v-for="attribute in trumpPack.attributes" :key="attribute.id" class="flex">
-                <span class="w-8/12">{{ attribute.name }}</span>
-                <input
-                  type="number"
-                  v-model="attribute.value"
-                  required
-                  class="w-2/12 mr-px textinput"
-                />
-                <span class="w-2/12">{{ attribute.unit }}</span>
-              </div>
+              <textarea type="text" v-model="cardDescription" required class="textinput w-full" />
             </div>
             <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
           </div>
@@ -71,6 +74,8 @@ import gql from 'graphql-tag'
 function initialFormData() {
   return {
     cardName: 'Card Title',
+    cardDescription: 'Card Description',
+    cardPoints: 0,
     image: '',
     imageFile: undefined
   }
@@ -87,11 +92,6 @@ export default {
             author {
               id
               name
-            }
-            attributes {
-              id
-              name
-              unit
             }
           }
         }
@@ -131,31 +131,23 @@ export default {
       }
 
       await this.save()
-      this.trumpPack.attributes.forEach(a => delete a.value)
       Object.assign(this.$data, initialFormData())
     },
     async save() {
-      const attributeValuesInput = this.trumpPack.attributes.map(
-        ({ id, value }) => ({
-          value: parseFloat(value),
-          attribute: { connect: { id } }
-        })
-      )
-
       const response = await this.$apollo.mutate({
         mutation: gql`
           mutation(
             $name: String!
             $pack: ID!
             $description: String!
-            $attributeValues: [TrumpAttributeValueCreateWithoutCardInput!]!
+            $points: Int!
           ) {
             createOneTrumpCard(
               data: {
                 name: $name
                 pack: { connect: { id: $pack } }
                 description: $description
-                attributeValues: { create: $attributeValues }
+                points: $points
               }
             ) {
               id
@@ -165,8 +157,8 @@ export default {
         variables: {
           name: this.cardName,
           pack: this.trumpPack.id,
-          description: '',
-          attributeValues: attributeValuesInput
+          description: this.cardDescription,
+          points: this.cardPoints
         },
         update: (store, { data: { createOneTrumpCard } }) => {
           const query = gql`

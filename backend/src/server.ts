@@ -39,7 +39,6 @@ const permissions = shield({
   Mutation: {
     createOneTrumpPack: isRegistered,
     createOneTrumpCard: isRegistered,
-    createOneTrumpAttribute: isRegistered,
   },
 })
 

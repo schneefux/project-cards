@@ -1,4 +1,6 @@
 datasource db {
+  // provider = "mysql"
+  // url      = "mysql://projectcards:projectcards@localhost/projectcards"
   provider = "sqlite"
   url      = "file:dev.db"
   default  = true
@@ -61,14 +63,13 @@ model GameHandPile {
 }
 
 model TrumpPack {
-  id          String           @default(cuid()) @id
+  id          String      @default(cuid()) @id
   name        String
   author      User
   description String
   cards       TrumpCard[]
-  attributes  TrumpAttribute[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model GamePileCard {
@@ -80,26 +81,11 @@ model GamePileCard {
 }
 
 model TrumpCard {
-  id              String                @default(cuid()) @id
-  name            String
-  pack            TrumpPack
-  description     String?
-  attributeValues TrumpAttributeValue[]
-  imageUrl        String?
-  pileCards       GamePileCard[]
-}
-
-model TrumpAttribute {
-  id      String    @default(cuid()) @id
-  pack    TrumpPack
-  name    String
-  unit    String
-  aimHigh Boolean   @default(true)
-}
-
-model TrumpAttributeValue {
-  id        String         @default(cuid()) @id
-  card      TrumpCard
-  attribute TrumpAttribute
-  value     Float
+  id          String         @default(cuid()) @id
+  name        String
+  pack        TrumpPack
+  description String
+  imageUrl    String?
+  points      Int
+  pileCards   GamePileCard[]
 }

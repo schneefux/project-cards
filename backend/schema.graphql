@@ -19,20 +19,20 @@ input GameCreateManyWithoutGamesInput {
 
 input GameCreateOneWithoutGameInput {
   connect: GameWhereUniqueInput
-  create: GameCreateWithoutHandsInput
-}
-
-input GameCreateWithoutHandsInput {
-  id: ID
-  pack: TrumpPackCreateOneWithoutPackInput!
-  piles: GamePileCreateManyWithoutPilesInput
-  state: GameState!
+  create: GameCreateWithoutPilesInput
 }
 
 input GameCreateWithoutPackInput {
   hands: GameHandCreateManyWithoutHandsInput
   id: ID
   piles: GamePileCreateManyWithoutPilesInput
+  state: GameState!
+}
+
+input GameCreateWithoutPilesInput {
+  hands: GameHandCreateManyWithoutHandsInput
+  id: ID
+  pack: TrumpPackCreateOneWithoutPackInput!
   state: GameState!
 }
 
@@ -136,14 +136,14 @@ type GamePileCard {
 
 input GamePileCardCreateManyWithoutPileCardsInput {
   connect: [GamePileCardWhereUniqueInput!]
-  create: [GamePileCardCreateWithoutPilesInput!]
+  create: [GamePileCardCreateWithoutCardInput!]
 }
 
-input GamePileCardCreateWithoutPilesInput {
-  card: TrumpCardCreateOneWithoutCardInput!
+input GamePileCardCreateWithoutCardInput {
   handPiles: GameHandPileCreateManyWithoutHandPilesInput
   id: ID
   index: Int
+  piles: GamePileCreateManyWithoutPilesInput
 }
 
 input GamePileCardWhereUniqueInput {
@@ -152,13 +152,13 @@ input GamePileCardWhereUniqueInput {
 
 input GamePileCreateManyWithoutPilesInput {
   connect: [GamePileWhereUniqueInput!]
-  create: [GamePileCreateWithoutGameInput!]
+  create: [GamePileCreateWithoutPileCardsInput!]
 }
 
-input GamePileCreateWithoutGameInput {
+input GamePileCreateWithoutPileCardsInput {
+  game: GameCreateOneWithoutGameInput!
   id: ID
   name: String!
-  pileCards: GamePileCardCreateManyWithoutPileCardsInput
 }
 
 input GamePileWhereUniqueInput {
@@ -183,7 +183,6 @@ type LoginResponse {
 type Mutation {
   bidGoofenspiel(gameId: ID!, pileCardId: ID!): Boolean!
   createGoofenspiel(pack: ID!): ID!
-  createOneTrumpAttribute(data: TrumpAttributeCreateInput!): TrumpAttribute!
   createOneTrumpCard(data: TrumpCardCreateInput!): TrumpCard!
   createOneTrumpPack(data: TrumpPackCreateInput!): TrumpPack!
   joinGoofenspiel(gameId: ID!): Boolean!
@@ -226,103 +225,23 @@ enum SubscriptionTier {
   GUEST
 }
 
-type TrumpAttribute {
-  aimHigh: Boolean!
-  id: ID!
-  name: String!
-  pack: TrumpPack!
-  unit: String!
-}
-
-input TrumpAttributeCreateInput {
-  aimHigh: Boolean
-  id: ID
-  name: String!
-  pack: TrumpPackCreateOneWithoutPackInput!
-  trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
-  unit: String!
-}
-
-input TrumpAttributeCreateManyWithoutAttributesInput {
-  connect: [TrumpAttributeWhereUniqueInput!]
-  create: [TrumpAttributeCreateWithoutPackInput!]
-}
-
-input TrumpAttributeCreateOneWithoutAttributeInput {
-  connect: TrumpAttributeWhereUniqueInput
-  create: TrumpAttributeCreateWithoutTrumpAttributeValuesInput
-}
-
-input TrumpAttributeCreateWithoutPackInput {
-  aimHigh: Boolean
-  id: ID
-  name: String!
-  trumpAttributeValues: TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput
-  unit: String!
-}
-
-input TrumpAttributeCreateWithoutTrumpAttributeValuesInput {
-  aimHigh: Boolean
-  id: ID
-  name: String!
-  pack: TrumpPackCreateOneWithoutPackInput!
-  unit: String!
-}
-
-type TrumpAttributeValue {
-  attribute: TrumpAttribute!
-  card: TrumpCard!
-  id: ID!
-  value: Float!
-}
-
-input TrumpAttributeValueCreateManyWithoutAttributeValuesInput {
-  connect: [TrumpAttributeValueWhereUniqueInput!]
-  create: [TrumpAttributeValueCreateWithoutCardInput!]
-}
-
-input TrumpAttributeValueCreateManyWithoutTrumpAttributeValuesInput {
-  connect: [TrumpAttributeValueWhereUniqueInput!]
-  create: [TrumpAttributeValueCreateWithoutAttributeInput!]
-}
-
-input TrumpAttributeValueCreateWithoutAttributeInput {
-  card: TrumpCardCreateOneWithoutCardInput!
-  id: ID
-  value: Float!
-}
-
-input TrumpAttributeValueCreateWithoutCardInput {
-  attribute: TrumpAttributeCreateOneWithoutAttributeInput!
-  id: ID
-  value: Float!
-}
-
-input TrumpAttributeValueWhereUniqueInput {
-  id: ID
-}
-
-input TrumpAttributeWhereUniqueInput {
-  id: ID
-}
-
 type TrumpCard {
-  attributeValues(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpAttributeValue!]!
-  description: String
+  description: String!
   id: ID!
   imageUrl: String
   name: String!
   pack: TrumpPack!
+  points: Int!
 }
 
 input TrumpCardCreateInput {
-  attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
-  description: String
+  description: String!
   id: ID
   imageUrl: String
   name: String!
   pack: TrumpPackCreateOneWithoutPackInput!
   pileCards: GamePileCardCreateManyWithoutPileCardsInput
+  points: Int!
 }
 
 input TrumpCardCreateManyWithoutCardsInput {
@@ -330,27 +249,13 @@ input TrumpCardCreateManyWithoutCardsInput {
   create: [TrumpCardCreateWithoutPackInput!]
 }
 
-input TrumpCardCreateOneWithoutCardInput {
-  connect: TrumpCardWhereUniqueInput
-  create: TrumpCardCreateWithoutPileCardsInput
-}
-
 input TrumpCardCreateWithoutPackInput {
-  attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
-  description: String
+  description: String!
   id: ID
   imageUrl: String
   name: String!
   pileCards: GamePileCardCreateManyWithoutPileCardsInput
-}
-
-input TrumpCardCreateWithoutPileCardsInput {
-  attributeValues: TrumpAttributeValueCreateManyWithoutAttributeValuesInput
-  description: String
-  id: ID
-  imageUrl: String
-  name: String!
-  pack: TrumpPackCreateOneWithoutPackInput!
+  points: Int!
 }
 
 input TrumpCardWhereUniqueInput {
@@ -358,7 +263,6 @@ input TrumpCardWhereUniqueInput {
 }
 
 type TrumpPack {
-  attributes(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpAttribute!]!
   author: User!
   cards(after: ID, before: ID, first: Int, last: Int, skip: Int): [TrumpCard!]!
   createdAt: DateTime!
@@ -369,7 +273,6 @@ type TrumpPack {
 }
 
 input TrumpPackCreateInput {
-  attributes: TrumpAttributeCreateManyWithoutAttributesInput
   author: UserCreateOneWithoutAuthorInput!
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
@@ -387,11 +290,10 @@ input TrumpPackCreateManyWithoutTrumpPacksInput {
 
 input TrumpPackCreateOneWithoutPackInput {
   connect: TrumpPackWhereUniqueInput
-  create: TrumpPackCreateWithoutAttributesInput
+  create: TrumpPackCreateWithoutGamesInput
 }
 
-input TrumpPackCreateWithoutAttributesInput {
-  author: UserCreateOneWithoutAuthorInput!
+input TrumpPackCreateWithoutAuthorInput {
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
   description: String!
@@ -401,12 +303,11 @@ input TrumpPackCreateWithoutAttributesInput {
   updatedAt: DateTime
 }
 
-input TrumpPackCreateWithoutAuthorInput {
-  attributes: TrumpAttributeCreateManyWithoutAttributesInput
+input TrumpPackCreateWithoutGamesInput {
+  author: UserCreateOneWithoutAuthorInput!
   cards: TrumpCardCreateManyWithoutCardsInput
   createdAt: DateTime
   description: String!
-  games: GameCreateManyWithoutGamesInput
   id: ID
   name: String!
   updatedAt: DateTime
