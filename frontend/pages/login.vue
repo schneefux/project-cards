@@ -1,31 +1,33 @@
 <template>
   <div class="container container--page">
-    <h1 class="page-heading">Login</h1>
+    <div class="mx-auto max-w-md card">
+      <h1 class="page-heading">Login</h1>
 
-    <div>
-      <p class="mt-2">
-        Don't have an account?
-        <nuxt-link
-          :to="'/register' + (redirect != undefined ? `?redirect=${redirect}` : '')"
-          class="ml-1 button button--sm"
-        >Go to Registration</nuxt-link>
-      </p>
+      <div>
+        <p class="mt-2">
+          Don't have an account?
+          <nuxt-link
+            :to="'/register' + (redirect != undefined ? `?redirect=${redirect}` : '')"
+            class="ml-1 button button--sm"
+          >Go to Registration</nuxt-link>
+        </p>
+      </div>
+
+      <form @submit.prevent="login">
+        <div class="mt-4 flex">
+          <label for="email" class="w-3/12">E-Mail</label>
+          <input id="email" type="email" required v-model="email" class="textinput w-9/12" />
+        </div>
+        <div class="mt-2 flex">
+          <label for="password" class="w-3/12">Password</label>
+          <input id="password" type="password" required v-model="password" class="textinput w-9/12" />
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="button button--secondary button--lg">Login</button>
+        </div>
+        <p class="text-red-500 ml-1 mt-2">{{ message }}</p>
+      </form>
     </div>
-
-    <form @submit.prevent="login">
-      <div class="mt-4 flex">
-        <label for="email" class="w-2/12">E-Mail</label>
-        <input id="email" type="email" required v-model="email" class="textinput w-10/12" />
-      </div>
-      <div class="mt-2 flex">
-        <label for="password" class="w-2/12">Password</label>
-        <input id="password" type="password" required v-model="password" class="textinput w-10/12" />
-      </div>
-      <div class="mt-4">
-        <button type="submit" class="button button--secondary button--lg">Login</button>
-      </div>
-      <p class="text-red-500 ml-1 mt-2">{{ message }}</p>
-    </form>
   </div>
 </template>
 

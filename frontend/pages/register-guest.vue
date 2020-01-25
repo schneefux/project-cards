@@ -1,19 +1,21 @@
 <template>
   <div class="container container--page">
-    <form @submit.prevent="registerGuest" class="mt-6 text-center">
-      <p class="mb-4">Choose a nickname to play games.</p>
-      <label for="username" class="mr-1">Nickname</label>
-      <input id="username" type="username" v-model="username" required class="textinput" />
-      <button type="submit" class="button button--secondary ml-3">Go</button>
+    <div class="mx-auto max-w-md card">
+      <form @submit.prevent="registerGuest" class="mt-6 text-center">
+        <p class="mb-4">Choose a nickname to play games.</p>
+        <label for="username" class="mr-1">Nickname</label>
+        <input id="username" type="username" v-model="username" required class="textinput" />
+        <button type="submit" class="button button--secondary ml-3">Go</button>
 
-      <p class="mt-8">
-        Already have an account?
-        <nuxt-link
-          :to="'/login' + (redirect != undefined ? `?redirect=${redirect}` : '')"
-          class="ml-1 button button--sm"
-        >Go to Login</nuxt-link>
-      </p>
-    </form>
+        <p class="mt-8 mb-4">
+          Already have an account?
+          <nuxt-link
+            :to="'/login' + (redirect != undefined ? `?redirect=${redirect}` : '')"
+            class="ml-1 button button--sm"
+          >Go to Login</nuxt-link>
+        </p>
+      </form>
+    </div>
   </div>
 </template>
 

@@ -84,7 +84,7 @@
 }
 
 .button {
-  @apply bg-primary-500 py-1 px-3 shadow-md rounded-sm text-white;
+  @apply bg-primary-500 py-1 px-3 shadow-md rounded-sm text-white inline-block;
 
   &:hover {
     @apply bg-primary-400;
@@ -156,4 +156,8 @@
 
 .container--page {
   @apply mx-auto px-4 py-2;
+}
+
+.card {
+  @apply border border-gray-300 px-6 py-2 my-6 rounded-sm shadow;
 }
