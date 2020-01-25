@@ -41,7 +41,7 @@
           <div class="block -mt-6 mb-6">
             <span
               class="bg-primary-400 text-white px-2 pt-px pb-1 rounded-full text-xs font-semibold tracking-wide"
-            >bald</span>
+            >geplant</span>
           </div>
         </div>
         <div class="w-full md:w-1/2">
@@ -52,12 +52,12 @@
 
     <section class="bg-primary-500">
       <div class="container mx-auto px-6 text-center py-20">
-        <h2 class="mb-6 text-4xl font-bold text-center text-white">Try it for free</h2>
-        <h3 class="my-4 text-2xl text-white">Create your first card pack</h3>
+        <h2 class="mb-6 text-4xl font-bold text-center text-white">Probier es kostenlos aus</h2>
+        <h3 class="my-4 text-2xl text-white">Erstelle dein erstes Lernkartenspiel</h3>
         <nuxt-link
-          to="/login"
+          to="/register"
           class="bg-white hover:bg-primary-100 button--xl mt-6 inline-block"
-        >Sign Up</nuxt-link>
+        >Registrieren</nuxt-link>
       </div>
     </section>
   </div>

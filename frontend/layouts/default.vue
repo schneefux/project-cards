@@ -4,7 +4,7 @@
       class="bg-white border-b-gradient px-4 md:pt-4 flex justify-between items-center flex-wrap sticky top-0 md:static z-50"
     >
       <div class="flex-shrink-0 pt-3 md:py-0 w-full md:w-auto">
-        <nuxt-link to="/" class="font-bold text-xl tracking-tighter nav-link">[Project Name]</nuxt-link>
+        <nuxt-link to="/" class="font-bold text-xl tracking-tighter nav-link">[Projektname]</nuxt-link>
         <div class="md:hidden float-right mt-1">
           <nuxt-link
             v-if="me != undefined"
@@ -38,8 +38,8 @@
     <nuxt class="flex-grow" />
 
     <footer class="bg-gray-100 py-2 text-sm text-gray-600 text-center leading-normal">
-      <p>Copyright goes here</p>
-      <p class="text-xs leading-tight">Disclaimer goes here</p>
+      <p>Todo</p>
+      <p class="text-xs leading-tight">Disclaimer</p>
     </footer>
   </div>
 </template>
@@ -64,12 +64,12 @@ export default {
         return [
           {
             to: '/',
-            title: 'Home',
+            title: 'Startseite',
             exact: true
           },
           {
             to: '/packs',
-            title: 'Packs'
+            title: 'Karten'
           },
           {
             to: '/login',
@@ -83,12 +83,12 @@ export default {
           return [
             {
               to: '/',
-              title: 'Home',
+              title: 'Startseite',
               exact: true
             },
             {
               to: '/packs',
-              title: 'Packs'
+              title: 'Karten'
             }
           ]
 
@@ -96,16 +96,16 @@ export default {
           return [
             {
               to: '/',
-              title: 'Home',
+              title: 'Startseite',
               exact: true
             },
             {
               to: '/packs',
-              title: 'Packs'
+              title: 'Karten'
             },
             {
               to: '/games',
-              title: 'Live Games'
+              title: 'Spiele'
             }
           ]
       }
