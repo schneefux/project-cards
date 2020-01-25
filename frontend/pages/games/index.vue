@@ -1,12 +1,11 @@
 <template>
   <div class="container container--page">
-    <h1 class="page-heading">Games waiting for Players</h1>
+    <h1 class="page-heading">Offene Spiele</h1>
     <ul class="mt-6">
-      <li v-for="game in games" :key="game.id" class="my-2">
-        <nuxt-link :to="`/games/${game.id}`" class="button">
-          {{
-          game.pack.name
-          }}
+      <li v-for="game in games" :key="game.id" class="mx-2 my-2 inline-block">
+        <nuxt-link :to="`/games/${game.id}`" class="button button--white">
+          <p class="font-semibold text-lg">{{ game.pack.name }}</p>
+          <p>{{ game.pack.description }}</p>
         </nuxt-link>
       </li>
     </ul>
@@ -25,6 +24,7 @@ export default {
             id
             pack {
               name
+              description
             }
           }
         }
@@ -35,9 +35,8 @@ export default {
             createdGame {
               id
               pack {
-                author {
-                  name
-                }
+                name
+                description
               }
             }
           }
