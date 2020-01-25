@@ -700,86 +700,108 @@ const Mutation = mutationType({
           ),
         )
         const third = Math.floor(cards.length / 3)
-        const hand1Cards = cards.splice(0, third)
-        const hand2Cards = cards.splice(0, third)
+        const handCards = [cards.splice(0, third), cards.splice(0, third)]
         const priceCards = cards.splice(0, 1)
         const reserveCards = cards
 
-        await ctx.photon.gameHands.update({
-          where: { id: opponentHand.id },
-          data: {
-            score: 0,
-            atTurn: true,
-            piles: {
-              create: [
-                {
-                  name: 'hand',
-                  pileCards: {
-                    create: hand1Cards.map(c => ({
-                      card: { connect: { id: c.id } },
-                    })),
-                  },
-                },
-                {
-                  name: 'bid',
-                },
-              ],
-            },
-          },
-        })
-
         const isFull = game.hands.length + 1 == 2
 
+        // update game state
         await ctx.photon.games.update({
           where: { id: game.id },
           data: {
             state: isFull ? 'RUNNING' : 'OPEN',
-            piles: {
-              create: [
-                {
-                  name: 'reserve',
-                  pileCards: {
-                    create: reserveCards.map(c => ({
-                      card: { connect: { id: c.id } },
-                    })),
-                  },
-                },
-                {
-                  name: 'price',
-                  pileCards: {
-                    create: priceCards.map(c => ({
-                      card: { connect: { id: c.id } },
-                    })),
-                  },
-                },
-              ],
-            },
-            hands: {
-              create: [
-                {
-                  player: { connect: { id: userCredentials.id } },
-                  score: 0,
-                  atTurn: true,
-                  piles: {
-                    create: [
-                      {
-                        name: 'hand',
-                        pileCards: {
-                          create: hand2Cards.map(c => ({
-                            card: { connect: { id: c.id } },
-                          })),
-                        },
-                      },
-                      {
-                        name: 'bid',
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
           },
         })
+
+        // create game piles
+        const reservePile = await ctx.photon.gamePiles.create({
+          data: {
+            game: { connect: { id: game.id } },
+            name: 'reserve',
+          },
+        })
+        const pricePile = await ctx.photon.gamePiles.create({
+          data: {
+            game: { connect: { id: game.id } },
+            name: 'price',
+          },
+        })
+
+        // initialize player hand
+        const gameHands = [
+          await ctx.photon.gameHands.create({
+            data: {
+              game: { connect: { id: game.id } },
+              player: { connect: { id: userCredentials.id } },
+              score: 0,
+              atTurn: true,
+              piles: {
+                create: [{ name: 'hand' }, { name: 'bid' }],
+              },
+            },
+            include: {
+              piles: true,
+            },
+          }),
+        ]
+
+        // initialize opponent hand
+        gameHands.push(
+          await ctx.photon.gameHands.update({
+            where: { id: opponentHand.id },
+            data: {
+              score: 0,
+              atTurn: true,
+              piles: {
+                create: [{ name: 'hand' }, { name: 'bid' }],
+              },
+            },
+            include: {
+              piles: true,
+            },
+          }),
+        )
+
+        // add card instances (pile cards) to both hands
+        let handIndex = 0
+        for (const hand of gameHands) {
+          for (const card of handCards[handIndex++]) {
+            await ctx.photon.gamePileCards.create({
+              data: {
+                card: { connect: { id: card.id } },
+                handPile: {
+                  connect: {
+                    id: hand.piles.find(p => p.name == 'hand')?.id,
+                  },
+                },
+              },
+            })
+          }
+        }
+
+        // add drawn cards to game piles
+        for (const card of reserveCards) {
+          ctx.photon.gamePileCards.create({
+            data: {
+              card: { connect: { id: card.id } },
+              gamePile: {
+                connect: { id: reservePile.id },
+              },
+            },
+          })
+        }
+
+        for (const card of priceCards) {
+          ctx.photon.gamePileCards.create({
+            data: {
+              card: { connect: { id: card.id } },
+              gamePile: {
+                connect: { id: pricePile.id },
+              },
+            },
+          })
+        }
 
         ctx.pubsub.publish('UPDATED_GAME', {
           updatedGame: game,

@@ -91,14 +91,14 @@ type GameHandPile {
   pileCards(after: ID, before: ID, first: Int, last: Int, skip: Int): [GamePileCard!]!
 }
 
-input GameHandPileCreateManyWithoutHandPilesInput {
-  connect: [GameHandPileWhereUniqueInput!]
-  create: [GameHandPileCreateWithoutPileCardsInput!]
-}
-
 input GameHandPileCreateManyWithoutPilesInput {
   connect: [GameHandPileWhereUniqueInput!]
   create: [GameHandPileCreateWithoutHandInput!]
+}
+
+input GameHandPileCreateOneWithoutHandPileInput {
+  connect: GameHandPileWhereUniqueInput
+  create: GameHandPileCreateWithoutPileCardsInput
 }
 
 input GameHandPileCreateWithoutHandInput {
@@ -140,10 +140,10 @@ input GamePileCardCreateManyWithoutPileCardsInput {
 }
 
 input GamePileCardCreateWithoutCardInput {
-  handPiles: GameHandPileCreateManyWithoutHandPilesInput
+  gamePile: GamePileCreateOneWithoutGamePileInput
+  handPile: GameHandPileCreateOneWithoutHandPileInput
   id: ID
   index: Int
-  piles: GamePileCreateManyWithoutPilesInput
 }
 
 input GamePileCardWhereUniqueInput {
@@ -152,7 +152,18 @@ input GamePileCardWhereUniqueInput {
 
 input GamePileCreateManyWithoutPilesInput {
   connect: [GamePileWhereUniqueInput!]
-  create: [GamePileCreateWithoutPileCardsInput!]
+  create: [GamePileCreateWithoutGameInput!]
+}
+
+input GamePileCreateOneWithoutGamePileInput {
+  connect: GamePileWhereUniqueInput
+  create: GamePileCreateWithoutPileCardsInput
+}
+
+input GamePileCreateWithoutGameInput {
+  id: ID
+  name: String!
+  pileCards: GamePileCardCreateManyWithoutPileCardsInput
 }
 
 input GamePileCreateWithoutPileCardsInput {

@@ -73,11 +73,11 @@ model TrumpPack {
 }
 
 model GamePileCard {
-  id        String         @default(cuid()) @id
-  index     Int?
-  card      TrumpCard
-  piles     GamePile[]
-  handPiles GameHandPile[]
+  id       String        @default(cuid()) @id
+  index    Int?
+  card     TrumpCard
+  gamePile GamePile?
+  handPile GameHandPile?
 }
 
 model TrumpCard {

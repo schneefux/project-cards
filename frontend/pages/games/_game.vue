@@ -1,10 +1,14 @@
 <template>
   <div v-if="game != undefined" class="container container--page">
-    <h1 class="page-heading">Game {{ game.id }}</h1>
+    <h1 class="page-heading">Spiel {{ game.id }}</h1>
 
-    <p>Waiting for players…</p>
-    <p>Players: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
-    <button @click="joinGame" v-if="canJoin" class="button button--lg button--secondary my-3">Join</button>
+    <p>Warte auf Spieler…</p>
+    <p>Spieler: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
+    <button
+      @click="joinGame"
+      v-if="canJoin"
+      class="button button--lg button--secondary my-3"
+    >Beitreten</button>
 
     <div v-if="game.state == 'RUNNING' && pricePile != undefined">
       <div

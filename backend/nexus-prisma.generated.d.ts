@@ -244,7 +244,7 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
 }
     gamePileCards: {
-  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  filtering: 'id' | 'index' | 'AND' | 'OR' | 'NOT' | 'card' | 'gamePile' | 'handPile'
   ordering: 'id' | 'index'
 }
     trumpCards: {
@@ -275,7 +275,7 @@ interface NexusPrismaInputs {
 
   },  GamePile: {
     pileCards: {
-  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  filtering: 'id' | 'index' | 'AND' | 'OR' | 'NOT' | 'card' | 'gamePile' | 'handPile'
   ordering: 'id' | 'index'
 }
 
@@ -287,7 +287,7 @@ interface NexusPrismaInputs {
 
   },  GameHandPile: {
     pileCards: {
-  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  filtering: 'id' | 'index' | 'AND' | 'OR' | 'NOT' | 'card' | 'gamePile' | 'handPile'
   ordering: 'id' | 'index'
 }
 
@@ -302,18 +302,11 @@ interface NexusPrismaInputs {
 }
 
   },  GamePileCard: {
-    piles: {
-  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'game'
-  ordering: 'id' | 'name'
-}
-    handPiles: {
-  filtering: 'id' | 'pileCards' | 'name' | 'AND' | 'OR' | 'NOT' | 'hand'
-  ordering: 'id' | 'name'
-}
+
 
   },  TrumpCard: {
     pileCards: {
-  filtering: 'id' | 'index' | 'piles' | 'handPiles' | 'AND' | 'OR' | 'NOT' | 'card'
+  filtering: 'id' | 'index' | 'AND' | 'OR' | 'NOT' | 'card' | 'gamePile' | 'handPile'
   ordering: 'id' | 'index'
 }
 
@@ -441,8 +434,8 @@ interface NexusPrismaTypes {
     id: 'String'
     index: 'Int'
     card: 'TrumpCard'
-    piles: 'GamePile'
-    handPiles: 'GameHandPile'
+    gamePile: 'GamePile'
+    handPile: 'GameHandPile'
 
 },  TrumpCard: {
     id: 'String'
