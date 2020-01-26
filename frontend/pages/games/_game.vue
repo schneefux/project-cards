@@ -17,6 +17,11 @@
       class="button button--lg button--secondary my-3"
     >Beitreten</button>
 
+    <p v-if="!canJoin && game.state == 'OPEN'">
+      Lade einen Freund mit diesem Link ein:
+      <a :href="selfLink" class="underline">{{ selfLink }}</a>
+    </p>
+
     <div v-if="game.state == 'FINISHED'">
       <p>Das Spiel ist zu Ende.</p>
       <ul class="ml-4 mt-2">
@@ -319,6 +324,12 @@ export default {
       const myHand = this.game.hands.find(h => h.player.id == this.me.id)
       const opponentHand = this.game.hands.find(h => h.player.id != this.me.id)
       return [opponentHand, myHand]
+    },
+    selfLink() {
+      if (process.client) {
+        return window.location.href
+      }
+      return ''
     }
   },
   components: {
