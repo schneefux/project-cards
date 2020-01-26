@@ -81,6 +81,7 @@ export default {
       query {
         me {
           id
+          state
         }
       }
     `,

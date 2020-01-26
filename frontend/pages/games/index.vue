@@ -1,6 +1,11 @@
 <template>
   <div class="container container--page">
     <h1 class="page-heading">Offene Spiele</h1>
+    <p v-if="games.length == 0">Gerade laufen keine Spiele.</p>
+    <div v-if="games.length == 0 && me != undefined && me.state == 'GUEST'">
+      <p>Registriere dich und starte eins!</p>
+      <nuxt-link to="/register" class="button button--sm">Registrieren</nuxt-link>
+    </div>
     <ul class="mt-6">
       <li v-for="game in games" :key="game.id" class="mx-2 my-2 inline-block">
         <nuxt-link :to="`/games/${game.id}`" class="button button--white">
@@ -17,6 +22,14 @@ import gql from 'graphql-tag'
 
 export default {
   apollo: {
+    me: gql`
+      query {
+        me {
+          id
+          state
+        }
+      }
+    `,
     games: {
       query: gql`
         query {
