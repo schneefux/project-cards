@@ -17,6 +17,14 @@
       class="button button--lg button--secondary my-3"
     >Beitreten</button>
 
+    <div v-if="game.state == 'FINISHED'">
+      <p>Das Spiel ist zu Ende.</p>
+      <ul class="ml-4 mt-2">
+        <li>{{ game.hands[0].player.name }}: {{ game.hands[0].score }} Punkte</li>
+        <li>{{ game.hands[1].player.name }}: {{ game.hands[1].score }} Punkte</li>
+      </ul>
+    </div>
+
     <div v-if="game.state == 'RUNNING'">
       <div
         v-for="(side, sideIndex) in sides"

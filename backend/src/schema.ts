@@ -575,18 +575,26 @@ const Mutation = mutationType({
               },
             },
           })
-          await ctx.photon.gamePiles.update({
-            where: { id: pricePile.id },
-            data: {
-              pileCards: {
-                disconnect: pricePile.pileCards.map(p => ({ id: p.id })),
+          if (pricePile.pileCards.length > 0) {
+            await ctx.photon.gamePiles.update({
+              where: { id: pricePile.id },
+              data: {
+                pileCards: {
+                  disconnect: pricePile.pileCards.map(p => ({ id: p.id })),
+                },
               },
-            },
-          })
+            })
+          }
         }
 
         if (reservePile.pileCards.length == 0) {
           // end of game
+          await ctx.photon.games.update({
+            where: { id: game.id },
+            data: {
+              state: 'FINISHED',
+            },
+          })
           ctx.pubsub.publish('UPDATED_GAME', {
             updatedGame: { id: game.id },
           })
