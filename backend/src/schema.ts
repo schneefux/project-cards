@@ -501,7 +501,7 @@ const Mutation = mutationType({
         if (opponentHand.atTurn) {
           // wait for opponent
           ctx.pubsub.publish('UPDATED_GAME', {
-            updatedGame: { id: game.id },
+            updatedGame: game,
           })
 
           return true
@@ -589,6 +589,7 @@ const Mutation = mutationType({
 
         if (reservePile.pileCards.length == 0) {
           // end of game
+          game.state = 'FINISHED'
           await ctx.photon.games.update({
             where: { id: game.id },
             data: {
@@ -596,7 +597,7 @@ const Mutation = mutationType({
             },
           })
           ctx.pubsub.publish('UPDATED_GAME', {
-            updatedGame: { id: game.id },
+            updatedGame: game,
           })
           return true
         }
@@ -635,7 +636,7 @@ const Mutation = mutationType({
         })
 
         ctx.pubsub.publish('UPDATED_GAME', {
-          updatedGame: { id: game.id },
+          updatedGame: game,
         })
         return true
       },
@@ -712,15 +713,16 @@ const Mutation = mutationType({
         const priceCards = cards.splice(0, 1)
         const reserveCards = cards
 
-        const isFull = game.hands.length + 1 == 2
-
-        // update game state
-        await ctx.photon.games.update({
-          where: { id: game.id },
-          data: {
-            state: isFull ? 'RUNNING' : 'OPEN',
-          },
-        })
+        if (game.hands.length + 1 == 2) {
+          // update game state
+          game.state = 'RUNNING'
+          await ctx.photon.games.update({
+            where: { id: game.id },
+            data: {
+              state: 'RUNNING',
+            },
+          })
+        }
 
         // create game piles
         const reservePile = await ctx.photon.gamePiles.create({
