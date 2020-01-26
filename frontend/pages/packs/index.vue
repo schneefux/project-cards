@@ -1,13 +1,13 @@
 <template>
   <div class="container container--page">
     <div v-if="me != undefined && me.subscriptionTier != 'GUEST'" class="mb-16">
-      <h1 class="page-heading">Your Card Packs</h1>
+      <h1 class="page-heading">Deine Kartenspiele</h1>
 
       <div class="flex justify-center my-4">
         <nuxt-link
           to="/packs/new"
           class="button button--lg button--round button--secondary"
-        >Create New</nuxt-link>
+        >Neues Erstellen</nuxt-link>
       </div>
 
       <div class="flex flex-wrap justify-center">
@@ -21,7 +21,7 @@
             <div class="playingcard__container playingcard__container--lg">
               <div class="playingcard__container playingcard__container--lg leading-loose relative">
                 <button class="playingcard__title text-primary-500">{{ pack.name }}</button>
-                <p>Description: {{ pack.description }}</p>
+                <p>Beschreibung: {{ pack.description }}</p>
               </div>
             </div>
           </div>
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <h2 class="page-subheading">Explore Card Packs by the Community</h2>
+    <h2 class="page-subheading">Entdecke Kartenspiele von der Community</h2>
 
     <div class="flex flex-wrap justify-center mb-16">
       <nuxt-link
@@ -42,8 +42,8 @@
           <div class="playingcard__container playingcard__container--sm">
             <div class="playingcard__container playingcard__container--sm leading-loose relative">
               <button class="playingcard__title text-primary-500">{{ pack.name }}</button>
-              <p>Author: {{ pack.author.name }}</p>
-              <p>Description: {{ pack.description }}</p>
+              <p>Autor: {{ pack.author.name }}</p>
+              <p>Beschreibung: {{ pack.description }}</p>
             </div>
           </div>
         </div>
@@ -51,9 +51,12 @@
     </div>
 
     <div v-if="me == undefined || me.subscriptionTier == 'GUEST'" class="mb-16">
-      <h2 class="page-subheading">Register and design your own</h2>
-      <p class="mb-2">With a free account, you can create your own card packs.</p>
-      <nuxt-link to="/packs/new" class="inline-block button button--lg button--secondary">Sign Up</nuxt-link>
+      <h2 class="page-subheading">Registriere dich und erstelle dein eigenes</h2>
+      <p class="mb-2">Mit einem kostenlosen Account kannst du deine eigenen Kartenspiele erstellen.</p>
+      <nuxt-link
+        to="/packs/new"
+        class="inline-block button button--lg button--secondary"
+      >Registrieren</nuxt-link>
     </div>
   </div>
 </template>

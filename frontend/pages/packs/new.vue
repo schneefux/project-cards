@@ -1,48 +1,48 @@
 <template>
   <div class="container container--page">
-    <h1 class="page-heading">Create a Card Pack</h1>
+    <h1 class="page-heading">Erstelle ein neues Kartenspiel</h1>
 
     <form @submit.prevent="createPack" class="mt-6">
       <div class="block w-64 mx-auto md:mx-0">
         <div class="block flex">
-          <label for="name" class="mr-1 w-4/12">Title</label>
-          <input type="text" v-model="packName" maxlength="20" required class="textinput w-8/12" />
+          <label for="name" class="mr-1 w-5/12">Titel</label>
+          <input type="text" v-model="packName" maxlength="20" required class="textinput w-7/12" />
         </div>
 
         <div class="block flex mt-2">
-          <label for="name" class="mr-1 w-4/12">Description</label>
+          <label for="name" class="mr-1 w-5/12">Beschreibung</label>
           <input
             type="text"
             v-model="packDescription"
             maxlength="20"
             required
-            class="textinput w-8/12"
+            class="textinput w-7/12"
           />
         </div>
       </div>
 
       <div class="mt-6">
-        <h2 class="page-subheading">Card Design Preview</h2>
+        <h2 class="page-subheading">Vorschau des Kartendesigns</h2>
       </div>
 
       <div class="block mt-2 flex justify-center">
         <div class="playingcard">
           <div class="playingcard__container playingcard__container--lg">
-            <p class="playingcard__title">Card Title</p>
+            <p class="playingcard__title">Kartentitel</p>
             <div class="playingcard__image boxedimage relative">
               <div class="boxedimage__container">
                 <div class="boxedimage__image"></div>
-                <span class="absolute bottom-0 inset-x-0 text-center text-gray-400">card image</span>
+                <span class="absolute bottom-0 inset-x-0 text-center text-gray-400">Kartenbild</span>
               </div>
             </div>
-            <p class="playingcard__attributes text-gray-400">card text</p>
-            <p class="playingcard__attribution">created by {{ me.name }}</p>
+            <p class="playingcard__attributes text-gray-400">Kartentext</p>
+            <p class="playingcard__attribution">erstellt von {{ me.name }}</p>
           </div>
         </div>
       </div>
 
       <div class="block mt-2 flex justify-end">
-        <button type="submit" class="button button--secondary button--lg">Save</button>
+        <button type="submit" class="button button--secondary button--lg">Speichern</button>
       </div>
     </form>
   </div>

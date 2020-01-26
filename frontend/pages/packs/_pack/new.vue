@@ -1,7 +1,7 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
     <h1 class="page-heading">
-      New Card for
+      Neue Karte für
       <span class="text-gray-700">{{ trumpPack.name }}</span>
     </h1>
 
@@ -35,7 +35,7 @@
               <label
                 class="absolute bottom-0 right-0 rounded-tl pl-1 pr-px bg-blue-500 hover:bg-blue-400 text-white"
               >
-                select
+                auswählen
                 <input
                   @change="selectImage"
                   type="file"
@@ -48,20 +48,23 @@
             <div class="playingcard__attributes">
               <textarea type="text" v-model="cardDescription" required class="textinput w-full" />
             </div>
-            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
+            <p class="playingcard__attribution">erstellt von {{ trumpPack.author.name }}</p>
           </div>
         </div>
       </div>
 
       <div class="w-full mt-4">
         <div class="ml-auto w-2/3 flex flex-wrap justify-end">
-          <nuxt-link :to="`/packs/${trumpPack.id}`" class="button ml-1 mb-1">Cancel</nuxt-link>
+          <nuxt-link :to="`/packs/${trumpPack.id}`" class="button ml-1 mb-1">Abbrechen</nuxt-link>
           <button
             type="button"
             @click="saveAndReset"
             class="button button--secondary ml-1 mb-1"
-          >Save and Create Another</button>
-          <button type="submit" class="button button--secondary ml-1 mb-1">Save and Return to Packs</button>
+          >Speichern und Nächste</button>
+          <button
+            type="submit"
+            class="button button--secondary ml-1 mb-1"
+          >Speichern und zur Übersicht</button>
         </div>
       </div>
     </form>

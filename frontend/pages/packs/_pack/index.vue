@@ -1,9 +1,9 @@
 <template>
   <div v-if="trumpPack != undefined" class="container container--page">
     <h1 class="page-heading">
-      Card Pack
+      Kartenspiel
       <span class="text-primary-700">{{ trumpPack.name }}</span>
-      by
+      von
       <span class="text-gray-700">{{ trumpPack.author.name }}</span>
     </h1>
 
@@ -12,19 +12,19 @@
         v-if="me != undefined && me.subscriptionTier != 'GUEST'"
         @click="createGoofenspiel"
         class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
-      >Start Game</button>
+      >Spiel starten</button>
       <div v-else class="block">
-        <p>With a free account, you can start this game.</p>
+        <p>Mit einem kostenlosen Account kannst du dieses Spiel starten.</p>
         <div class="mt-4 mb-6">
-          <nuxt-link :to="currentRoute" class="button button--lg button--secondary">Sign Up</nuxt-link>
-          <nuxt-link to="/games" class="ml-2 button button--lg">Play started Games</nuxt-link>
+          <nuxt-link :to="currentRoute" class="button button--lg button--secondary">Registrieren</nuxt-link>
+          <nuxt-link to="/games" class="ml-2 button button--lg">Bereits gestartete Spiele sehen</nuxt-link>
         </div>
       </div>
       <p class="flex items-center">{{ trumpPack.description }}</p>
     </div>
 
     <div class="mt-8">
-      <h2 class="page-subheading">Cards ({{ trumpPack.cards.length }})</h2>
+      <h2 class="page-subheading">Karten ({{ trumpPack.cards.length }})</h2>
 
       <div class="flex flex-wrap">
         <nuxt-link
@@ -37,7 +37,7 @@
               <div class="button button--secondary button--fab-lg">
                 <PlusIcon class="button__icon" />
               </div>
-              <p class="w-full text-center text-lg">Create New</p>
+              <p class="w-full text-center text-lg">Neu</p>
             </div>
           </div>
         </nuxt-link>
@@ -62,7 +62,7 @@
             >
               <BinIcon class="button__icon" />
             </button>
-            <p class="playingcard__attribution">created by {{ trumpPack.author.name }}</p>
+            <p class="playingcard__attribution">erstellt von {{ trumpPack.author.name }}</p>
           </div>
         </div>
       </div>
