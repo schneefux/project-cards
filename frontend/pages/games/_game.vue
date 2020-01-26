@@ -1,16 +1,23 @@
 <template>
   <div v-if="game != undefined" class="container container--page">
-    <h1 class="page-heading">Spiel {{ game.id }}</h1>
+    <h1 class="page-heading">
+      Spiel
+      <span class="text-gray-600">{{ game.hands[0].player.name }}</span>
+      gegen
+      <span
+        v-if="game.hands.length > 1"
+        class="text-gray-600"
+      >{{ game.hands[1].player.name }}</span>
+      <span v-else class="text-gray-600 italic">warte auf Gegner</span>
+    </h1>
 
-    <p>Warte auf Spieler…</p>
-    <p>Spieler: {{ game.hands.map(h => h.player.name).join(', ') }}</p>
     <button
       @click="joinGame"
       v-if="canJoin"
       class="button button--lg button--secondary my-3"
     >Beitreten</button>
 
-    <div v-if="game.state == 'RUNNING' && pricePile != undefined">
+    <div v-if="game.state == 'RUNNING'">
       <div
         v-for="(side, sideIndex) in sides.slice().reverse()"
         :key="side.id"
