@@ -152,6 +152,14 @@
       stroke-width: 4;
     }
   }
+
+  &--disabled {
+    @apply bg-gray-400 shadow-none cursor-not-allowed;
+
+    &:hover {
+      @apply bg-gray-400;
+    }
+  }
 }
 
 .page-heading {

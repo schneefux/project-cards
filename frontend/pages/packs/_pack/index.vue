@@ -8,10 +8,15 @@
     </h1>
 
     <div class="flex flex-wrap">
+      <p
+        v-if="!enoughCardsToPlay"
+        class="mb-2 text-gray-800 text-sm w-full"
+      >Füge mehr Karten hinzu, um spielen zu können.</p>
       <button
         v-if="me != undefined && me.subscriptionTier != 'GUEST'"
-        @click="createGoofenspiel"
+        @click="enoughCardsToPlay ? createGoofenspiel : null"
         class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
+        :class="{ 'button--disabled': !enoughCardsToPlay }"
       >Spiel starten</button>
       <div v-else class="block">
         <p>Mit einem kostenlosen Account kannst du dieses Spiel starten.</p>
@@ -124,6 +129,9 @@ export default {
   computed: {
     currentRoute() {
       return this.$router.currentRoute
+    },
+    enoughCardsToPlay() {
+      return this.trumpPack.cards.length > 3
     }
   },
   data() {
