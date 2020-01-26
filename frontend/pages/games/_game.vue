@@ -66,7 +66,7 @@
                   height: ${CENTER_CARD_W * CARD_RATIO}rem;
                 `"
                 class="playingcard__container"
-              >{{ pileCard.card.name }}</div>
+              >{{ pileCard.card.name }} ({{ pileCard.card.points }})</div>
             </div>
             <draggable
               v-show="!spread"
@@ -98,7 +98,7 @@
                   height: ${CENTER_CARD_W * CARD_RATIO}rem;
                 `"
                 class="playingcard__container"
-              >{{ pricePile.pileCards.length }} cards left</div>
+              >{{ pricePile.pileCards.length }} Karten übrig</div>
             </div>
             <div
               v-for="betSide in 2"
@@ -127,7 +127,7 @@
                   height: ${CENTER_CARD_W * CARD_RATIO}rem;
                 `"
                 class="playingcard__container"
-              >{{ pileCard.card.name }}</div>
+              >{{ pileCard.card.name }} ({{ pileCard.card.points }})</div>
             </div>
           </template>
         </div>
@@ -173,7 +173,7 @@
                 ${spread || sideIndex == 0 ? '' : 'box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'}
               `"
               class="playingcard__container"
-            >{{ pileCard.card.name }}</div>
+            >{{ pileCard.card.name }} ({{ pileCard.card.points }})</div>
           </draggable>
           <p
             class="text-center w-full absolute font-semibold"
@@ -208,10 +208,12 @@ const gameAttrs = `
         id
         name
         imageUrl
+        points
       }
     }
   }
   hands {
+    id
     player {
       id
       name
@@ -224,8 +226,10 @@ const gameAttrs = `
       pileCards {
         id
         card {
+          id
           name
           imageUrl
+          points
         }
       }
     }
