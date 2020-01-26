@@ -63,7 +63,7 @@
               :group="`cards-${sideIndex}`"
               class="border-gray-700 border-dashed border-4 px-2 py-1 mx-auto flex justify-center items-center relative z-20"
               :style="`
-                margin-top: -${CENTER_CARD_W * CARD_RATIO * 1.25}rem;
+                margin-top: -${CENTER_CARD_W * CARD_RATIO * 0.75}rem;
                 width: ${HAND_SPACE_W}rem;
                 height: ${CENTER_CARD_W * CARD_RATIO * 1.5}rem;
                 background: rgba(0, 0, 0, 0.25);
@@ -72,7 +72,7 @@
             >
               <p
                 class="absolute top-0 left-0 text-gray-200 font-semibold"
-              >Drag card here to place your bet.</p>
+              >Ziehe die Karte hierher als Einsatz.</p>
             </draggable>
             <div
               :style="`
