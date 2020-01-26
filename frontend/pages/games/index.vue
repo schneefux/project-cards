@@ -1,5 +1,5 @@
 <template>
-  <div class="container container--page">
+  <div v-if="games != undefined" class="container container--page">
     <h1 class="page-heading">Offene Spiele</h1>
     <p v-if="games.length == 0">Gerade laufen keine Spiele.</p>
     <div v-if="games.length == 0 && me != undefined && me.subscriptionTier == 'GUEST'">
