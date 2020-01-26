@@ -19,7 +19,7 @@
 
     <div v-if="game.state == 'RUNNING'">
       <div
-        v-for="(side, sideIndex) in sides.slice().reverse()"
+        v-for="(side, sideIndex) in sides"
         :key="side.id"
         :class="{
           'transform-flip-y': sideIndex == 0,
@@ -97,7 +97,7 @@
                   width: ${CENTER_CARD_W}rem;
                   height: ${CENTER_CARD_W * CARD_RATIO * 0.5}rem;
                 `"
-              >{{ betSide == 2 ? 'Your Bet' : 'Opponent Bet' }}</p>
+              >{{ betSide == 2 ? 'Dein Einsatz' : 'Einsatz des Gegners' }}</p>
               <div
                 v-for="pileCard in bids[betSide - 1].pileCards"
                 :key="pileCard.id"
@@ -302,7 +302,7 @@ export default {
     sides() {
       const myHand = this.game.hands.find(h => h.player.id == this.me.id)
       const opponentHand = this.game.hands.find(h => h.player.id != this.me.id)
-      return [myHand, opponentHand]
+      return [opponentHand, myHand]
     }
   },
   components: {
@@ -324,9 +324,8 @@ export default {
       await this.$apollo.queries.game.refetch()
     },
     async addBid(index, event) {
-      // index 0: player hand
-      const pileCard = this.hands[0].pileCards[event.newIndex]
-      console.log(pileCard)
+      // index 1: player hand
+      const pileCard = this.hands[1].pileCards[event.oldIndex]
       await this.bidCard(pileCard)
     },
     async bidCard(pileCard) {
