@@ -9,7 +9,7 @@
 
     <div class="flex flex-wrap">
       <button
-        v-if="me != undefined && me.state != 'GUEST'"
+        v-if="me != undefined && me.subscriptionTier != 'GUEST'"
         @click="createGoofenspiel"
         class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
       >Start Game</button>
@@ -81,7 +81,7 @@ export default {
       query {
         me {
           id
-          state
+          subscriptionTier
         }
       }
     `,

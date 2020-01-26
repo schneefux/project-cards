@@ -2,7 +2,7 @@
   <div class="container container--page">
     <h1 class="page-heading">Offene Spiele</h1>
     <p v-if="games.length == 0">Gerade laufen keine Spiele.</p>
-    <div v-if="games.length == 0 && me != undefined && me.state == 'GUEST'">
+    <div v-if="games.length == 0 && me != undefined && me.subscriptionTier == 'GUEST'">
       <p>Registriere dich und starte eins!</p>
       <nuxt-link to="/register" class="button button--sm">Registrieren</nuxt-link>
     </div>
@@ -26,7 +26,7 @@ export default {
       query {
         me {
           id
-          state
+          subscriptionTier
         }
       }
     `,
