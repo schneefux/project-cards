@@ -24,14 +24,14 @@
   }
 
   &--interactive {
-    @apply pt-4;
+    @apply pt-4 pb-2;
 
     .playingcard__container {
       @apply shadow-lg;
     }
 
     &:hover {
-      @apply pt-2 pb-2;
+      @apply pt-2 pb-4;
 
       .playingcard__container {
         @apply shadow-xl;
