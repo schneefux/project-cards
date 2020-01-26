@@ -2,17 +2,17 @@
   <div class="container container--page">
     <div class="mx-auto max-w-md card">
       <form @submit.prevent="registerGuest" class="mt-6 text-center">
-        <p class="mb-4">Choose a nickname to play games.</p>
-        <label for="username" class="mr-1">Nickname</label>
+        <p class="mb-4">Gib einen Spielernamen ein, um spielen zu können.</p>
+        <label for="username" class="mr-1">Spielername</label>
         <input id="username" type="username" v-model="username" required class="textinput" />
-        <button type="submit" class="button button--secondary ml-3">Go</button>
+        <button type="submit" class="button button--secondary ml-3">Los</button>
 
         <p class="mt-8 mb-4">
-          Already have an account?
+          Hast du einen Account?
           <nuxt-link
             :to="'/login' + (redirect != undefined ? `?redirect=${redirect}` : '')"
             class="ml-1 button button--sm"
-          >Go to Login</nuxt-link>
+          >Zum Login</nuxt-link>
         </p>
       </form>
     </div>
