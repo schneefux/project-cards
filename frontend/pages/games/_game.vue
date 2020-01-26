@@ -23,6 +23,12 @@
         <li>{{ game.hands[0].player.name }}: {{ game.hands[0].score }} Punkte</li>
         <li>{{ game.hands[1].player.name }}: {{ game.hands[1].score }} Punkte</li>
       </ul>
+
+      <button
+        v-if="me != undefined && me.subscriptionTier != 'GUEST'"
+        @click="createGoofenspiel"
+        class="button button--secondary button--lg shadow-md float-left my-2 ml-4 mr-6"
+      >Noch ein Spiel starten</button>
     </div>
 
     <div v-if="game.state == 'RUNNING'">
@@ -183,6 +189,7 @@ const gameAttrs = `
   id
   state
   pack {
+    id
     author {
       name
     }
@@ -226,6 +233,7 @@ export default {
       query {
         me {
           id
+          subscriptionTier
         }
       }
     `,
@@ -350,6 +358,21 @@ export default {
       })
 
       await this.$apollo.queries.game.refetch()
+    },
+    async createGoofenspiel() {
+      const response = await this.$apollo.mutate({
+        mutation: gql`
+          mutation($pack: ID!) {
+            createGoofenspiel(pack: $pack)
+          }
+        `,
+        variables: {
+          pack: this.game.pack.id
+        }
+      })
+
+      const gameId = response.data.createGoofenspiel
+      this.$router.push(`/games/${gameId}`)
     }
   },
   middleware: ['guest']
